@@ -1,0 +1,19 @@
+var config = require('config')
+var app = require('express')()
+  , cookieParser = require('cookie-parser')
+  , bodyParser = require('body-parser')
+  , morgan = require('morgan')
+  , server = require('http').Server(app)
+
+server.listen(config.get('server.port'))
+
+require('./socket.io.init')(server)
+require('./passport.init')(app)
+
+app.use(morgan(':status\t :method\t :response-time ms\t :date[clf]\t :url\t\t'))
+app.use(cookieParser())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+
+app.use('/auth', require('./routes/auth'))
+app.use('/api', require('./routes/api'))

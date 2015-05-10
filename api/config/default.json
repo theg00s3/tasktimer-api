@@ -1,0 +1,10 @@
+{
+  "mongodb":{
+    "host":"pomodoro-api-db",
+    "port":27017
+  },
+  "server":{
+    "host":"0.0.0.0",
+    "port":80
+  }
+}

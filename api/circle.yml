@@ -1,0 +1,23 @@
+machine:
+  services:
+    - docker
+    - mongodb
+
+dependencies:
+  override:
+    - npm install
+
+test:
+  override:
+    - cp credentials/index.template.js credentials/index.js
+    - NODE_ENV=test npm test
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - echo $NODE_ENV
+      - docker build -t christianfei/pomodoro-api .
+      - docker push christianfei/pomodoro-api
+      - ssh pigeon@146.185.167.197 'sh /home/pigeon/apps/pomodoro/opt/docker.deploy.sh'
