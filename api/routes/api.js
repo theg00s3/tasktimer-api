@@ -23,14 +23,13 @@ Statistics.use(db, function(){
 router.use('/pomodoro',function(req,res,next){
   if( req.user ) return next()
 
-  var urlParts = url.parse(req.url, true)
-  var query = urlParts.query
+  var query = url.parse(req.url, true).query
 
   if( query.apikey === undefined ) return res.sendStatus(401)
 
   users.findOne({
     apikey: query.apikey
-  },function(err,user){
+  }, function(err,user){
     if( err || !user ) return res.sendStatus(401)
     req.user = user
     next()
@@ -42,15 +41,16 @@ router.use('/pomodoro',function(req,res,next){
 */
 router.post('/pomodoro', function(req,res){
   var rawPomodoro = req.body
-  var pomodoro
 
   var errors = PomodoroValidator.validate(rawPomodoro)
   if( errors.length > 0 ) return res.status(422).json(errors)
 
-  pomodoro = utils.cleanPomodoro(rawPomodoro)
+  var pomodoro = utils.cleanPomodoro(rawPomodoro)
   pomodoro.username = req.user.username
 
-  pomodori.update({username:pomodoro.username,startedAt:pomodoro.startedAt},pomodoro,{upsert:true},function(err,inserted,result){
+  var queryOptions = {upsert:true}
+
+  pomodori.update({username:pomodoro.username,startedAt:pomodoro.startedAt}, pomodoro, queryOptions, function(err, _, result){
     if(err) return res.sendStatus(500)
     if( result.upserted && result.upserted[0] )
       res.status(201).location('/api/pomodoro/'+result.upserted[0]._id).end()
@@ -94,8 +94,7 @@ function requestToMongoQuery(req){
 
   mongoQuery.username = req.user.username
 
-  var urlParts = url.parse(req.url, true)
-  var query = urlParts.query
+  var query = url.parse(req.url, true).query
 
   if( query.day ){
     mongoQuery.day = query.day
