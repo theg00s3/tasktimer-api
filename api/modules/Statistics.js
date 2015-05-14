@@ -65,7 +65,7 @@ function getPomodoriHours(pomodori){
 
 function getCountByType(type, pomodori){
   var count = _.reduce(pomodori, function(memo, pomodoro){
-    if( pomodoro.type.match(type) ){
+    if( pomodoro.type && pomodoro.type.match && pomodoro.type.match(type) ){
       if( utils.isPartial(pomodoro) ){
         memo += (pomodoro.cancelledAt-pomodoro.startedAt) / (pomodoro.minutes*60*1000)
       }else{

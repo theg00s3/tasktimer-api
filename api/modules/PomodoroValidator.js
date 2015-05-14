@@ -16,14 +16,14 @@ var propertyValidators = {
 };
 
 function validate(pomodoro){
-  var errors = [];
+  var errors = {};
   for(var prop in propertyValidators){
-    if( !hasProperty(pomodoro,prop) )
-      errors.push("not existing property: '"+ prop +"'");
-
     var rule = propertyValidators[prop];
     if( !rule(pomodoro[prop],pomodoro) )
-      errors.push("invalid property: '"+ prop +"'");
+      errors[prop] = "invalid"
+
+    if( !hasProperty(pomodoro,prop) )
+      errors[prop] = "required"
   }
   return errors;
 };

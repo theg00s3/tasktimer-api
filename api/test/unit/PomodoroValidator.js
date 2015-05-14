@@ -48,19 +48,23 @@ describe("PomodoroValidator", function() {
     };
   });
 
-  it("should not validate invalid pomodoro", function() {
+  it("invalid pomodoro", function() {
     expect(PomodoroValidator.validate(invalidPomodoro)).not.to.equal(true);
   });
 
-  it("should validate valid pomodoro", function() {
-    expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal([]); 
+  it("valid pomodoro", function() {
+    expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal({});
   });
 
-  it("should not validate if distractions are out of pomodoro timespan", function() {
+  it("invalid pomodoro if distractions are out of pomodoro timespan", function() {
     validPomodoro.distractions = [validPomodoro.startedAt+100*60*1000];
-    expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal(["invalid property: 'distractions'"]);
+    expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal({distractions:'invalid'});
   });
 
-  
+  it("returns errors for required property", function() {
+    var errors = PomodoroValidator.validate({})
+    expect(errors).to.have.property('distractions');
+    expect(errors.distractions).to.equal('required');
+  });
 
 });
