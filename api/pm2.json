@@ -1,7 +1,0 @@
-[{
-  "name"      : "pomodoro_auth",
-  "script"    : "./index.js",
-  "env": {
-    "NODE_ENV": "production"
-  }
-}]

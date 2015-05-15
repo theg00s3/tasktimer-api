@@ -3,11 +3,9 @@ var app = require('express')()
   , cookieParser = require('cookie-parser')
   , bodyParser = require('body-parser')
   , morgan = require('morgan')
-  , server = require('http').Server(app)
 
-server.listen(config.get('server.port'))
+app.listen(config.get('server.port'))
 
-require('./socket.io.init')(server)
 require('./passport.init')(app)
 
 app.use(morgan(':status\t :method\t :response-time ms\t :date[clf]\t :url\t\t'))
