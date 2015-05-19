@@ -43,7 +43,13 @@ describe('PomodoroApi', function(){
       return expect(_pomodoro).to.deep.equal(pomodoro)
     })
     .end(done)
-  });
+  })
+
+  it('returns 404 for unexisting pomodoro resource', function (done) {
+    request(app)
+    .get('/api/pomodoro/123123123?apikey='+apikey)
+    .expect(404,done)
+  })
 
   it('returns pomodori for authorized user with api key', function (done) {
     request(app)
