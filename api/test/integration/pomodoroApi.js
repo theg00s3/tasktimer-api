@@ -32,7 +32,7 @@ describe('PomodoroApi', function(){
     .expect(401, done)
   })
 
-  it('returns authorizes user with api key', function (done) {
+  it('returns pomodori for authorized user with api key', function (done) {
     request(app)
     .get('/api/pomodoro?apikey='+apikey)
     .expect(200)
@@ -43,7 +43,20 @@ describe('PomodoroApi', function(){
       return expect(pomodori[0]).to.deep.equal(pomodoro)
     })
     .end(done)
-  });
+  })
+
+  it('returns pomodori for day', function (done) {
+    request(app)
+    .get('/api/pomodoro?day='+day+'&apikey='+apikey)
+    .expect(200)
+    .expect(function(res){
+      var pomodori = res.body
+      delete pomodori[0]._id
+      delete pomodoro._id
+      return expect(pomodori[0]).to.deep.equal(pomodoro)
+    })
+    .end(done)
+  })
 
   // after(function(done){
   //   db(function(conn){
