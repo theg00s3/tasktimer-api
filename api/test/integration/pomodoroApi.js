@@ -43,6 +43,13 @@ describe('PomodoroApi', function(){
     .end(done)
   })
 
+  // it('creates a pomodoro and returns location', function (done) {
+  //   request(app)
+  //   .post('/api/pomodoro/?apikey='+apikey)
+  //   .expect(201)
+  //   .end(done)
+  // })
+
   it('returns 404 for unexisting pomodoro resource', function (done) {
     request(app)
     .get('/api/pomodoro/123123123?apikey='+apikey)

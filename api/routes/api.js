@@ -49,14 +49,9 @@ router.post('/pomodoro', function(req,res){
   var pomodoro = utils.cleanPomodoro(rawPomodoro)
   pomodoro.username = req.user.username
 
-  var queryOptions = {upsert:true}
-
-  pomodori.update({username:pomodoro.username,startedAt:pomodoro.startedAt}, pomodoro, queryOptions, function(err, _, result){
+  pomodori.insert(pomodoro, function(err, doc){
     if(err) return res.sendStatus(500)
-    if( result.upserted && result.upserted[0] )
-      res.status(201).location('/api/pomodoro/'+result.upserted[0]._id).end()
-    else
-      res.sendStatus(201)
+    res.status(201).location('/api/pomodoro/'+doc._id).end()
   })
 })
 
