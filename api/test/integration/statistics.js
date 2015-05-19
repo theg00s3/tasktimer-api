@@ -29,6 +29,8 @@ describe('Statistics', function(){
   before(function (done) {
     db(function(conn){
       async.parallel([
+        function(cb) {conn.collection('pomodori').remove(cb)},
+        function(cb) {conn.collection('users').remove(cb)},
         function(cb){conn.collection('pomodori').insert(pomodori.pomodoro1user1,cb)},
         function(cb){conn.collection('pomodori').insert(pomodori.pomodoro2user1,cb)},
         function(cb){conn.collection('pomodori').insert(pomodori.pomodoro1user2,cb)},
