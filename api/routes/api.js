@@ -1,6 +1,7 @@
 var router = require('express').Router()
   , url = require('url')
   , db = require('../modules/db.connection.js')
+  , BSON = require('mongodb').BSONPure
   , PomodoroValidator = require('../modules/PomodoroValidator')
   , Statistics = require('../modules/Statistics')
   , utils = require('../modules/utils')
@@ -70,10 +71,11 @@ router.get('/pomodoro', function(req,res){
 
 router.get('/pomodoro/:id', function(req,res){
   var username = req.user.username
-  var pomodoroId = req.params.id
+  var pomodoroId = new BSON.ObjectID(req.params.id)
 
   pomodori.findOne({username:username,_id:pomodoroId}, function(err,pomodoro){
     if( err ) return res.sendStatus(500)
+    if( !pomodoro ) return res.sendStatus(404)
     res.json(pomodoro)
   })
 })

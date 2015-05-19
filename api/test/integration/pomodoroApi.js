@@ -32,6 +32,19 @@ describe('PomodoroApi', function(){
     .expect(401, done)
   })
 
+  it('returns single pomodoro by id', function (done) {
+    request(app)
+    .get('/api/pomodoro/'+pomodoro._id+'?apikey='+apikey)
+    .expect(200)
+    .expect(function(res){
+      var _pomodoro = res.body
+      delete _pomodoro._id
+      delete pomodoro._id
+      return expect(_pomodoro).to.deep.equal(pomodoro)
+    })
+    .end(done)
+  });
+
   it('returns pomodori for authorized user with api key', function (done) {
     request(app)
     .get('/api/pomodoro?apikey='+apikey)
