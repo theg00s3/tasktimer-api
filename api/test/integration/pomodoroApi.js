@@ -38,9 +38,7 @@ describe('PomodoroApi', function(){
     .expect(200)
     .expect(function(res){
       var _pomodoro = res.body
-      delete _pomodoro._id
-      delete pomodoro._id
-      return expect(_pomodoro).to.deep.equal(pomodoro)
+      expectSamePomodori(_pomodoro, pomodoro)
     })
     .end(done)
   })
@@ -57,9 +55,7 @@ describe('PomodoroApi', function(){
     .expect(200)
     .expect(function(res){
       var pomodori = res.body
-      delete pomodori[0]._id
-      delete pomodoro._id
-      return expect(pomodori[0]).to.deep.equal(pomodoro)
+      expectSamePomodori(pomodori, [pomodoro])
     })
     .end(done)
   })
@@ -70,9 +66,7 @@ describe('PomodoroApi', function(){
     .expect(200)
     .expect(function(res){
       var pomodori = res.body
-      delete pomodori[0]._id
-      delete pomodoro._id
-      return expect(pomodori[0]).to.deep.equal(pomodoro)
+      expectSamePomodori(pomodori, [pomodoro])
     })
     .end(done)
   })
@@ -83,12 +77,22 @@ describe('PomodoroApi', function(){
     .expect(200)
     .expect(function(res){
       var pomodori = res.body
-      delete pomodori[0]._id
-      delete pomodoro._id
-      return expect(pomodori[0]).to.deep.equal(pomodoro)
+      expectSamePomodori(pomodori, [pomodoro])
     })
     .end(done)
   })
+
+  function expectSamePomodori(pom1, pom2){
+    if( pom1 instanceof Array )
+      delete pom1[0]._id
+    else
+      delete pom1._id
+    if( pom2 instanceof Array )
+      delete pom2[0]._id
+    else
+      delete pom2._id
+    return expect(pom1).to.deep.equal(pom2)
+  }
 
   // after(function(done){
   //   db(function(conn){
