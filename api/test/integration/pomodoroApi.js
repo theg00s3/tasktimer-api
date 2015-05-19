@@ -7,7 +7,8 @@ var expect = require('chai').expect
   , request = require('supertest')
 
 
-var fakeUser = {apikey:'fake'}
+var apikey = 'fake'
+var fakeUser = {apikey:apikey}
 
 describe('PomodoroApi', function(){
   before(function (done) {
@@ -24,5 +25,12 @@ describe('PomodoroApi', function(){
     .get('/api/pomodoro')
     .expect(401, done)
   })
+
+  it('returns authorizes user with api key', function (done) {
+    request(app)
+    .get('/api/pomodoro?apikey='+apikey)
+    .expect(200)
+    .expect([], done)
+  });
 
 })
