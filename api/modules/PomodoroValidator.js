@@ -9,8 +9,6 @@ var propertyValidators = {
   minutes: validateMinutes,
   startedAt: validateStartedAt,
   type: validateType,
-  // day: validateDay,
-  // week: validateWeek,
   tags: validateTags,
   distractions: validateDistractions,
 };
@@ -72,12 +70,6 @@ function validateStartedAt(startedAt){
 }
 function validateType(type){
   return ['pomodoro','break','pomodoro-public','break-public'].indexOf(type)>=0;
-}
-function validateDay(day){
-  return moment(day,'DD/MM/YYYY').isValid();
-}
-function validateWeek(week){
-  return moment(week,'W/GGGG').isValid();
 }
 function validateTags(tags){
   return TagsValidator.validate(tags);

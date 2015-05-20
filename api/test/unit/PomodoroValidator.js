@@ -7,7 +7,6 @@ describe("PomodoroValidator", function() {
     minutes: -1,
     startedAt: Date.now() + 100000,
     type: 'invalid',
-    day: '2013/123',
     week: '2013/123',
     tags: null,
   };
@@ -31,8 +30,6 @@ describe("PomodoroValidator", function() {
       minutes: invalid.minutes,
       startedAt: invalid.startedAt,
       type: invalid.type,
-      day: invalid.day,
-      week: invalid.week,
       tags: invalid.tags,
       distractions: invalid.distractions,
     };
@@ -40,8 +37,6 @@ describe("PomodoroValidator", function() {
       minutes: valid.minutes,
       startedAt: valid.startedAt,
       type: valid.type,
-      day: valid.day,
-      week: valid.week,
       tags: valid.tags,
       distractions: valid.distractions,
     };
@@ -55,7 +50,6 @@ describe("PomodoroValidator", function() {
       startedAt: 'invalid',
       minutes: 'invalid',
       type: 'invalid',
-
     })
   });
 
