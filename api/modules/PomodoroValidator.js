@@ -7,7 +7,7 @@ module.exports = {
 
 var propertyValidators = {
   minutes: validateMinutes,
-  // startedAt: validateStartedAt,
+  startedAt: validateStartedAt,
   type: validateType,
   // day: validateDay,
   // week: validateWeek,
