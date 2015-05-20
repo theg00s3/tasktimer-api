@@ -50,8 +50,8 @@ router.post('/pomodoro', function(req,res){
   pomodoro.username = req.user.username
 
   pomodori.insert(pomodoro, function(err, doc){
-    if(err) return res.sendStatus(500)
-    res.status(201).location('/api/pomodoro/'+doc._id).end()
+    if(err || !doc[0]) return res.sendStatus(500)
+    res.status(201).location('/api/pomodoro/'+doc[0]._id).end()
   })
 })
 

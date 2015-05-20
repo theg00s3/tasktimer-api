@@ -48,6 +48,7 @@ describe('PomodoroApi', function(){
     .post('/api/pomodoro/?apikey='+apikey)
     .send(pomodoro)
     .expect(201)
+    .expect('Location', /\/api\/pomodoro\/[a-z0-9]/)
     .end(done)
   })
 
