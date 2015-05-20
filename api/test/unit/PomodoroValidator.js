@@ -1,5 +1,5 @@
 var expect = require('chai').expect
-var PomodoroValidator = require('../../modules/PomodoroValidator');
+var PomodoroValidator = require('../../modules/PomodoroValidator')
 
 describe("PomodoroValidator", function() {
 
@@ -9,7 +9,7 @@ describe("PomodoroValidator", function() {
     type: 'invalid',
     week: '2013/123',
     tags: null,
-  };
+  }
 
   var valid = {
     minutes: 25,
@@ -19,11 +19,11 @@ describe("PomodoroValidator", function() {
     week: '42/2014',
     tags: [],
     distractions: [],
-  };
+  }
 
-  var invalidPomodoro;
+  var invalidPomodoro
 
-  var validPomodoro;
+  var validPomodoro
 
   beforeEach(function(){
     invalidPomodoro  = {
@@ -32,15 +32,15 @@ describe("PomodoroValidator", function() {
       type: invalid.type,
       tags: invalid.tags,
       distractions: invalid.distractions,
-    };
+    }
     validPomodoro = {
       minutes: valid.minutes,
       startedAt: valid.startedAt,
       type: valid.type,
       tags: valid.tags,
       distractions: valid.distractions,
-    };
-  });
+    }
+  })
 
   it("invalid pomodoro", function() {
     var errors = PomodoroValidator.validate(invalidPomodoro)
@@ -51,18 +51,18 @@ describe("PomodoroValidator", function() {
       minutes: 'invalid',
       type: 'invalid',
     })
-  });
+  })
 
   it("valid pomodoro", function() {
-    expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal({});
-  });
+    expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal({})
+  })
 
   it("invalid pomodoro if distractions are out of pomodoro timespan", function() {
-    validPomodoro.distractions = [validPomodoro.startedAt+100*60*1000];
+    validPomodoro.distractions = [validPomodoro.startedAt+100*60*1000]
     expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal({
       distractions:'invalid'
-    });
-  });
+    })
+  })
 
   it("returns errors for required property", function() {
     var errors = PomodoroValidator.validate({})
@@ -73,6 +73,6 @@ describe("PomodoroValidator", function() {
       tags:'required',
       type:'required',
     })
-  });
+  })
 
-});
+})
