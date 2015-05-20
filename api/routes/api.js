@@ -5,6 +5,7 @@ var router = require('express').Router()
   , PomodoroValidator = require('../modules/PomodoroValidator')
   , Statistics = require('../modules/Statistics')
   , utils = require('../modules/utils')
+  , _ = require('underscore')
 
 
 var pomodori
@@ -49,10 +50,17 @@ router.post('/pomodoro', function(req,res){
   var pomodoro = utils.cleanPomodoro(rawPomodoro)
   pomodoro.username = req.user.username
 
-  pomodori.insert(pomodoro, function(err, doc){
-    if(err || !doc[0]) return res.sendStatus(500)
-    res.status(201).location('/api/pomodoro/'+doc[0]._id).end()
+  var duplicatesQuery = _.pick(pomodoro, 'username','createdAt')
+
+  pomodori.find(duplicatesQuery).toArray(function(err, doc){
+    if(err) return res.sendStatus(500)
+    if(doc.length > 0) return res.sendStatus(409)
+    pomodori.insert(pomodoro, function(err, doc){
+      if(err) return res.sendStatus(500)
+      res.status(201).location('/api/pomodoro/'+doc[0]._id).end()
+    })
   })
+
 })
 
 router.get('/pomodoro', function(req,res){

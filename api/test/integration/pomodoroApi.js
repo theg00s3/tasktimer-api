@@ -44,12 +44,23 @@ describe('PomodoroApi', function(){
   })
 
   it('creates a pomodoro and returns location', function (done) {
+    db(function(conn){
+      conn.collection('pomodori').drop(function(){
+        request(app)
+        .post('/api/pomodoro/?apikey='+apikey)
+        .send(pomodoro)
+        .expect(201)
+        .expect('Location', /\/api\/pomodoro\/[a-z0-9]/)
+        .end(done)
+      })
+    })
+  })
+
+  it('refuses to add the same pomodoro', function (done) {
     request(app)
     .post('/api/pomodoro/?apikey='+apikey)
     .send(pomodoro)
-    .expect(201)
-    .expect('Location', /\/api\/pomodoro\/[a-z0-9]/)
-    .end(done)
+    .expect(409,done)
   })
 
   it('returns 404 for unexisting pomodoro resource', function (done) {
