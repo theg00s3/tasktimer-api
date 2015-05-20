@@ -77,7 +77,9 @@ router.get('/pomodoro/:id', function(req,res){
   var pomodoroId
   try {
     pomodoroId = new BSON.ObjectID(req.params.id)
-  }catch(e){}
+  }catch(e){
+    return res.sendStatus(404)
+  }
 
   pomodori.findOne({username:username,_id:pomodoroId}, function(err,pomodoro){
     if( err ) return res.sendStatus(500)
