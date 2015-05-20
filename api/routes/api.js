@@ -45,7 +45,7 @@ router.post('/pomodoro', function(req,res){
   var rawPomodoro = req.body
 
   var errors = PomodoroValidator.validate(rawPomodoro)
-  if( errors.length > 0 ) return res.status(422).json(errors)
+  if( Object.keys(errors).length > 0 ) return res.status(422).json(errors)
 
   var pomodoro = utils.cleanPomodoro(rawPomodoro)
   pomodoro.username = req.user.username

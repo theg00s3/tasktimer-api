@@ -63,6 +63,13 @@ describe('PomodoroApi', function(){
     .expect(409,done)
   })
 
+  it('returns 422 and errors for invalid pomodoro', function (done) {
+    request(app)
+    .post('/api/pomodoro/?apikey='+apikey)
+    .send({foo:'bar'})
+    .expect(422,done)
+  })
+
   it('returns 404 for unexisting pomodoro resource', function (done) {
     request(app)
     .get('/api/pomodoro/123123123?apikey='+apikey)
