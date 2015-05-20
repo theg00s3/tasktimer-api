@@ -14,23 +14,21 @@ var now = Date.now()
   , week = moment(now).format(constants.weekFormat)
   , notIncludedWeek = moment(notIncludedNow).format(constants.weekFormat)
   , users = {
-    user1: {},
-    user2: {},
+    user1: {username:'fake1'},
+    user2: {username:'fake2'},
   }
   , pomodori = {
-    pomodoro1user1: {'username':'test','minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]},
-    pomodoro2user1: {'username':'test','minutes':5,'startedAt':notIncludedNow,'type':'break','day':notIncludedDay,'week':notIncludedWeek,'tags':[],'distractions':[]},
-    pomodoro1user2: {'username':'test1','minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]},
-    pomodoro2user2: {'username':'test1','minutes':25,'startedAt':now,'cancelledAt':now+1000*60*10,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
+    pomodoro1user1: {'username':users.user1.username,'minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]},
+    pomodoro2user1: {'username':users.user1.username,'minutes':5,'startedAt':notIncludedNow,'type':'break','day':notIncludedDay,'week':notIncludedWeek,'tags':[],'distractions':[]},
+    pomodoro1user2: {'username':users.user2.username,'minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]},
+    pomodoro2user2: {'username':users.user2.username,'minutes':25,'startedAt':now,'cancelledAt':now+1000*60*10,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
   }
 
 
 describe('Statistics', function(){
-  before(function (done) {
+  beforeEach(function (done) {
     db(function(conn){
       async.parallel([
-        function(cb) {conn.collection('pomodori').remove(cb)},
-        function(cb) {conn.collection('users').remove(cb)},
         function(cb){conn.collection('pomodori').insert(pomodori.pomodoro1user1,cb)},
         function(cb){conn.collection('pomodori').insert(pomodori.pomodoro2user1,cb)},
         function(cb){conn.collection('pomodori').insert(pomodori.pomodoro1user2,cb)},
@@ -45,22 +43,19 @@ describe('Statistics', function(){
 
   it('gets all statistics', function(done) {
     Statistics.getAll(function(statistics){
-      expect( statistics ).to.deep.equal({
-        hours: 1,
-        pomodori: 2.4,
-        breaks: 1,
-        users: Object.keys(users).length
-      })
+      expect( statistics.hours ).to.eql(1)
+      expect( statistics.pomodori ).to.eql(2.4)
+      expect( statistics.breaks ).to.eql(1)
       done()
     })
   })
 
 
-  after(function(done){
+  afterEach(function(done){
     db(function(conn){
       async.parallel([
-        function(cb) {conn.collection('pomodori').remove(cb)},
-        function(cb) {conn.collection('users').remove(cb)},
+        function(cb) {conn.collection('pomodori').drop(cb)},
+        function(cb) {conn.collection('users').drop(cb)},
       ], function(){
         conn.close()
         done()

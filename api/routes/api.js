@@ -16,7 +16,7 @@ db(function(conn){
 })
 
 Statistics.use(db, function(){
-  console.log( '-- Statistics: using mongodb connection' )
+  // console.log( '-- Statistics: using mongodb connection' )
 })
 
 

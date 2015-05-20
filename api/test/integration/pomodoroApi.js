@@ -17,7 +17,7 @@ var now = Date.now()
 var pomodoro = {'username':'fake','minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
 
 describe('PomodoroApi', function(){
-  before(function (done) {
+  beforeEach(function (done) {
     db(function(conn){
       async.parallel([
         function(cb){conn.collection('users').insert(fakeUser,cb)},
@@ -43,12 +43,13 @@ describe('PomodoroApi', function(){
     .end(done)
   })
 
-  // it('creates a pomodoro and returns location', function (done) {
-  //   request(app)
-  //   .post('/api/pomodoro/?apikey='+apikey)
-  //   .expect(201)
-  //   .end(done)
-  // })
+  it('creates a pomodoro and returns location', function (done) {
+    request(app)
+    .post('/api/pomodoro/?apikey='+apikey)
+    .send(pomodoro)
+    .expect(201)
+    .end(done)
+  })
 
   it('returns 404 for unexisting pomodoro resource', function (done) {
     request(app)
@@ -101,15 +102,15 @@ describe('PomodoroApi', function(){
     return expect(pom1).to.deep.equal(pom2)
   }
 
-  // after(function(done){
-  //   db(function(conn){
-  //     async.parallel([
-  //       function(cb) {conn.collection('pomodori').drop(cb)},
-  //       function(cb) {conn.collection('users').drop(cb)},
-  //     ], function(){
-  //       conn.close()
-  //       done()
-  //     })
-  //   })
-  // })
+  afterEach(function(done){
+    db(function(conn){
+      async.parallel([
+        function(cb) {conn.collection('pomodori').drop(cb)},
+        function(cb) {conn.collection('users').drop(cb)},
+      ], function(){
+        conn.close()
+        done()
+      })
+    })
+  })
 })

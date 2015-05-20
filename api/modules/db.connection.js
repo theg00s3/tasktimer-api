@@ -2,24 +2,26 @@
   http://afshinm.name/mongodb-singleton-connection-in-nodejs
 */
 
-var config = require('config');
+var config = require('config')
 
-var Db = require('mongodb').Db;
-var Connection = require('mongodb').Connection;
-var Server = require('mongodb').Server;
+var Db = require('mongodb').Db
+  , Connection = require('mongodb').Connection
+  , Server = require('mongodb').Server
 
-var connectionInstance;
+var conn
 
 module.exports = function(callback) {
-  if (connectionInstance) {
-    callback(connectionInstance);
-    return;
+  if (conn) {
+    return callback(conn)
   }
 
-  var db = new Db('pomodoro', new Server(config.get('mongodb.host'), Connection.DEFAULT_PORT, { auto_reconnect: true }),{ fsync:true });
-  db.open(function(error, databaseConnection) {
-    if (error) throw new Error(error);
-    connectionInstance = databaseConnection;
-    callback(databaseConnection);
-  });
-};
+  var db = new Db('pomodoro', new Server(config.get('mongodb.host'), Connection.DEFAULT_PORT, { auto_reconnect: true }),{ fsync:true })
+  db.open(function(error, _conn) {
+    if (error) throw new Error(error)
+    conn = _conn
+    conn.on('close', function(){
+      conn = undefined
+    })
+    callback(_conn)
+  })
+}
