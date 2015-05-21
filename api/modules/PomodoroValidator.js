@@ -7,7 +7,6 @@ module.exports = {
 
 var propertyValidators = {
   minutes: validateMinutes,
-  startedAt: validateStartedAt,
   type: validateType,
   tags: validateTags,
   distractions: validateDistractions,
@@ -64,9 +63,6 @@ function validateSeconds(seconds){
 }
 function validateMinutes(minutes){
   return validateIntegerRange(minutes,1,25)
-}
-function validateStartedAt(startedAt){
-  return startedAt < Date.now()
 }
 function validateType(type){
   return ['pomodoro','break','pomodoro-public','break-public'].indexOf(type)>=0

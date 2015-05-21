@@ -47,7 +47,6 @@ describe("PomodoroValidator", function() {
     expect(errors).to.deep.equal({
       distractions: 'required',
       tags: 'invalid',
-      startedAt: 'invalid',
       minutes: 'invalid',
       type: 'invalid',
     })
@@ -67,7 +66,6 @@ describe("PomodoroValidator", function() {
   it("returns errors for required property", function() {
     var errors = PomodoroValidator.validate({})
     expect(errors).to.deep.equal({
-      startedAt:'required',
       distractions:'required',
       minutes:'required',
       tags:'required',
