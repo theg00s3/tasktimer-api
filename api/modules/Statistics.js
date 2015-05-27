@@ -18,7 +18,7 @@ module.exports = {
       pomodoriColl = conn.collection('pomodori')
 
       doCache(callback)
-      setInterval(doCache, 1000*60*10)
+      setInterval(doCache, 1000*60*25)
     })
   },
   getAll: getAll,
