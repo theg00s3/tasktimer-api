@@ -8,13 +8,17 @@ module.exports = {
 var propertyValidators = {
   minutes: validateMinutes,
   type: validateType,
-  tags: validateTags,
-  distractions: validateDistractions,
+  // tags: validateTags,
+  // distractions: validateDistractions,
 }
 
 function validate(pomodoro){
   var errors = {}
   for(var prop in propertyValidators){
+    if( !hasProperty(pomodoro,prop) && /(distractions|tags)/.test(prop) ){
+      continue
+    }
+
     var rule = propertyValidators[prop]
     if( !rule(pomodoro[prop],pomodoro) )
       errors[prop] = "invalid"
@@ -30,7 +34,7 @@ function hasProperty(pomodoro,prop){
 }
 
 function inTimerange(timestamp,timespan){
-  return timestamp<timespan.max && timestamp>timespan.min
+  return timestamp<=timespan.max && timestamp>=timespan.min
 }
 
 function getPomodoroTimespan(pomodoro){
@@ -73,10 +77,10 @@ function validateTags(tags){
 function validateDistractions(distractions,pomodoro){
   if( !distractions || !distractions instanceof Array )
     return false
-  var timespan = getPomodoroTimespan(pomodoro)
-  for (var i = 0; i < distractions.length; i++) {
-    var d = distractions[i]
-    if( !inTimerange(d,timespan) ) return false
-  }
+  // var timespan = getPomodoroTimespan(pomodoro)
+  // for (var i = 0; i < distractions.length; i++) {
+  //   var d = distractions[i]
+  //   if( !inTimerange(d,timespan) ) return false
+  // }
   return true
 }
