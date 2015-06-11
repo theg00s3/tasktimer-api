@@ -22,7 +22,7 @@ module.exports = function(app){
         port: 6379
       }),
       cookie: {
-        maxAge : 1000*60*60*24*2
+        maxAge : 1000*60*60*24*5
       },
       secret: process.env.POMODORO_AUTH_SESSION_SECRET || 'lolcat'
     })
