@@ -50,9 +50,9 @@ router.post('/pomodoro', function(req,res){
   var pomodoro = utils.cleanPomodoro(rawPomodoro)
   pomodoro.username = req.user.username
 
-  var duplicatesQuery = _.pick(pomodoro, 'username','startedAt')
+  var duplicates = _.pick(pomodoro, 'username','startedAt')
 
-  pomodori.find(duplicatesQuery).toArray(function(err, doc){
+  pomodori.find(duplicates).toArray(function(err, doc){
     if(err) return res.sendStatus(500)
     if(doc.length > 0) return res.sendStatus(409)
     pomodori.insert(pomodoro, function(err, doc){
