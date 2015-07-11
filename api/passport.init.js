@@ -43,28 +43,32 @@ module.exports = function(app){
       consumerKey: credentials.TWITTER_CONSUMER_KEY,
       consumerSecret: credentials.TWITTER_CONSUMER_SECRET,
       callbackURL: credentials.TWITTER_CALLBACK_URL
-    }, getUserInfo)
+    }, authenticatedUser)
   )
   passport.use(
     new GitHubStrategy({
       clientID: credentials.GITHUB_CLIENT_ID,
       clientSecret: credentials.GITHUB_CLIENT_SECRET,
       callbackURL: credentials.GITHUB_CALLBACK_URL
-    }, getUserInfo)
+    }, authenticatedUser)
   )
 
 
-  function getUserInfo(token, tokenSecret, profile, done){
+  function authenticatedUser(token, tokenSecret, profile, done){
     var user = new UserInfo(profile).toJSON()
     users.findOne({
-      id:       user.id
-    },function(err,doc){
+      id: user.id
+    },handleUser(done))
+  }
+
+  function handleUser(done){
+    return function(err,doc){
       if( err ) return done(err,null)
       if( doc ) return done(null, doc)
       users.insert(user,function(err,doc){
         if( err ) return done(err,null)
         done(null,doc[0])
       })
-    })
+    }
   }
 }
