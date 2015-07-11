@@ -43,16 +43,17 @@ router.post('/pomodoro', function(req,res){
   if( Object.keys(errors).length > 0 ) return res.status(422).json(errors)
 
   var pomodoro = utils.cleanPomodoro(rawPomodoro)
-  pomodoro.username = req.user.username
+  pomodoro.userId = req.user.id
 
-  var duplicates = _.pick(pomodoro, 'username','startedAt')
+  var duplicates = _.pick(pomodoro, 'userId','startedAt')
 
   pomodori.find(duplicates).toArray(function(err, doc){
     if(err) return res.sendStatus(500)
     if(doc.length > 0) return res.sendStatus(409)
     pomodori.insert(pomodoro, function(err, doc){
       if(err) return res.sendStatus(500)
-      res.status(201).location('/api/pomodoro/'+doc[0]._id).end()
+      var createdResourceId = doc[0]._id
+      res.status(201).location('/api/pomodoro/'+createdResourceId).end()
     })
   })
 
@@ -68,7 +69,7 @@ router.get('/pomodoro', function(req,res){
 })
 
 router.get('/pomodoro/:id', function(req,res){
-  var username = req.user.username
+  var userId = req.user.id
   var pomodoroId
   try {
     pomodoroId = new BSON.ObjectID(req.params.id)
@@ -76,7 +77,7 @@ router.get('/pomodoro/:id', function(req,res){
     return res.sendStatus(404)
   }
 
-  pomodori.findOne({username:username,_id:pomodoroId}, function(err,pomodoro){
+  pomodori.findOne({userId:userId, _id:pomodoroId}, function(err,pomodoro){
     if( err ) return res.sendStatus(500)
     if( !pomodoro ) return res.sendStatus(404)
     res.json(pomodoro)
@@ -89,7 +90,7 @@ router.get('/pomodoro/:id', function(req,res){
 function requestToMongoQuery(req){
   var mongoQuery = {}
 
-  mongoQuery.username = req.user.username
+  mongoQuery.userId = req.user.id
 
   var query = url.parse(req.url, true).query
 
