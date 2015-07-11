@@ -57,7 +57,6 @@ module.exports = function(app){
   function getUserInfo(token, tokenSecret, profile, done){
     var user = new UserInfo(profile).toJSON()
     users.findOne({
-      username: user.username,
       id:       user.id
     },function(err,doc){
       if( err ) return done(err,null)
