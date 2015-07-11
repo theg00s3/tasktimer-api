@@ -9,12 +9,12 @@ var expect = require('chai').expect
 
 
 var apikey = 'fake'
-var fakeUser = {username:'fake', apikey:apikey}
+var fakeUser = {apikey:apikey}
 var now = Date.now()
   , day = moment(now).format(constants.dayFormat)
   , week = moment(now).format(constants.weekFormat)
 
-var pomodoro = {'username':'fake','minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
+var pomodoro = {'minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
 
 describe('PomodoroApi', function(){
   beforeEach(function (done) {
