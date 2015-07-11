@@ -3,7 +3,6 @@ var router = require('express').Router()
   , db = require('../modules/db.connection.js')
   , BSON = require('mongodb').BSONPure
   , PomodoroValidator = require('../modules/PomodoroValidator')
-  , Statistics = require('../modules/Statistics')
   , utils = require('../modules/utils')
   , _ = require('underscore')
 
@@ -14,10 +13,6 @@ var pomodori
 db(function(conn){
   pomodori = conn.collection('pomodori')
   users = conn.collection('users')
-})
-
-Statistics.use(db, function(){
-  // console.log( '-- Statistics: using mongodb connection' )
 })
 
 
@@ -88,14 +83,6 @@ router.get('/pomodoro/:id', function(req,res){
   })
 })
 
-
-
-
-router.get('/statistics', function(req,res){
-  Statistics.getAll(function(statistics){
-    res.json(statistics)
-  })
-})
 
 
 
