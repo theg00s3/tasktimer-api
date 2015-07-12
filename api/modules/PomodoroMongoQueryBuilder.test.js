@@ -36,8 +36,8 @@ describe("PomodoroMongoQueryBuilder", function() {
 
       var result = builder.build()
 
-      expect( result.id ).to.be.ok
-      expect( result.id.toHexString() ).to.be.ok
+      expect( result._id ).to.be.ok
+      expect( result._id.toHexString() ).to.be.ok
     })
     
     it('can be chained', function () {

@@ -40,8 +40,10 @@ module.exports = function PomodoroMongoQueryBuilder(){
     if( _id ){
       var pomodoroId
       try {
-        result.id = new BSON.ObjectID(_id)
-      }catch(e){}
+        result._id = new BSON.ObjectID(_id)
+      }catch(e){
+        console.log( '-- opps', _id )
+      }
     }
 
     return result
