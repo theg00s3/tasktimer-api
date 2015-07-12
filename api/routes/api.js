@@ -46,6 +46,10 @@ router.post('/pomodoro', function(req,res){
 
   var pomodoro = utils.cleanPomodoro(rawPomodoro)
   pomodoro.userId = req.user.id
+  pomodoro.startedAt = new Date(pomodoro.startedAt)
+  if( pomodoro.cancelledAt ){
+    pomodoro.cancelledAt = new Date(pomodoro.cancelledAt)
+  }
 
   pomodori.insert(pomodoro, function(err, doc){
     if(err) return res.sendStatus(500)
