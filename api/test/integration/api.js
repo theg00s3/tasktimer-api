@@ -14,14 +14,17 @@ var now = Date.now()
   , day = moment(now).format(constants.dayFormat)
   , week = moment(now).format(constants.weekFormat)
 
-var pomodoro = {'minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
+var pomodoro1 = {'minutes':25,'startedAt':now,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
+var pomodoro2 = {'minutes':15,'startedAt':now+1000*60*5,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
+var pomodori = [pomodoro1, pomodoro2]
 
 describe('PomodoroApi', function(){
   beforeEach(function (done) {
     db(function(conn){
       async.parallel([
         function(cb){conn.collection('users').insert(fakeUser,cb)},
-        function(cb){conn.collection('pomodori').insert(pomodoro,cb)},
+        function(cb){conn.collection('pomodori').insert(pomodoro1,cb)},
+        function(cb){conn.collection('pomodori').insert(pomodoro2,cb)},
       ], done)
     })
   })
@@ -34,11 +37,11 @@ describe('PomodoroApi', function(){
 
   it('returns single pomodoro by id', function (done) {
     request(app)
-    .get('/api/pomodoro/'+pomodoro._id+'?apikey='+apikey)
+    .get('/api/pomodoro/'+pomodoro1._id+'?apikey='+apikey)
     .expect(200)
     .expect(function(res){
       var _pomodoro = res.body
-      expectSamePomodori(_pomodoro, pomodoro)
+      expectSamePomodori(_pomodoro, pomodoro1)
     })
     .end(done)
   })
@@ -48,7 +51,7 @@ describe('PomodoroApi', function(){
       conn.collection('pomodori').drop(function(){
         request(app)
         .post('/api/pomodoro/?apikey='+apikey)
-        .send(pomodoro)
+        .send(pomodoro1)
         .expect(201)
         .expect('Location', /\/api\/pomodoro\/[a-z0-9]/)
         .end(done)
@@ -59,7 +62,7 @@ describe('PomodoroApi', function(){
   it('refuses to add the same pomodoro', function (done) {
     request(app)
     .post('/api/pomodoro/?apikey='+apikey)
-    .send(pomodoro)
+    .send(pomodoro1)
     .expect(409,done)
   })
 
@@ -81,8 +84,8 @@ describe('PomodoroApi', function(){
     .get('/api/pomodoro?apikey='+apikey)
     .expect(200)
     .expect(function(res){
-      var pomodori = res.body
-      expectSamePomodori(pomodori, [pomodoro])
+      var _pomodori = res.body
+      expect(_pomodori.length).to.eql(2)
     })
     .end(done)
   })
@@ -92,8 +95,8 @@ describe('PomodoroApi', function(){
     .get('/api/pomodoro?day='+day+'&apikey='+apikey)
     .expect(200)
     .expect(function(res){
-      var pomodori = res.body
-      expectSamePomodori(pomodori, [pomodoro])
+      var _pomodori = res.body
+      expect(_pomodori.length).to.eql(2)
     })
     .end(done)
   })
@@ -103,8 +106,8 @@ describe('PomodoroApi', function(){
     .get('/api/pomodoro?week='+week+'&apikey='+apikey)
     .expect(200)
     .expect(function(res){
-      var pomodori = res.body
-      expectSamePomodori(pomodori, [pomodoro])
+      var _pomodori = res.body
+      expect(_pomodori.length).to.eql(2)
     })
     .end(done)
   })

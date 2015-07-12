@@ -11,4 +11,4 @@ if [ -z "$(id_for_container 'pomodoro-api-db-test')" ]; then
 
 fi
 
-docker run -it --link=pomodoro-api-db-test:pomodoro-api-db -v /pomodoro.cc/credentials.json:/credentials.json christianfei/pomodoro-api sh -c 'npm install && npm test'
+docker run -it --link=pomodoro-api-db-test:pomodoro-api-db -v /pomodoro.cc/credentials.json:/credentials.json -v /pomodoro.cc/api:/app christianfei/pomodoro-api sh -c 'npm install && npm test'
