@@ -7,10 +7,12 @@ module.exports = function PomodoroMongoQueryBuilder(){
 
   this.withUser = function(user){
     _user = user
+    return this
   }
 
   this.withDay = function(day){
     _day = day
+    return this
   }
 
   this.build = function(){

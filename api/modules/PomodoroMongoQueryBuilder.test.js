@@ -30,5 +30,24 @@ describe("PomodoroMongoQueryBuilder", function() {
         }
       })
     })
+    
+    it('can be chained', function () {
+        var user = {id: 1}
+        var day = '07/12/2015'
+        builder
+          .withUser(user)
+          .withDay(day)    
+          
+      var result = builder.build()
+
+      expect( result ).to.deep.eql({
+        userId: user.id,
+        startedAt: {
+          $gte: new Date('07/12/2015'),
+          $lt: new Date('07/13/2015'),
+        }
+      })
+    })
   })
+
 })
