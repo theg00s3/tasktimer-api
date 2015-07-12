@@ -60,13 +60,6 @@ describe('PomodoroApi', function(){
     })
   })
 
-  xit('refuses to add the same pomodoro', function (done) {
-    request(app)
-    .post('/api/pomodoro/?apikey='+apikey)
-    .send(pomodoro1)
-    .expect(409,done)
-  })
-
   it('returns 422 and errors for invalid pomodoro', function (done) {
     request(app)
     .post('/api/pomodoro/?apikey='+apikey)

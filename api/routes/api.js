@@ -47,16 +47,10 @@ router.post('/pomodoro', function(req,res){
   var pomodoro = utils.cleanPomodoro(rawPomodoro)
   pomodoro.userId = req.user.id
 
-  var duplicates = _.pick(pomodoro, 'userId','startedAt')
-
-  pomodori.find(duplicates).toArray(function(err, doc){
+  pomodori.insert(pomodoro, function(err, doc){
     if(err) return res.sendStatus(500)
-    if(doc.length > 0) return res.sendStatus(409)
-    pomodori.insert(pomodoro, function(err, doc){
-      if(err) return res.sendStatus(500)
-      var createdResourceId = doc[0]._id
-      res.status(201).location('/api/pomodoro/'+createdResourceId).end()
-    })
+    var createdResourceId = doc[0]._id
+    res.status(201).location('/api/pomodoro/'+createdResourceId).end()
   })
 
 })
