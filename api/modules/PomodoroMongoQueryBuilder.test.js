@@ -49,5 +49,4 @@ describe("PomodoroMongoQueryBuilder", function() {
       })
     })
   })
-
 })
