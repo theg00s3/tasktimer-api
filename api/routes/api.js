@@ -63,14 +63,14 @@ router.use('/pomodoro',function(req,res,next){
   })
 
   router.get('/pomodoro/:id', function(req,res){
-    var pomodoroId
     try {
-      pomodoroId = new BSON.ObjectID(req.params.id)
+      new BSON.ObjectID(req.params.id)
     }catch(e){
       return res.sendStatus(404)
     }
+    var mongoQuery = requestToMongoQuery(req)
 
-    pomodori.findOne({userId:req.user.id, _id:pomodoroId}, function(err,pomodoro){
+    pomodori.findOne(mongoQuery, function(err,pomodoro){
       if( err ) return res.sendStatus(500)
       if( !pomodoro ) return res.sendStatus(404)
       res.json(pomodoro)
@@ -84,6 +84,7 @@ function requestToMongoQuery(req){
   builder
     .withUser(req.user)
     .withDay(query.day)
+    .withId(req.params.id)
   return builder.build()
 }
 
