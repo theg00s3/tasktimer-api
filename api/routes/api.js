@@ -4,6 +4,7 @@ var router = require('express').Router()
   , db = require('../modules/db.connection.js')
   , BSON = require('mongodb').BSONPure
   , PomodoroValidator = require('../modules/PomodoroValidator')
+  , PomodoroMongoQueryBuilder = require('../modules/PomodoroMongoQueryBuilder')
   , utils = require('../modules/utils')
   , constants = require('../constants')
   , _ = require('underscore')
@@ -78,22 +79,11 @@ router.use('/pomodoro',function(req,res,next){
 
 
 function requestToMongoQuery(req){
-  var mongoQuery = {}
-
-  mongoQuery.userId = req.user.id
-
+  var builder = new PomodoroMongoQueryBuilder
+  builder.withUser(req.user)
   var query = url.parse(req.url, true).query
-
-  if( query.day ){
-    var startDate = new Date(query.day)
-    var endDate = new Date(query.day)
-    endDate.setDate(endDate.getDate()+1)
-    mongoQuery.startedAt = {
-      $gte: startDate,
-      $lt: endDate,
-    }
-  }
-  return mongoQuery
+  builder.withDay(query.day)
+  return builder.build()
 }
 
 
