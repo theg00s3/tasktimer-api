@@ -7,7 +7,6 @@ describe("PomodoroValidator", function() {
     minutes: -1,
     startedAt: Date.now() + 100000,
     type: 'invalid',
-    week: '2013/123',
   }
 
   var valid = {
@@ -15,7 +14,6 @@ describe("PomodoroValidator", function() {
     startedAt: Date.now() - 100000,
     type: 'pomodoro',
     day: '07/12/2014',
-    week: '42/2014',
     tags: [],
     distractions: [],
   }
