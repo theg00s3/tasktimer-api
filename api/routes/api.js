@@ -103,10 +103,6 @@ function requestToMongoQuery(req){
       $lt: endDate,
     }
   }
-  if( query.week ){
-    mongoQuery.week = query.week
-  }
-
   return mongoQuery
 }
 

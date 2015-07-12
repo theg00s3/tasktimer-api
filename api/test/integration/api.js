@@ -13,10 +13,9 @@ var timestampNow = Date.now()
   , dateNow = moment(timestampNow).toDate()
   , dateNow1 = moment(timestampNow).add(1,'hour').toDate()
   , day = moment(timestampNow).format(constants.dayFormat)
-  , week = moment(timestampNow).format(constants.weekFormat)
 
-var pomodoro1 = {'minutes':25,'startedAt':dateNow,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
-var pomodoro2 = {'minutes':15,'startedAt':dateNow1,'type':'pomodoro','day':day,'week':week,'tags':[],'distractions':[]}
+var pomodoro1 = {'minutes':25,'startedAt':dateNow,'type':'pomodoro','tags':[],'distractions':[]}
+var pomodoro2 = {'minutes':15,'startedAt':dateNow1,'type':'pomodoro','tags':[],'distractions':[]}
 var pomodori = [pomodoro1, pomodoro2]
 
 describe('PomodoroApi', function(){
@@ -87,17 +86,6 @@ describe('PomodoroApi', function(){
   it('returns pomodori for day', function (done) {
     request(app)
     .get('/api/pomodoro?day='+day+'&apikey='+apikey)
-    .expect(200)
-    .expect(function(res){
-      var _pomodori = res.body
-      expect(_pomodori.length).to.eql(2)
-    })
-    .end(done)
-  })
-
-  it('returns pomodori for week', function (done) {
-    request(app)
-    .get('/api/pomodoro?week='+week+'&apikey='+apikey)
     .expect(200)
     .expect(function(res){
       var _pomodori = res.body
