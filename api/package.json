@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/**/*.js modules/*.test.js --growl",
-    "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js modules/*.test.js --watch --growl"
+    "test": "./node_modules/mocha/bin/mocha test/**/*.js modules/*.test.js",
+    "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js modules/*.test.js --watch"
   },
   "repository": {
     "type": "git",
