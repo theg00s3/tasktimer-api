@@ -30,6 +30,15 @@ describe("PomodoroMongoQueryBuilder", function() {
         }
       })
     })
+    it('withId', function () {
+      var id = 1
+      builder.withId(id)
+
+      var result = builder.build()
+
+      expect( result.id ).to.be.ok
+      expect( result.id.toHexString() ).to.be.ok
+    })
     
     it('can be chained', function () {
         var user = {id: 1}

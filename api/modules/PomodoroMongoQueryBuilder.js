@@ -1,9 +1,12 @@
+var BSON = require('mongodb').BSONPure
+
 module.exports = function PomodoroMongoQueryBuilder(){
   if( !(this instanceof PomodoroMongoQueryBuilder)){
     return new PomodoroMongoQueryBuilder
   }
   var _user
     , _day
+    , _id
 
   this.withUser = function(user){
     _user = user
@@ -12,6 +15,11 @@ module.exports = function PomodoroMongoQueryBuilder(){
 
   this.withDay = function(day){
     _day = day
+    return this
+  }
+
+  this.withId = function(id){
+    _id = id
     return this
   }
 
@@ -27,6 +35,13 @@ module.exports = function PomodoroMongoQueryBuilder(){
         $gte: getStartDay(_day),
         $lt: getEndDay(_day),
       }
+    }
+
+    if( _id ){
+      var pomodoroId
+      try {
+        result.id = new BSON.ObjectID(_id)
+      }catch(e){}
     }
 
     return result
