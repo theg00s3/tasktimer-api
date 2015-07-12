@@ -12,7 +12,6 @@ module.exports = {
   },
   cleanPomodoro: function(rawPomodoro){
     var pomodoro = _.pick(rawPomodoro,'startedAt','minutes','type','tags','distractions','cancelledAt')
-    pomodoro.day = moment(pomodoro.startedAt).format(constants.dayFormat)
     pomodoro.week = moment(pomodoro.startedAt).format(constants.weekFormat)
     return pomodoro
   }
