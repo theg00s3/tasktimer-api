@@ -1,5 +1,5 @@
 module.exports = {
-  dayFormat: 'DD/MM/YYYY',
+  dayFormat: 'MM/DD/YYYY',
   weekFormat: 'W/GGGG',
   tagsLimit:5,
 }
