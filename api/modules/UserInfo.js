@@ -9,7 +9,7 @@ module.exports = function UserInfo(raw){
   switch(raw.provider){
     case 'twitter':
       self.username = raw.username
-      self.avatar = raw._json.profile_image_url
+      self.avatar = raw._json.profile_image_url_https || raw._json.profile_image_url
       break
     case 'github':
       self.username = raw.username

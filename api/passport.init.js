@@ -58,16 +58,17 @@ module.exports = function(app){
     var user = new UserInfo(profile).toJSON()
     users.findOne({
       id: user.id
-    },handleUser(done))
+    },handleUser(done, profile))
   }
 
-  function handleUser(done){
-    return function(err,doc){
+  function handleUser(done, profile){
+    return function(err,user){
       if( err ) return done(err,null)
-      if( doc ) return done(null, doc)
-      users.insert(user,function(err,doc){
+      if( user ) return done(null, user)
+      user = new UserInfo(profile)
+      users.insert(user,function(err,user){
         if( err ) return done(err,null)
-        done(null,doc[0])
+        done(null,user[0])
       })
     }
   }
