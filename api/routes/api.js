@@ -80,9 +80,10 @@ router.use('/pomodoro',function(req,res,next){
 
 function requestToMongoQuery(req){
   var builder = new PomodoroMongoQueryBuilder
-  builder.withUser(req.user)
   var query = url.parse(req.url, true).query
-  builder.withDay(query.day)
+  builder
+    .withUser(req.user)
+    .withDay(query.day)
   return builder.build()
 }
 
