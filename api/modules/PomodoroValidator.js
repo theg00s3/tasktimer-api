@@ -9,13 +9,12 @@ var propertyValidators = {
   minutes: validateMinutes,
   type: validateType,
   // tags: validateTags,
-  // distractions: validateDistractions,
 }
 
 function validate(pomodoro){
   var errors = {}
   for(var prop in propertyValidators){
-    if( !hasProperty(pomodoro,prop) && /(distractions|tags)/.test(prop) ){
+    if( !hasProperty(pomodoro,prop) && /(tags)/.test(prop) ){
       continue
     }
 
@@ -73,14 +72,4 @@ function validateType(type){
 }
 function validateTags(tags){
   return TagsValidator.validate(tags)
-}
-function validateDistractions(distractions,pomodoro){
-  if( !distractions || !distractions instanceof Array )
-    return false
-  // var timespan = getPomodoroTimespan(pomodoro)
-  // for (var i = 0; i < distractions.length; i++) {
-  //   var d = distractions[i]
-  //   if( !inTimerange(d,timespan) ) return false
-  // }
-  return true
 }

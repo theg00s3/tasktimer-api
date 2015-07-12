@@ -55,13 +55,6 @@ describe("PomodoroValidator", function() {
     expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal({})
   })
 
-  xit("invalid pomodoro if distractions are out of pomodoro timespan", function() {
-    validPomodoro.distractions = [validPomodoro.startedAt+100*60*1000]
-    expect(PomodoroValidator.validate(validPomodoro)).to.deep.equal({
-      distractions:'invalid'
-    })
-  })
-
   it("returns errors for required property", function() {
     var errors = PomodoroValidator.validate({})
     expect(errors).to.deep.equal({
