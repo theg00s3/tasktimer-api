@@ -1,5 +1,5 @@
 var expect = require('chai').expect
-var PomodoroValidator = require('../../modules/PomodoroValidator')
+var PomodoroValidator = require('./PomodoroValidator')
 
 describe("PomodoroValidator", function() {
 

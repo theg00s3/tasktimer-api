@@ -1,4 +1,4 @@
-var utils = require('../../modules/utils')
+var utils = require('./utils')
 var expect = require('chai').expect
 
 describe('utils', function() {

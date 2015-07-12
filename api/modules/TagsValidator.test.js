@@ -1,5 +1,5 @@
 var expect = require('chai').expect
-var TagsValidator = require('../../modules/TagsValidator')
+var TagsValidator = require('./TagsValidator')
 
 var fullArray = ['tag1','tag2','tag3','tag4','tag5']
 var overfullArray = ['tag1','tag2','tag3','tag4','tag5','tag6']
