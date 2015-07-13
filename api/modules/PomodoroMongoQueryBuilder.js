@@ -32,8 +32,8 @@ module.exports = function PomodoroMongoQueryBuilder(){
 
     if( _day ){
       result.startedAt = {
-        $gte: getStartDay(_day),
-        $lt: getEndDay(_day),
+        $gte: calculateStartDay(_day),
+        $lt: calculateEndDay(_day),
       }
     }
 
@@ -48,10 +48,10 @@ module.exports = function PomodoroMongoQueryBuilder(){
     return result
   }
 
-  function getStartDay(_day){
+  function calculateStartDay(_day){
     return new Date(_day)
   }
-  function getEndDay(_day){
+  function calculateEndDay(_day){
     var endDate = new Date(_day)
     endDate.setDate(endDate.getDate()+1)
     return endDate
