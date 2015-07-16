@@ -33,6 +33,25 @@ db.pomodori.insert({
   "type": "break",
   "userId": userId
 })
+db.pomodori.insert({
+  "startedAt": new Date("2015-07-12T10:00:00.000+02:00"),
+  "cancelledAt": new Date("2015-07-12T10:13:00.000+02:00"),
+  "minutes": 25,
+  "type": "pomodoro",
+  "userId": userId
+})
+db.pomodori.insert({
+  "startedAt": new Date("2015-07-12T10:15:00.000+02:00"),
+  "minutes": 15,
+  "type": "break",
+  "userId": userId
+})
+db.pomodori.insert({
+  "startedAt": new Date("2015-07-12T10:30:00.000+02:00"),
+  "minutes": 25,
+  "type": "pomodoro",
+  "userId": userId
+})
 // db.pomodori.insert({
 //   "startedAt": new Date("2015-07-12T10:00:00.000+02:00"),
 //   "minutes": 25,
