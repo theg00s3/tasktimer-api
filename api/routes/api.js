@@ -18,6 +18,7 @@ db(function(conn){
 })
 
 router.use('/pomodoro',function(req,res,next){
+  console.log( '-- req.user', req.user )
   if( req.user ) return next()
   var query = url.parse(req.url, true).query
   if( query.apikey === undefined ) return res.sendStatus(401)
