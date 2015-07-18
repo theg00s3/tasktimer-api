@@ -7,8 +7,8 @@ id_for_container(){
 }
 
 if [ -z "$(id_for_container 'pomodoro-api-db-test')" ]; then
-  docker run --name pomodoro-api-db-test --restart=always -d mongo:latest
-
+  docker run --name pomodoro-api-db-test -d mongo:latest
 fi
 
-docker run -it --link=pomodoro-api-db-test:pomodoro-api-db -v /pomodoro.cc/credentials.json:/credentials.json -v /pomodoro.cc/api:/app christianfei/pomodoro-api sh -c 'npm install && npm test'
+docker run --rm -it --link=pomodoro-api-db-test:pomodoro-api-db --env ENV="DEV" -v /pomodoro.cc/credentials.json:/credentials.json -v /pomodoro.cc/api:/app christianfei/pomodoro-api sh -c 'npm install && npm test'
+docker rm -f pomodoro-api-db-test
