@@ -1,18 +1,18 @@
 var config = require('config')
-var app = require('express')()
+var server = require('express')()
   , cookieParser = require('cookie-parser')
   , bodyParser = require('body-parser')
   , morgan = require('morgan')
 
-app.listen(config.get('server.port'))
+server.listen(config.get('server.port'))
 
-require('./passport.init')(app)
+require('./passport.init')(server)
 
-app.use(morgan(':status\t :method\t :response-time ms\t :date[clf]\t :url\t\t'))
-app.use(cookieParser())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+server.use(morgan(':status\t :method\t :response-time ms\t :date[clf]\t :url\t\t'))
+server.use(cookieParser())
+server.use(bodyParser.json())
+server.use(bodyParser.urlencoded({ extended: true }))
 
-app.use('/', require('./routes'))
+server.use('/', require('./routes'))
 
-module.exports = app
+module.exports = server
