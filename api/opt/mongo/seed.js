@@ -52,39 +52,3 @@ db.pomodori.insert({
   "type": "pomodoro",
   "userId": userId
 })
-// db.pomodori.insert({
-//   "startedAt": new Date("2015-07-12T10:00:00.000+02:00"),
-//   "minutes": 25,
-//   "type": "pomodoro",
-//   "userId": userId
-// })
-// db.pomodori.insert({
-//   "startedAt": new Date("2015-07-12T10:25:00.000+02:00"),
-//   "minutes": 5,
-//   "type": "break",
-//   "userId": userId
-// })
-// db.pomodori.insert({
-//   "startedAt": new Date("2015-07-12T10:30:00.000+02:00"),
-//   "minutes": 25,
-//   "type": "pomodoro",
-//   "userId": userId
-// })
-// db.pomodori.insert({
-//   "startedAt": new Date("2015-07-12T10:55:00.000+02:00"),
-//   "minutes": 15,
-//   "type": "break",
-//   "userId": userId
-// })
-// db.pomodori.insert({
-//   "startedAt": new Date("2015-07-12T11:30:00.000+02:00"),
-//   "minutes": 25,
-//   "type": "pomodoro",
-//   "userId": userId
-// })
-// db.pomodori.insert({
-//   "startedAt": new Date("2015-07-12T12:34:00.000+02:00"),
-//   "minutes": 25,
-//   "type": "pomodoro",
-//   "userId": userId
-// })
