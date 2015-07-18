@@ -2,8 +2,6 @@ var router = require('express').Router()
   , passport = require('passport')
 var defaultRedirectRoutes = {failureRedirect: '/',successRedirect: '/'}
 
-if( process.env.ENV==='DEV' || process.env.NODE_ENV==='test' ){ require('./helpers/fakeSession')(router) }
-
 router.get('/twitter', passport.authenticate('twitter'))
 router.get('/github', passport.authenticate('github'))
 
