@@ -13,7 +13,6 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use('/auth', require('./routes/auth'))
-app.use('/api', require('./routes/api'))
+app.use('/', require('./routes'))
 
 module.exports = app
