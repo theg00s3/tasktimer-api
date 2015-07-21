@@ -19,7 +19,8 @@ if [ -z "$(id_for_container 'pomodoro-api-sessions-test')" ]; then
   docker run --name pomodoro-api-sessions-test -d redis:latest redis-server
 fi
 
-docker run --rm -it \
+docker run -it \
+  --name pomodoro-api-test \
   --link=pomodoro-api-db-test:pomodoro-api-db \
   --link=pomodoro-api-sessions-test:pomodoro-api-sessions \
   --env ENV="DEV" \
