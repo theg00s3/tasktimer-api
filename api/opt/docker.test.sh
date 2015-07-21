@@ -29,7 +29,4 @@ docker run --rm -it \
 
 TEST_RESULT_CODE=$?
 
-docker rm -f pomodoro-api-db-test
-docker rm -f pomodoro-api-sessions-test
-
 exit $TEST_RESULT_CODE
