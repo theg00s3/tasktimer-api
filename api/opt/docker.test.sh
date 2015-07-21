@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT_DIR=$(dirname `readlink -f $0`)
-PROJECT_DIR=$(dirname $SCRIPT_DIR)
+PROJECT_DIR=$(readlink -f $SCRIPT_DIR/../../)
 if [ "$PROJECT_DIR" = "/" ]; then
   PROJECT_DIR="/pomodoro.cc"
 fi
