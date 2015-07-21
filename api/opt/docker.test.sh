@@ -20,4 +20,6 @@ docker run --rm -it \
   -v /pomodoro.cc/credentials.json:/credentials.json \
   -v /pomodoro.cc/api:/app \
   christianfei/pomodoro-api sh -c 'npm install && npm test'
+
 docker rm -f pomodoro-api-db-test
+docker rm -f pomodoro-api-sessions-test
