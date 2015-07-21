@@ -12,6 +12,9 @@ id_for_container(){
   echo $CONTAINER_ID
 }
 
+if [ ! -z "$(id_for_container 'pomodoro-api-test')" ]; then
+  docker rm -f pomodoro-api-test
+fi
 if [ -z "$(id_for_container 'pomodoro-api-db-test')" ]; then
   docker run --name pomodoro-api-db-test -d mongo:latest
 fi
