@@ -18,7 +18,7 @@ describe("PomodoroMongoQueryBuilder", function() {
         userId: user.id
       })
     })
-    it('withDay', function () {      
+    it('withDay', function () {
       var day = '07/12/2015'
       builder.withDay(day)
       var result = builder.build()
@@ -39,14 +39,27 @@ describe("PomodoroMongoQueryBuilder", function() {
       expect( result._id ).to.be.ok
       expect( result._id.toHexString() ).to.be.ok
     })
-    
+    it('withinTimerange', function () {
+      var timerangeStart = '2015-07-12T08:00:00Z'
+      var timerangeEnd = '2015-07-12T09:00:00Z'
+      builder.withinTimerange(timerangeStart, timerangeEnd)
+      var result = builder.build()
+
+      expect( result ).to.deep.eql({
+        startedAt: {
+          $gte: new Date('2015-07-12T08:00:00Z'),
+          $lt: new Date('2015-07-12T09:00:00Z'),
+        }
+      })
+    })
+
     it('can be chained', function () {
         var user = {id: 1}
         var day = '07/12/2015'
         builder
           .withUser(user)
-          .withDay(day)    
-          
+          .withDay(day)
+
       var result = builder.build()
 
       expect( result ).to.deep.eql({

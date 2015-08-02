@@ -7,6 +7,8 @@ module.exports = function PomodoroMongoQueryBuilder(){
   var _user
     , _day
     , _id
+    , _timerangeStart
+    , _timerangeEnd
 
   this.withUser = function(user){
     _user = user
@@ -23,6 +25,12 @@ module.exports = function PomodoroMongoQueryBuilder(){
     return this
   }
 
+  this.withinTimerange = function(timerangeStart, timerangeEnd) {
+    _timerangeStart = timerangeStart
+    _timerangeEnd = timerangeEnd
+    return this
+  }
+
   this.build = function(){
     var result = {}
 
@@ -34,6 +42,13 @@ module.exports = function PomodoroMongoQueryBuilder(){
       result.startedAt = {
         $gte: calculateStartDay(_day),
         $lt: calculateEndDay(_day),
+      }
+    }
+
+    if( _timerangeStart && _timerangeEnd ){
+      result.startedAt = {
+        $gte: new Date(_timerangeStart),
+        $lt: new Date(_timerangeEnd)
       }
     }
 
