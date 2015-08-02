@@ -47,16 +47,12 @@ describe('PomodoroApi', function(){
   })
 
   it('creates a pomodoro and returns location', function (done) {
-    db(function(conn){
-      conn.collection('pomodori').drop(function(){
-        request(app)
-        .post('/api/pomodoro/?apikey='+apikey)
-        .send(pomodoro1)
-        .expect(201)
-        .expect('Location', /\/api\/pomodoro\/[a-z0-9]/)
-        .end(done)
-      })
-    })
+    request(app)
+    .post('/api/pomodoro/?apikey='+apikey)
+    .send(pomodoro1)
+    .expect(201)
+    .expect('Location', /\/api\/pomodoro\/[a-z0-9]/)
+    .end(done)
   })
 
   it('returns 422 and errors for invalid pomodoro', function (done) {
