@@ -46,12 +46,27 @@ router.use('/pomodoro',function(req,res,next){
       pomodoro.cancelledAt = new Date(pomodoro.cancelledAt)
     }
 
-    pomodori.insert(pomodoro, function(err, doc){
-      if(err) return res.sendStatus(500)
-      var createdResourceId = doc[0]._id
-      res.status(201).location('/api/pomodoro/'+createdResourceId).end()
-    })
+    var timerangeStart = pomodoro.startedAt
+    var timerangeEnd = pomodoro.cancelledAt
+    if( !pomodoro.cancelledAt ){
+      timerangeEnd = new Date(pomodoro.startedAt)
+      timerangeEnd.setMinutes(timerangeEnd.getMinutes() + pomodoro.minutes)
+    }
+    var builder = new PomodoroMongoQueryBuilder
+    builder.withUser(req.user)
+    builder.withinTimerange(timerangeStart, timerangeEnd)
+    var mongoQuery = builder.build()
 
+    pomodori.count(mongoQuery, function(err, count){
+      if(err) return res.sendStatus(500)
+      if( count > 0 ) return res.sendStatus(403)
+
+      pomodori.insert(pomodoro, function(err, doc){
+        if(err) return res.sendStatus(500)
+        var createdResourceId = doc[0]._id
+        res.status(201).location('/api/pomodoro/'+createdResourceId).end()
+      })
+    })
   })
 
   router.get('/pomodoro', function(req,res){

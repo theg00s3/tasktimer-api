@@ -12,10 +12,12 @@ var fakeUser = {apikey:apikey}
 var timestampNow = Date.now()
   , dateNow = moment(timestampNow).toDate()
   , dateNow1 = moment(timestampNow).add(1,'hour').toDate()
+  , dateNow2 = moment(timestampNow).add(2,'hour').toDate()
   , day = moment(timestampNow).format(constants.dayFormat)
 
 var pomodoro1 = {'minutes':25,'startedAt':dateNow,'type':'pomodoro','tags':[],'distractions':[]}
-var pomodoro2 = {'minutes':15,'startedAt':dateNow1,'type':'pomodoro','tags':[],'distractions':[]}
+var pomodoro2 = {'minutes':15,'startedAt':dateNow1,'type':'break','tags':[],'distractions':[]}
+var pomodoro3 = {'minutes':25,'startedAt':dateNow2,'type':'pomodoro','tags':[],'distractions':[]}
 var pomodori = [pomodoro1, pomodoro2]
 
 describe('PomodoroApi', function(){
@@ -49,9 +51,17 @@ describe('PomodoroApi', function(){
   it('creates a pomodoro and returns location', function (done) {
     request(app)
     .post('/api/pomodoro/?apikey='+apikey)
-    .send(pomodoro1)
+    .send(pomodoro3)
     .expect(201)
     .expect('Location', /\/api\/pomodoro\/[a-z0-9]/)
+    .end(done)
+  })
+
+  it('refuses to create overlapping pomodoro', function (done) {
+    request(app)
+    .post('/api/pomodoro/?apikey='+apikey)
+    .send(pomodoro1)
+    .expect(403)
     .end(done)
   })
 
