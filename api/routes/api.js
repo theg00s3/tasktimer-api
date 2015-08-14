@@ -8,6 +8,7 @@ var router = require('express').Router()
   , utils = require('../modules/utils')
   , constants = require('../constants')
   , _ = require('underscore')
+  , authorizedMiddleware = require('./middleware/authorized')
 
 var pomodori
   , users
@@ -17,21 +18,7 @@ db(function(conn){
   users = conn.collection('users')
 })
 
-router.use('/pomodoro',function(req,res,next){
-  console.log( '-- req.user', req.user )
-  if( req.user ) return next()
-  var query = url.parse(req.url, true).query
-  if( query.apikey === undefined ) return res.sendStatus(401)
-  users.findOne({
-    apikey: query.apikey
-  }, function(err,user){
-    if( err || !user ) {
-      return res.sendStatus(401)
-    }
-    req.user = user
-    next()
-  })
-})
+router.use('/pomodoro', authorizedMiddleware(db, 'users'))
 
   router.post('/pomodoro', function(req,res){
     var rawPomodoro = req.body
