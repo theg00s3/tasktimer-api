@@ -31,6 +31,16 @@ module.exports = function PomodoroMongoQueryBuilder(){
     return this
   }
 
+  this.withinTimerangeOf = function(pomodoro){
+    var timerangeStart = pomodoro.startedAt
+    var timerangeEnd = pomodoro.cancelledAt
+    if( !timerangeEnd ){
+      timerangeEnd = new Date(pomodoro.startedAt)
+      timerangeEnd.setMinutes(timerangeEnd.getMinutes() + pomodoro.minutes)
+    }
+    return this.withinTimerange(timerangeStart, timerangeEnd)
+  }
+
   this.build = function(){
     var result = {}
 

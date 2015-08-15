@@ -33,15 +33,9 @@ router.use('/pomodoro', authorizedMiddleware(db, 'users'))
       pomodoro.cancelledAt = new Date(pomodoro.cancelledAt)
     }
 
-    var timerangeStart = pomodoro.startedAt
-    var timerangeEnd = pomodoro.cancelledAt
-    if( !pomodoro.cancelledAt ){
-      timerangeEnd = new Date(pomodoro.startedAt)
-      timerangeEnd.setMinutes(timerangeEnd.getMinutes() + pomodoro.minutes)
-    }
     var builder = new PomodoroMongoQueryBuilder
     builder.withUser(req.user)
-    builder.withinTimerange(timerangeStart, timerangeEnd)
+    builder.withinTimerangeOf(pomodoro)
     var mongoQuery = builder.build()
 
     pomodori.count(mongoQuery, function(err, count){

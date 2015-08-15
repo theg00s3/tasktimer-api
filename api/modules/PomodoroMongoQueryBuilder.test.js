@@ -52,6 +52,39 @@ describe("PomodoroMongoQueryBuilder", function() {
         }
       })
     })
+    describe('withinTimerangeOf', function () {
+      it('of cancelled pomodoro', function () {
+        builder.withinTimerangeOf({
+          startedAt: '2015-07-12T08:00:00Z',
+          cancelledAt: '2015-07-12T08:15:26Z',
+          minutes: 25,
+          type: 'pomodoro'
+        })
+        var result = builder.build()
+
+        expect( result ).to.deep.eql({
+          startedAt: {
+            $gte: new Date('2015-07-12T08:00:00Z'),
+            $lt: new Date('2015-07-12T08:15:26Z'),
+          }
+        })
+      })
+      it('of a full pomodoro', function () {
+        builder.withinTimerangeOf({
+          startedAt: '2015-07-12T08:00:00Z',
+          minutes: 25,
+          type: 'pomodoro'
+        })
+        var result = builder.build()
+
+        expect( result ).to.deep.eql({
+          startedAt: {
+            $gte: new Date('2015-07-12T08:00:00Z'),
+            $lt: new Date('2015-07-12T08:25:00Z'),
+          }
+        })
+      })
+    })
 
     it('can be chained', function () {
         var user = {id: 1}
