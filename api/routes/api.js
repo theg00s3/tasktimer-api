@@ -33,10 +33,10 @@ router.use('/pomodoro', authorizedMiddleware(db, 'users'))
       pomodoro.cancelledAt = new Date(pomodoro.cancelledAt)
     }
 
-    var builder = new PomodoroMongoQueryBuilder
-    builder.withUser(req.user)
-    builder.withinTimerangeOf(pomodoro)
-    var mongoQuery = builder.build()
+    var mongoQuery = PomodoroMongoQueryBuilder()
+      .withUser(req.user)
+      .withinTimerangeOf(pomodoro)
+      .build()
 
     Pomodoro.count(mongoQuery, function(err, count){
       if(err) return res.sendStatus(500)
@@ -51,7 +51,10 @@ router.use('/pomodoro', authorizedMiddleware(db, 'users'))
   })
 
   router.get('/pomodoro', function(req,res){
-    var mongoQuery = requestToMongoQuery(req)
+    var mongoQuery = PomodoroMongoQueryBuilder()
+      .withRequest(req)
+      .build()
+
 
     Pomodoro.find(mongoQuery, function(err,pomodori){
       if( err ) return res.sendStatus(500)
@@ -65,7 +68,11 @@ router.use('/pomodoro', authorizedMiddleware(db, 'users'))
     }catch(e){
       return res.sendStatus(404)
     }
-    var mongoQuery = requestToMongoQuery(req)
+
+    var mongoQuery = PomodoroMongoQueryBuilder()
+      .withRequest(req)
+      .build()
+
 
     Pomodoro.findOne(mongoQuery, function(err,pomodoro){
       if( err ) return res.sendStatus(500)
@@ -73,17 +80,5 @@ router.use('/pomodoro', authorizedMiddleware(db, 'users'))
       res.json(pomodoro)
     })
   })
-
-
-function requestToMongoQuery(req){
-  var builder = new PomodoroMongoQueryBuilder
-  var query = url.parse(req.url, true).query
-  builder
-    .withUser(req.user)
-    .withDay(query.day)
-    .withId(req.params.id)
-  return builder.build()
-}
-
 
 module.exports = router

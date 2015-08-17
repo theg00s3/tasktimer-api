@@ -1,4 +1,5 @@
 var BSON = require('mongodb').BSONPure
+var url = require('url')
 
 module.exports = function PomodoroMongoQueryBuilder(){
   if( !(this instanceof PomodoroMongoQueryBuilder)){
@@ -22,6 +23,15 @@ module.exports = function PomodoroMongoQueryBuilder(){
 
   this.withId = function(id){
     _id = id
+    return this
+  }
+
+  this.withRequest = function(req){
+    var query = url.parse(req.url, true).query
+    this
+      .withUser(req.user)
+      .withDay(query.day)
+      .withId(req.params.id)
     return this
   }
 

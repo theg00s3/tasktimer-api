@@ -18,6 +18,7 @@ describe("PomodoroMongoQueryBuilder", function() {
         userId: user.id
       })
     })
+
     it('withDay', function () {
       var day = '07/12/2015'
       builder.withDay(day)
@@ -30,6 +31,7 @@ describe("PomodoroMongoQueryBuilder", function() {
         }
       })
     })
+
     it('withId', function () {
       var id = 1
       builder.withId(id)
@@ -39,6 +41,29 @@ describe("PomodoroMongoQueryBuilder", function() {
       expect( result._id ).to.be.ok
       expect( result._id.toHexString() ).to.be.ok
     })
+
+    it('withRequest', function () {
+      builder.withRequest({
+        url: '?day=01/01/2015',
+        user: {
+          id: 123456
+        },
+        params: {
+          id: 1
+        }
+      })
+
+      var result = builder.build()
+
+      expect( result.startedAt ).to.deep.eql({
+        $gte: new Date('2015-01-01T00:00:00.000Z'),
+        $lt: new Date('2015-01-02T00:00:00.000Z'),
+      })
+      expect( result.userId ).to.eql( 123456 )
+      expect( result._id ).to.be.ok
+      expect( result._id.toHexString() ).to.be.ok
+    })
+
     it('withinTimerange', function () {
       var timerangeStart = '2015-07-12T08:00:00Z'
       var timerangeEnd = '2015-07-12T09:00:00Z'
@@ -52,6 +77,7 @@ describe("PomodoroMongoQueryBuilder", function() {
         }
       })
     })
+
     describe('withinTimerangeOf', function () {
       it('of cancelled pomodoro', function () {
         builder.withinTimerangeOf({
