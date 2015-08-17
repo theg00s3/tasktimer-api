@@ -8,16 +8,17 @@ var expect = require('chai').expect
 
 
 var apikey = 'fake'
-var fakeUser = {apikey:apikey}
+var userId = 123456
+var fakeUser = {apikey:apikey, id:userId}
 var timestampNow = Date.now()
   , dateNow = moment(timestampNow).toDate()
   , dateNow1 = moment(timestampNow).add(1,'hour').toDate()
   , dateNow2 = moment(timestampNow).add(2,'hour').toDate()
   , day = moment(timestampNow).format(constants.dayFormat)
 
-var pomodoro1 = {'minutes':25,'startedAt':dateNow,'type':'pomodoro','tags':[],'distractions':[]}
-var pomodoro2 = {'minutes':15,'startedAt':dateNow1,'type':'break','tags':[],'distractions':[]}
-var pomodoro3 = {'minutes':25,'startedAt':dateNow2,'type':'pomodoro','tags':[],'distractions':[]}
+var pomodoro1 = {'minutes':25,'startedAt':dateNow,'type':'pomodoro','tags':[],'distractions':[],userId: userId}
+var pomodoro2 = {'minutes':15,'startedAt':dateNow1,'type':'break','tags':[],'distractions':[],userId: userId}
+var pomodoro3 = {'minutes':25,'startedAt':dateNow2,'type':'pomodoro','tags':[],'distractions':[],userId: userId}
 var pomodori = [pomodoro1, pomodoro2]
 
 describe('PomodoroApi', function(){

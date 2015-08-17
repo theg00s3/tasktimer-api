@@ -6,15 +6,15 @@ var router = require('express').Router()
   , PomodoroValidator = require('../modules/PomodoroValidator')
   , PomodoroMongoQueryBuilder = require('../modules/PomodoroMongoQueryBuilder')
   , utils = require('../modules/utils')
-  , constants = require('../constants')
-  , _ = require('underscore')
   , authorizedMiddleware = require('./middleware/authorized')
+  , mongoose = require('mongoose')
+  , Pomodoro = require('../models/Pomodoro')
 
-var pomodori
-  , users
+mongoose.connect('mongodb://pomodoro-api-db/pomodoro')
+
+var users
 
 db(function(conn){
-  pomodori = conn.collection('pomodori')
   users = conn.collection('users')
 })
 
@@ -38,13 +38,13 @@ router.use('/pomodoro', authorizedMiddleware(db, 'users'))
     builder.withinTimerangeOf(pomodoro)
     var mongoQuery = builder.build()
 
-    pomodori.count(mongoQuery, function(err, count){
+    Pomodoro.count(mongoQuery, function(err, count){
       if(err) return res.sendStatus(500)
       if( count > 0 ) return res.sendStatus(403)
 
-      pomodori.insert(pomodoro, function(err, doc){
+      Pomodoro.create(pomodoro, function(err, pomodoro){
         if(err) return res.sendStatus(500)
-        var createdResourceId = doc[0]._id
+        var createdResourceId = pomodoro._id
         res.status(201).location('/api/pomodoro/'+createdResourceId).end()
       })
     })
@@ -53,9 +53,9 @@ router.use('/pomodoro', authorizedMiddleware(db, 'users'))
   router.get('/pomodoro', function(req,res){
     var mongoQuery = requestToMongoQuery(req)
 
-    pomodori.find(mongoQuery).toArray(function(err,pomodoro){
+    Pomodoro.find(mongoQuery, function(err,pomodori){
       if( err ) return res.sendStatus(500)
-      res.json(pomodoro)
+      res.json(pomodori)
     })
   })
 
@@ -67,7 +67,7 @@ router.use('/pomodoro', authorizedMiddleware(db, 'users'))
     }
     var mongoQuery = requestToMongoQuery(req)
 
-    pomodori.findOne(mongoQuery, function(err,pomodoro){
+    Pomodoro.findOne(mongoQuery, function(err,pomodoro){
       if( err ) return res.sendStatus(500)
       if( !pomodoro ) return res.sendStatus(404)
       res.json(pomodoro)

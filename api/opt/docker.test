@@ -32,7 +32,7 @@ docker run -it \
   --env ENV="DEV" \
   -v $PROJECT_DIR/credentials.json:/credentials.json \
   -v $PROJECT_DIR/api:/app \
-  christianfei/pomodoro-api sh -c 'npm install && npm test'
+  christianfei/pomodoro-api sh -c 'npm test'
 
 TEST_RESULT_CODE=$?
 
