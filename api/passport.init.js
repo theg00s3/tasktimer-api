@@ -5,16 +5,10 @@ var credentials = require('../credentials.json')
   , GitHubStrategy = require('passport-github').Strategy
   , session = require('express-session')
   , RedisStore = require('connect-redis')(session)
-  , db = require('./modules/db.connection')
+  , User = require('./models/User')
 
 
 module.exports = function(app){
-  var users
-
-  db(function(conn){
-    users = conn.collection('users')
-  })
-
   app.use(
     session({
       store: new RedisStore({
@@ -56,7 +50,7 @@ module.exports = function(app){
 
   function authenticatedUser(token, tokenSecret, profile, done){
     var user = new UserInfo(profile).toJSON()
-    users.findOne({
+    User.findOne({
       id: user.id
     },handleUser(done, profile))
   }
@@ -66,7 +60,7 @@ module.exports = function(app){
       if( err ) return done(err,null)
       if( user ) return done(null, user)
       user = new UserInfo(profile)
-      users.insert(user,function(err,user){
+      User.create(user,function(err,user){
         if( err ) return done(err,null)
         done(null,user[0])
       })

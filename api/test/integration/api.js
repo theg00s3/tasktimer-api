@@ -3,7 +3,8 @@ var expect = require('chai').expect
   , moment = require('moment')
   , app = require('../../index')
   , constants = require('../../constants')
-  , db = require('../../modules/db.connection')
+  , mongoose = require('mongoose')
+  , config = require('config')
   , request = require('supertest')
 
 
@@ -22,14 +23,14 @@ var pomodoro3 = {'minutes':25,'startedAt':dateNow2,'type':'pomodoro','tags':[],'
 var pomodori = [pomodoro1, pomodoro2]
 
 describe('PomodoroApi', function(){
+  var conn
   beforeEach(function (done) {
-    db(function(conn){
-      async.parallel([
-        function(cb){conn.collection('users').insert(fakeUser,cb)},
-        function(cb){conn.collection('pomodori').insert(pomodoro1,cb)},
-        function(cb){conn.collection('pomodori').insert(pomodoro2,cb)},
-      ], done)
-    })
+    conn = mongoose.createConnection(config.get('mongodb.url'))
+    async.parallel([
+      function(cb){conn.collection('users').insert(fakeUser,cb)},
+      function(cb){conn.collection('pomodori').insert(pomodoro1,cb)},
+      function(cb){conn.collection('pomodori').insert(pomodoro2,cb)},
+    ], done)
   })
 
   it('returns 401 for unauthorized user accessing /pomodoro', function(done){
@@ -114,14 +115,12 @@ describe('PomodoroApi', function(){
   }
 
   afterEach(function(done){
-    db(function(conn){
-      async.parallel([
-        function(cb) {conn.collection('pomodori').drop(cb)},
-        function(cb) {conn.collection('users').drop(cb)},
-      ], function(){
-        conn.close()
-        done()
-      })
+    async.parallel([
+      function(cb) {conn.collection('pomodori').drop(cb)},
+      function(cb) {conn.collection('users').drop(cb)},
+    ], function(){
+      conn.close()
+      done()
     })
   })
 })

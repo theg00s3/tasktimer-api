@@ -1,24 +1,16 @@
+var config = require('config')
+
 var router = require('express').Router()
   , url = require('url')
   , moment = require('moment')
-  , db = require('../modules/db.connection.js')
   , BSON = require('mongodb').BSONPure
   , PomodoroValidator = require('../modules/PomodoroValidator')
   , PomodoroMongoQueryBuilder = require('../modules/PomodoroMongoQueryBuilder')
   , utils = require('../modules/utils')
   , authorizedMiddleware = require('./middleware/authorized')
-  , mongoose = require('mongoose')
   , Pomodoro = require('../models/Pomodoro')
 
-mongoose.connect('mongodb://pomodoro-api-db/pomodoro')
-
-var users
-
-db(function(conn){
-  users = conn.collection('users')
-})
-
-router.use('/pomodoro', authorizedMiddleware(db, 'users'))
+router.use('/pomodoro', authorizedMiddleware)
 
   router.post('/pomodoro', function(req,res){
     var rawPomodoro = req.body

@@ -1,5 +1,6 @@
 {
   "mongodb":{
+    "url": "mongodb://pomodoro-api-db/pomodoro",
     "host":"pomodoro-api-db",
     "port":27017
   },

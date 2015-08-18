@@ -6,6 +6,7 @@ var server = require('express')()
 
 server.listen(config.get('server.port'))
 
+require('./init/mongo')()
 require('./passport.init')(server)
 
 server.use(morgan(':status\t :method\t :response-time ms\t :date[clf]\t :url\t\t'))
