@@ -1,5 +1,4 @@
 var moment = require('moment')
-var TagsValidator = require('./TagsValidator')
 
 module.exports = {
   validate: validate
@@ -8,7 +7,6 @@ module.exports = {
 var propertyValidators = {
   minutes: validateMinutes,
   type: validateType,
-  // tags: validateTags,
 }
 
 function validate(pomodoro){
@@ -69,7 +67,4 @@ function validateMinutes(minutes){
 }
 function validateType(type){
   return ['pomodoro','break','pomodoro-public','break-public'].indexOf(type)>=0
-}
-function validateTags(tags){
-  return TagsValidator.validate(tags)
 }
