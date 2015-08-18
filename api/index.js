@@ -14,6 +14,6 @@ server.use(cookieParser())
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded({ extended: true }))
 
-server.use('/', require('./routes'))
+server.use(require('./routes'))
 
 module.exports = server
