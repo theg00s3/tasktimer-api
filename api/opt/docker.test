@@ -12,9 +12,6 @@ id_for_container(){
   echo $CONTAINER_ID
 }
 
-docker rm -f pomodoro-api-test
-docker rm -f pomodoro-api-db-test
-docker rm -f pomodoro-api-sessions-test
 if [ ! -z "$(id_for_container 'pomodoro-api-test')" ]; then
   docker rm -f pomodoro-api-test
 fi
