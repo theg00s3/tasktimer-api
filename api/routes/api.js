@@ -1,10 +1,9 @@
 var router = require('express').Router()
-  , BSON = require('mongodb').BSONPure
-  , PomodoroValidator = require('../modules/PomodoroValidator')
+  , Pomodoro = require('../models/Pomodoro')
   , PomodoroBuilder = require('../modules/PomodoroBuilder')
   , PomodoroMongoQueryBuilder = require('../modules/PomodoroMongoQueryBuilder')
   , authorizedMiddleware = require('./middleware/authorized')
-  , Pomodoro = require('../models/Pomodoro')
+  , BSON = require('mongodb').BSONPure
 
 router.use('/pomodoro', authorizedMiddleware)
 
