@@ -5,6 +5,7 @@ var router = require('express').Router()
   , moment = require('moment')
   , BSON = require('mongodb').BSONPure
   , PomodoroValidator = require('../modules/PomodoroValidator')
+  , PomodoroBuilder = require('../modules/PomodoroBuilder')
   , PomodoroMongoQueryBuilder = require('../modules/PomodoroMongoQueryBuilder')
   , utils = require('../modules/utils')
   , authorizedMiddleware = require('./middleware/authorized')
@@ -13,17 +14,13 @@ var router = require('express').Router()
 router.use('/pomodoro', authorizedMiddleware)
 
   router.post('/pomodoro', function(req,res){
-    var rawPomodoro = req.body
+    var pomodoro = PomodoroBuilder()
+      .withData(req.body)
+      .withUser(req.user.id)
+      .build()
 
-    var errors = PomodoroValidator.validate(rawPomodoro)
+    var errors = PomodoroValidator.validate(pomodoro)
     if( Object.keys(errors).length > 0 ) return res.status(422).json(errors)
-
-    var pomodoro = utils.cleanPomodoro(rawPomodoro)
-    pomodoro.userId = req.user.id
-    pomodoro.startedAt = new Date(pomodoro.startedAt)
-    if( pomodoro.cancelledAt ){
-      pomodoro.cancelledAt = new Date(pomodoro.cancelledAt)
-    }
 
     var mongoQuery = PomodoroMongoQueryBuilder()
       .withUser(req.user)
