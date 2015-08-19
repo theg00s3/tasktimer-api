@@ -103,7 +103,12 @@ describe('PomodoroApi', function(){
     .expect(200)
     .expect(function(res){
       var _pomodori = res.body
-      expect(_pomodori.length).to.eql(2)
+      var hour = dateNow.getHours()
+      if( hour === 23 ){
+        expect(_pomodori.length).to.eql(1)
+      }else{
+        expect(_pomodori.length).to.eql(2)
+      }
     })
     .end(done)
   })

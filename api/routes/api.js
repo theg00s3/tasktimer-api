@@ -44,7 +44,6 @@ router.use('/pomodoro', authorizedMiddleware)
       .withRequest(req)
       .build()
 
-
     Pomodoro.find(mongoQuery, function(err,pomodori){
       if( err ) return res.sendStatus(500)
       res.json(pomodori)
