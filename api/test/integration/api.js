@@ -71,7 +71,13 @@ describe('PomodoroApi', function(){
     request(app)
     .post('/api/pomodoro/?apikey='+apikey)
     .send({foo:'bar'})
-    .expect(422,done)
+    .expect(422)
+    .expect(function(res){
+      var errors = res.body
+      expect( errors.minutes ).to.eql('required')
+      expect( errors.type ).to.eql('required')
+    })
+    .end(done)
   })
 
   it('returns 404 for unexisting pomodoro resource', function (done) {
