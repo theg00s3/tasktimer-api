@@ -14,11 +14,6 @@ router.use('/pomodoro', authorizedMiddleware)
       .withUser(req.user.id)
       .build()
 
-    var errors = PomodoroValidator.validate(pomodoro)
-    if( Object.keys(errors).length > 0 ){
-      return res.status(422).json(errors)
-    }
-
     var mongoQuery = PomodoroMongoQueryBuilder()
       .withUser(req.user)
       .withinTimerangeOf(pomodoro)
@@ -34,7 +29,13 @@ router.use('/pomodoro', authorizedMiddleware)
 
       Pomodoro.create(pomodoro, function(err, pomodoro){
         if( err ){
-          return res.sendStatus(500)
+          var rawErrors = err.errors
+          var errors = {}
+          for(var key in rawErrors){
+            var error = rawErrors[key]
+            errors[key] = error.kind
+          }
+          return res.status(422).json(errors)
         }
         var createdResourceId = pomodoro._id
         res.status(201).location('/api/pomodoro/'+createdResourceId).end()

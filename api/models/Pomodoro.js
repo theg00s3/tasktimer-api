@@ -2,10 +2,10 @@ var mongoose = require('mongoose')
 var Schema =mongoose.Schema
 
 var PomodoroSchema = new Schema({
-  minutes: {type: Number, /*validate: /^(5|15|25)$/g,*/ required: true},
+  minutes: {type: Number, validate: /^(5|15|25)$/g, required: true},
   startedAt: {type: Date, required: true},
   cancelledAt: {type: Date, required: false},
-  type: {type: String, /*validate: /^(break|pomodoro)$/g,*/ required: true},
+  type: {type: String, validate: /^(break|pomodoro)$/g, required: true},
   tags: {type: Array, default: [], required: false},
   distractions: {type: Array, default: [], required: false},
   userId: {type: Number, required: true},
