@@ -1,13 +1,8 @@
-var config = require('config')
-
 var router = require('express').Router()
-  , url = require('url')
-  , moment = require('moment')
   , BSON = require('mongodb').BSONPure
   , PomodoroValidator = require('../modules/PomodoroValidator')
   , PomodoroBuilder = require('../modules/PomodoroBuilder')
   , PomodoroMongoQueryBuilder = require('../modules/PomodoroMongoQueryBuilder')
-  , utils = require('../modules/utils')
   , authorizedMiddleware = require('./middleware/authorized')
   , Pomodoro = require('../models/Pomodoro')
 
@@ -20,7 +15,9 @@ router.use('/pomodoro', authorizedMiddleware)
       .build()
 
     var errors = PomodoroValidator.validate(pomodoro)
-    if( Object.keys(errors).length > 0 ) return res.status(422).json(errors)
+    if( Object.keys(errors).length > 0 ){
+      return res.status(422).json(errors)
+    }
 
     var mongoQuery = PomodoroMongoQueryBuilder()
       .withUser(req.user)
@@ -28,11 +25,17 @@ router.use('/pomodoro', authorizedMiddleware)
       .build()
 
     Pomodoro.count(mongoQuery, function(err, count){
-      if(err) return res.sendStatus(500)
-      if( count > 0 ) return res.sendStatus(403)
+      if( err ){
+        return res.sendStatus(500)
+      }
+      if( count > 0 ){
+        return res.sendStatus(403)
+      }
 
       Pomodoro.create(pomodoro, function(err, pomodoro){
-        if(err) return res.sendStatus(500)
+        if( err ){
+          return res.sendStatus(500)
+        }
         var createdResourceId = pomodoro._id
         res.status(201).location('/api/pomodoro/'+createdResourceId).end()
       })
@@ -45,7 +48,9 @@ router.use('/pomodoro', authorizedMiddleware)
       .build()
 
     Pomodoro.find(mongoQuery, function(err,pomodori){
-      if( err ) return res.sendStatus(500)
+      if( err ){
+        return res.sendStatus(500)
+      }
       res.json(pomodori)
     })
   })
@@ -61,10 +66,14 @@ router.use('/pomodoro', authorizedMiddleware)
       .withRequest(req)
       .build()
 
+    Pomodoro.findOne(mongoQuery, function(err, pomodoro){
+      if( err ){
+        return res.sendStatus(500)
+      }
+      if( pomodoro === null || pomodoro === undefined ){
+        return res.sendStatus(404)
+      }
 
-    Pomodoro.findOne(mongoQuery, function(err,pomodoro){
-      if( err ) return res.sendStatus(500)
-      if( !pomodoro ) return res.sendStatus(404)
       res.json(pomodoro)
     })
   })

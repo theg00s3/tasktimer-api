@@ -11,7 +11,11 @@ router.get('/github/callback',
   passport.authenticate('github', defaultRedirectRoutes))
 
 router.get('/info', function(req,res){
-  !req.user ? res.writeHead(401) : res.json( req.user )
+  if( req.user === undefined ){
+    req.writeHead(401)
+  }else{
+    res.json( req.user )
+  }
   res.end()
 })
 
