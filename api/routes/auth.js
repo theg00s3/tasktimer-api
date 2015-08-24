@@ -12,7 +12,7 @@ router.get('/github/callback',
 
 router.get('/info', function(req,res){
   if( req.user === undefined ){
-    req.writeHead(401)
+    res.writeHead(401)
   }else{
     res.json( req.user )
   }
