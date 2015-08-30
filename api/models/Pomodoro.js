@@ -1,5 +1,5 @@
 var mongoose = require('mongoose')
-var Schema =mongoose.Schema
+var Schema = mongoose.Schema
 
 var PomodoroSchema = new Schema({
   minutes: {type: Number, enum: [5,15,25], required: true},

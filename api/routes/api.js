@@ -13,34 +13,39 @@ router.use('/pomodoro', authorizedMiddleware)
       .withUser(req.user.id)
       .build()
 
-    var mongoQuery = PomodoroMongoQueryBuilder()
+    var overlappingPomodoroQuery = PomodoroMongoQueryBuilder()
       .withUser(req.user)
       .withinTimerangeOf(pomodoro)
       .build()
 
-    Pomodoro.count(mongoQuery, function(err, count){
-      if( err ){
-        return res.sendStatus(500)
-      }
+    Pomodoro.count(overlappingPomodoroQuery, function(err, count){
+      if( err ){ return res.sendStatus(500) }
       if( count > 0 ){
-        return res.sendStatus(403)
+        return res.status(403).json({
+          info: 'Pomodoro overlaps with others',
+          data: pomodoro
+        })
       }
 
       Pomodoro.create(pomodoro, function(err, createdPomodoro){
         if( err ){
-          var rawErrors = err.errors
-          var errors = {}
-          for(var key in rawErrors){
-            var error = rawErrors[key]
-            errors[key] = error.kind
-          }
-          return res.status(422).json(errors)
+          return res.status(422).json( formatValidationErrors(err) )
         }
         var createdResourceId = createdPomodoro._id
         res.status(201).location('/api/pomodoro/'+createdResourceId).end()
       })
     })
   })
+
+  function formatValidationErrors(err) {
+    var rawErrors = err.errors
+    var errors = {}
+    for(var key in rawErrors){
+      var error = rawErrors[key]
+      errors[key] = error.kind
+    }
+    return errors
+  }
 
   router.get('/pomodoro', function(req,res){
     var mongoQuery = PomodoroMongoQueryBuilder()
