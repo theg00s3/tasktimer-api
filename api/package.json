@@ -19,6 +19,7 @@
   "homepage": "https://github.com/christian-fei/pomodoro-api",
   "dependencies": {
     "async": "^0.9.0",
+    "bluebird": "^2.9.34",
     "body-parser": "^1.9.0",
     "config": "^1.9.0",
     "connect-redis": "^2.1.0",
