@@ -64,6 +64,13 @@ describe('PomodoroApi', function(){
     .post('/api/pomodoro/?apikey='+apikey)
     .send(pomodoro1)
     .expect(403)
+    .expect(function(res){
+      var overlapping = res.body
+      var conflicts = overlapping.conflicts
+      var conflict = conflicts[0]
+      expect( conflicts ).to.be.ok
+      expect( conflicts.length ).to.eql( 1 )
+    })
     .end(done)
   })
 

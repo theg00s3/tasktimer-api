@@ -18,12 +18,12 @@ router.use('/pomodoro', authorizedMiddleware)
       .withinTimerangeOf(pomodoro)
       .build()
 
-    Pomodoro.count(overlappingPomodoroQuery).exec()
-    .then(function(count){
-      if( count > 0 ){
+    Pomodoro.find(overlappingPomodoroQuery).exec()
+    .then(function(conflicts){
+      if( conflicts.length > 0 ){
         return res.status(403).json({
           info: 'Pomodoro overlaps with others',
-          data: pomodoro
+          conflicts: conflicts
         })
       }
       return pomodoro.save()
