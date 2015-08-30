@@ -19,7 +19,7 @@ router.use('/pomodoro', authorizedMiddleware)
       .build()
 
     Pomodoro.count(overlappingPomodoroQuery).exec()
-    .then(respond(res, function(count){
+    .then(function(count){
       if( count > 0 ){
         return res.status(403).json({
           info: 'Pomodoro overlaps with others',
@@ -27,7 +27,7 @@ router.use('/pomodoro', authorizedMiddleware)
         })
       }
       return pomodoro.save()
-    }))
+    })
     .then(respond(res, function(createdPomodoro){
       res
         .status(201)
