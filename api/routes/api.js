@@ -26,7 +26,7 @@ router.use('/pomodoro', authorizedMiddleware)
         return res.sendStatus(403)
       }
 
-      Pomodoro.create(pomodoro, function(err, pomodoro){
+      Pomodoro.create(pomodoro, function(err, createdPomodoro){
         if( err ){
           var rawErrors = err.errors
           var errors = {}
@@ -36,7 +36,7 @@ router.use('/pomodoro', authorizedMiddleware)
           }
           return res.status(422).json(errors)
         }
-        var createdResourceId = pomodoro._id
+        var createdResourceId = createdPomodoro._id
         res.status(201).location('/api/pomodoro/'+createdResourceId).end()
       })
     })
