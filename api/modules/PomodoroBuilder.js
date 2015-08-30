@@ -1,4 +1,5 @@
 var _ = require('underscore')
+var Pomodoro = require('../models/Pomodoro')
 module.exports = function PomodoroBuilder(){
   if( !(this instanceof PomodoroBuilder)){
     return new PomodoroBuilder
@@ -34,5 +35,9 @@ module.exports = function PomodoroBuilder(){
     }
 
     return pomodoro
+  }
+
+  this.buildModel = function(){
+    return new Pomodoro(this.build())
   }
 }

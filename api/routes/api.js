@@ -8,11 +8,10 @@ var router = require('express').Router()
 router.use('/pomodoro', authorizedMiddleware)
 
   router.post('/pomodoro', function(req,res){
-    var pomodoroData = PomodoroBuilder()
+    var pomodoro = PomodoroBuilder()
       .withData(req.body)
       .withUser(req.user.id)
-      .build()
-    pomodoro = new Pomodoro(pomodoroData)
+      .buildModel()
 
     var overlappingPomodoroQuery = PomodoroMongoQueryBuilder()
       .withUser(req.user)
