@@ -15,12 +15,16 @@ id_for_container(){
 if [ ! -z "$(id_for_container 'pomodoro-api-test')" ]; then
   docker rm -f pomodoro-api-test
 fi
-if [ -z "$(id_for_container 'pomodoro-api-db-test')" ]; then
-  docker run --name pomodoro-api-db-test -d mongo:latest
+if [ ! -z "$(id_for_container 'pomodoro-api-db-test')" ]; then
+  docker rm -f pomodoro-api-db-test
 fi
-if [ -z "$(id_for_container 'pomodoro-api-sessions-test')" ]; then
-  docker run --name pomodoro-api-sessions-test -d redis:latest redis-server
+if [ ! -z "$(id_for_container 'pomodoro-api-sessions-test')" ]; then
+  docker rm -f pomodoro-api-sessions-test
 fi
+
+docker run --name pomodoro-api-db-test -d mongo:latest
+
+docker run --name pomodoro-api-sessions-test -d redis:latest redis-server
 
 docker run -it \
   --name pomodoro-api-test \
