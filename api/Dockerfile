@@ -1,4 +1,5 @@
-FROM nodesource/precise:0.12.7
+FROM alpine
+RUN apk add --update nodejs
 ADD package.json /app/package.json
 WORKDIR /app
 RUN npm install
