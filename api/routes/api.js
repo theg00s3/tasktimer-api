@@ -1,9 +1,16 @@
 var router = require('express').Router()
+  , request = require('request')
   , Pomodoro = require('../models/Pomodoro')
   , PomodoroBuilder = require('../modules/PomodoroBuilder')
   , PomodoroMongoQueryBuilder = require('../modules/PomodoroMongoQueryBuilder')
   , authorizedMiddleware = require('./middleware/authorized')
   , BSON = require('mongodb').BSONPure
+
+router.use('/tasks', function(req, res){
+  req.pipe(
+    request('http://pomodoro-api_v2:6000/tasks')
+  ).pipe(res)
+})
 
 router.use('/pomodoro', authorizedMiddleware)
 
