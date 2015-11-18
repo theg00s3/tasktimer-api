@@ -1,4 +1,4 @@
-var BSON = require('mongodb').BSONPure
+var ObjectID = require('mongodb').ObjectID
 var url = require('url')
 
 module.exports = function PomodoroMongoQueryBuilder(){
@@ -74,7 +74,7 @@ module.exports = function PomodoroMongoQueryBuilder(){
 
     if( _id ){
       try {
-        result._id = new BSON.ObjectID(_id)
+        result._id = new ObjectID(_id)
       }catch(e){
       }
     }

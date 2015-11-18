@@ -4,63 +4,63 @@ var router = require('express').Router()
   , PomodoroBuilder = require('../modules/PomodoroBuilder')
   , PomodoroMongoQueryBuilder = require('../modules/PomodoroMongoQueryBuilder')
   , authorizedMiddleware = require('./middleware/authorized')
-  , BSON = require('mongodb').BSONPure
+  , ObjectID = require('mongodb').ObjectID
 
 router.use('/pomodoro', authorizedMiddleware)
 
-  router.post('/pomodoro', function(req,res){
-    var pomodoro = PomodoroBuilder()
-      .withData(req.body)
-      .withUser(req.user.id)
-      .buildModel()
+router.post('/pomodoro', function(req,res){
+  var pomodoro = PomodoroBuilder()
+    .withData(req.body)
+    .withUser(req.user.id)
+    .buildModel()
 
-    var overlappingPomodoroQuery = PomodoroMongoQueryBuilder()
-      .withUser(req.user)
-      .withinTimerangeOf(pomodoro)
-      .build()
+  var overlappingPomodoroQuery = PomodoroMongoQueryBuilder()
+    .withUser(req.user)
+    .withinTimerangeOf(pomodoro)
+    .build()
 
-    Pomodoro.find(overlappingPomodoroQuery).exec()
-    .then(function(conflicts){
-      if( conflicts.length > 0 ){
-        return res.status(403).json({
-          info: 'Pomodoro overlaps with others',
-          conflicts: conflicts
-        })
-      }
-      return pomodoro.save()
-    })
-    .then(respond(res, function(createdPomodoro){
-      res
-        .status(201)
-        .location('/api/pomodoro/'+createdPomodoro._id)
-        .end()
-    }))
-    .catch(respond(res, function(err){
-      res
-        .status(422)
-        .json( formatValidationErrors(err) )
-    }))
-    .catch(respond(res, function(err){
-      res.sendStatus(500)
-    }))
+  Pomodoro.find(overlappingPomodoroQuery).exec()
+  .then(function(conflicts){
+    if( conflicts.length > 0 ){
+      return res.status(403).json({
+        info: 'Pomodoro overlaps with others',
+        conflicts: conflicts
+      })
+    }
+    return pomodoro.save()
   })
+  .then(respond(res, function(createdPomodoro){
+    res
+      .status(201)
+      .location('/api/pomodoro/'+createdPomodoro._id)
+      .end()
+  }))
+  .catch(respond(res, function(err){
+    res
+      .status(422)
+      .json( formatValidationErrors(err) )
+  }))
+  .catch(respond(res, function(err){
+    res.sendStatus(500)
+  }))
+})
 
-  router.get('/pomodoro', function(req,res){
-    var mongoQuery = PomodoroMongoQueryBuilder()
-      .withRequest(req)
-      .build()
+router.get('/pomodoro', function(req,res){
+  var mongoQuery = PomodoroMongoQueryBuilder()
+    .withRequest(req)
+    .build()
 
-    Pomodoro.find(mongoQuery, function(err,pomodori){
-      if( err ){
-        return res.sendStatus(500)
-      }
-      res.json(pomodori)
-    })
+  Pomodoro.find(mongoQuery, function(err,pomodori){
+    if( err ){
+      return res.sendStatus(500)
+    }
+    res.json(pomodori)
   })
+})
 
   router.get('/pomodoro/:id', function(req,res){
     try {
-      new BSON.ObjectID(req.params.id)
+      new ObjectID(req.params.id)
     }catch(e){
       return res.sendStatus(404)
     }
