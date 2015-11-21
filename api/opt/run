@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR=$(dirname `readlink -f $0`)
+PROJECT_DIR=$(readlink -f $SCRIPT_DIR/../../)
+if [ "$PROJECT_DIR" = "/" ]; then
+  PROJECT_DIR="/pomodoro.cc"
+fi
+
+ENV="$1"
+
+docker run --name pomodoro-api \
+  --restart=always \
+  --detach=true \
+  --env ENV="$ENV" \
+  --volume $PROJECT_DIR/credentials.json:/credentials.json \
+  --volume $PROJECT_DIR/shared:/shared \
+  --link pomodoro-api-sessions:pomodoro-api-sessions \
+  --link pomodoro-api-db:pomodoro-api-db \
+  christianfei/pomodoro-api
