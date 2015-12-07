@@ -1,0 +1,56 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(dirname `readlink -f $0`)
+PROJECT_DIR=$(readlink -f $SCRIPT_DIR/../../)
+if [ "$PROJECT_DIR" = "/" ]; then
+  PROJECT_DIR="/pomodoro.cc"
+fi
+
+id_for_container(){
+  CONTAINER="$1\s*$"
+  CONTAINER_ID="$(docker ps -a | grep "$CONTAINER" | awk '{print $1}')"
+  echo $CONTAINER_ID
+}
+
+docker run --name pomodoro-api-db-test  --detach=true kiasaki/alpine-postgres:latest
+docker run --name pomodoro-auth-db-test --detach=true mongo:latest
+docker run --name pomodoro-auth-sessions-test --detach=true smebberson/alpine-redis
+docker run --name pomodoro-auth-test \
+  --detach=true \
+  --volume $PROJECT_DIR/credentials.json:/credentials.json \
+  --volume $PROJECT_DIR/shared:/shared \
+  --link pomodoro-auth-sessions-test:pomodoro-auth-sessions \
+  --link pomodoro-auth-db-test:pomodoro-auth-db \
+  christianfei/pomodoro-auth
+
+sleep 2
+docker run --rm \
+  --env MIX_ENV="test" \
+  --link pomodoro-api-db-test:pomodoro-api-db \
+  christianfei/pomodoro-api \
+  sh -c "mix ecto.create; mix ecto.migrate"
+
+TEST_COMMAND="mix test"
+
+if [ "$TRAVIS" == "true" ]; then
+  TEST_COMMAND="mix deps.get; $TEST_COMMAND"
+fi
+
+echo "--> executing: $TEST_COMMAND"
+
+docker run --rm \
+  --name pomodoro-api-test \
+  --env MIX_ENV="test" \
+  --link pomodoro-auth-test:pomodoro-auth \
+  --link pomodoro-api-db-test:pomodoro-api-db \
+  --volume $PROJECT_DIR/api:/app \
+  christianfei/pomodoro-api sh -c "$TEST_COMMAND"
+
+TEST_RESULT_CODE=$?
+
+docker rm -f pomodoro-auth-test
+docker rm -f pomodoro-auth-db-test
+docker rm -f pomodoro-auth-sessions-test
+docker rm -f pomodoro-api-db-test
+
+exit $TEST_RESULT_CODE
