@@ -11,10 +11,15 @@ defmodule Api.Router.Pomodoros do
   get "/" do
     user = conn.assigns[:user]
     user_id = Dict.get(user, "id")
-    IO.inspect conn
-    fetch_query_params(conn)
-    IO.inspect conn
-    pomodoros = Repo.pomodoros_for(user_id)
+    conn = fetch_query_params(conn)
+    query_params = conn.query_params
+    IO.inspect query_params
+    pomodoros = nil
+    if Map.has_key?(query_params, "day") do
+      pomodoros = Repo.daily_pomodoros_for(user_id, Map.get(query_params, "day"))
+    else
+      pomodoros = Repo.pomodoros_for(user_id)
+    end
     send_resp(conn, 200, Poison.encode!(pomodoros))
   end
 

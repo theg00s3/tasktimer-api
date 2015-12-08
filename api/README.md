@@ -41,5 +41,5 @@ You can authenticate your request simply by providing the Header "Cookie: author
 e.g with curl:
 
 ```
-curl localhost:6000/api/pomodoros -H "Cookie: authorized"
+curl localhost:4000/api/pomodoros -H "Cookie: authorized"
 ```

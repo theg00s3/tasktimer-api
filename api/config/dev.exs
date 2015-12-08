@@ -7,5 +7,7 @@ config :api, Api.Repo,
   password: "postgres",
   hostname: "localhost"
 
+
 config :api,
+  http_port: 4000,
   authorizer:     Api.FakeAuthorizer

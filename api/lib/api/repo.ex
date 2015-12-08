@@ -6,6 +6,43 @@ defmodule Api.Repo do
   alias Api.Models.UserPomodoro
   alias Api.Models.UserPomodoroTask
 
+  # pomodoros
+  def create_pomodoro_for(user_id, pomodoro) do
+    case insert pomodoro do
+      {:ok, pomodoro} ->
+        insert %UserPomodoro{user_id: user_id, pomodoro_id: pomodoro.id}
+        {:ok, pomodoro}
+      {:error, changeset}  ->
+        {:error, changeset}
+    end
+  end
+
+  def daily_pomodoros_for(user_id, day) do
+    Pomodoro.daily(day)
+    |> UserPomodoro.for_user(user_id)
+    |> all
+  end
+  def pomodoros_for(user_id) do
+    Pomodoro.all
+    |> UserPomodoro.for_user(user_id)
+    |> all
+  end
+
+  def pomodoro_for(user_id, pomodoro_id) do
+    Pomodoro.get(pomodoro_id)
+    |> UserPomodoro.for_user(user_id)
+    |> one
+  end
+
+  def update_pomodoros_for(user_id, pomodoro) do
+    update pomodoro
+  end
+
+
+
+
+
+  # tasks
   def tasks_for(user_id) do
     PomodoroTask.in_progress
     |> UserPomodoroTask.for_user(user_id)
@@ -32,29 +69,4 @@ defmodule Api.Repo do
     update task
   end
 
-  def create_pomodoro_for(user_id, pomodoro) do
-    case insert pomodoro do
-      {:ok, pomodoro} ->
-        insert %UserPomodoro{user_id: user_id, pomodoro_id: pomodoro.id}
-        {:ok, pomodoro}
-      {:error, changeset}  ->
-        {:error, changeset}
-    end
-  end
-
-  def pomodoros_for(user_id) do
-    Pomodoro.all
-    |> UserPomodoro.for_user(user_id)
-    |> all
-  end
-
-  def pomodoro_for(user_id, pomodoro_id) do
-    Pomodoro.get(pomodoro_id)
-    |> UserPomodoro.for_user(user_id)
-    |> one
-  end
-
-  def update_pomodoros_for(user_id, pomodoro) do
-    update pomodoro
-  end
 end

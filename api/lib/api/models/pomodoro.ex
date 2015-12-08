@@ -5,6 +5,7 @@ defmodule Api.Models.Pomodoro do
 
   @required_fields ~w(type minutes started_at)
   @optional_fields ~w(cancelled_at)
+  @one_day {60*60*24/1000000, 0, 0}
 
   schema "pomodoro" do
     field :type,         :string
@@ -21,6 +22,25 @@ defmodule Api.Models.Pomodoro do
   def get(pomodoro_id) do
     from p in all,
       where: p.id == ^pomodoro_id
+  end
+  def daily(day) do
+    {beginning_day, ending_day} = get_date_range(day)
+    from p in all,
+      where: p.started_at >= ^beginning_day,
+      where: p.started_at < ^ending_day
+  end
+
+
+  defp get_date_range(day) do
+    beginning_day = Timex.DateFormat.parse!(day, "{YYYY}/{0M}/{0D}")
+    ending_day = Timex.Date.add(beginning_day, @one_day)
+    beginning_day = beginning_day
+      |> Timex.Date.Convert.to_erlang_datetime
+      |> Ecto.DateTime.from_erl
+    ending_day = ending_day
+      |> Timex.Date.Convert.to_erlang_datetime
+      |> Ecto.DateTime.from_erl
+    {beginning_day, ending_day}
   end
 
 
