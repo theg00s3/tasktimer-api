@@ -8,7 +8,7 @@ config :api, Api.Repo,
   hostname: "pomodoro-api-db"
 
 config :api,
-  http_port: 6000,
+  http_port: 4000,
   authorizer_url: "http://pomodoro-auth:6000/auth/info",
   authorizer:     Api.Authorizer
 

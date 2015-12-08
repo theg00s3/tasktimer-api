@@ -9,5 +9,4 @@ config :api, Api.Repo,
 
 
 config :api,
-  http_port: 4000,
   authorizer:     Api.FakeAuthorizer
