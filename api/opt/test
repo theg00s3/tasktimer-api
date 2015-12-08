@@ -23,7 +23,7 @@ docker run --name pomodoro-auth-test \
   --link pomodoro-auth-db-test:pomodoro-auth-db \
   christianfei/pomodoro-auth
 
-sleep 2
+sleep 5
 docker run --rm \
   --env MIX_ENV="test" \
   --link pomodoro-api-db-test:pomodoro-api-db \
