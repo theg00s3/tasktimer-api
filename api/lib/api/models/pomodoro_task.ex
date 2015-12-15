@@ -19,7 +19,8 @@ defmodule Api.Models.PomodoroTask do
   end
   def in_progress do
     from pt in all,
-      where: pt.deleted == false
+      where: pt.deleted == false,
+      order_by: pt.completed
   end
   def get(pomodoro_task_id) do
     from pt in all,
