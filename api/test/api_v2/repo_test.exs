@@ -21,8 +21,8 @@ defmodule Api.Repo.Test do
   end
 
   # tasks
-  test "#create_pomodoro_task_for" do
-    {:ok, _pomodoro_task} = Repo.create_pomodoro_task_for(@user_id, @pomodoro_task)
+  test "#create_task_for" do
+    {:ok, _pomodoro_task} = Repo.create_task_for(@user_id, @pomodoro_task)
   end
 
   test "#tasks_for" do
@@ -31,16 +31,31 @@ defmodule Api.Repo.Test do
     assert Repo.tasks_for(@user_id) == [pomodoro_task]
   end
 
+  test "#daily_completed_tasks_for" do
+    today_dt = Timex.Date.universal
+    tomorrow_dt = Timex.Date.add(today_dt, {60*60*24/1000000, 0, 0})
+    today = today_dt |> Timex.DateFormat.format!("{YYYY}/{0M}/{0D}")
+    tomorrow = tomorrow_dt |> Timex.DateFormat.format!("{YYYY}/{0M}/{0D}")
+    assert Repo.daily_completed_tasks_for(@user_id, today) == []
+    {:ok, pomodoro_task} = create_pomodoro_task
+    assert Repo.daily_completed_tasks_for(@user_id, today) == []
+    assert Repo.daily_completed_tasks_for(@user_id, tomorrow) == []
+    updated_pomodoro_task = PomodoroTask.changeset(pomodoro_task, %{"completed" => true})
+    {:ok, pomodoro_task} = Repo.update_task_for(@user_id, updated_pomodoro_task)
+    assert Repo.daily_completed_tasks_for(@user_id, today) == [pomodoro_task]
+    assert Repo.daily_completed_tasks_for(@user_id, tomorrow) == []
+  end
+
   test "#task_for" do
     assert Repo.task_for(@user_id, 0) == nil
     {:ok, pomodoro_task} = create_pomodoro_task
     assert Repo.task_for(@user_id, pomodoro_task.id) == pomodoro_task
   end
 
-  test "#update_pomodoro_task_for" do
+  test "#update_task_for" do
     {:ok, pomodoro_task} = create_pomodoro_task
-    updated_pomodoro_task = PomodoroTask.changeset(pomodoro_task, %{text: @updated_text, completed: true})
-    Repo.update_pomodoro_task_for(@user_id, updated_pomodoro_task)
+    updated_pomodoro_task = PomodoroTask.changeset(pomodoro_task, %{"text" => @updated_text, "completed" => true})
+    Repo.update_task_for(@user_id, updated_pomodoro_task)
     updated_pomodoro_task_in_db = Repo.task_for(@user_id, pomodoro_task.id)
     assert updated_pomodoro_task_in_db.text == @updated_text
     assert updated_pomodoro_task_in_db.completed_at
@@ -71,10 +86,11 @@ defmodule Api.Repo.Test do
   end
 
   @tag :skip
-  test "#update_pomodoros_for" do
+  test "#update_pomodoro_for" do
     {:ok, pomodoro} = create_pomodoro
-    updated_pomodoro = Pomodoro.changeset(pomodoro, %{cancelled_at: pomodoro.started_at})
-    Repo.update_pomodoros_for(@user_id, updated_pomodoro)
+    updated_pomodoro = Pomodoro.changeset(pomodoro, %{cancelled_at: Ecto.DateTime.local})
+    # fails because `cancelled_at` must be a timestamp after `started_at`
+    {:ok, pomodoro} = Repo.update_pomodoro_for(@user_id, updated_pomodoro)
     updated_pomodoro_in_db = Repo.pomodoro_for(@user_id, pomodoro.id)
     assert updated_pomodoro_in_db.cancelled_at == pomodoro.started_at
   end
@@ -84,6 +100,6 @@ defmodule Api.Repo.Test do
   end
 
   defp create_pomodoro_task do
-    Repo.create_pomodoro_task_for(@user_id, @pomodoro_task)
+    Repo.create_task_for(@user_id, @pomodoro_task)
   end
 end

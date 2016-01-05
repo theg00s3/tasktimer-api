@@ -34,7 +34,7 @@ defmodule Api.Repo do
     |> one
   end
 
-  def update_pomodoros_for(user_id, pomodoro) do
+  def update_pomodoro_for(user_id, pomodoro) do
     update pomodoro
   end
 
@@ -49,13 +49,20 @@ defmodule Api.Repo do
     |> all
   end
 
+  def daily_completed_tasks_for(user_id, day) do
+    PomodoroTask.daily(day)
+    |> PomodoroTask.completed
+    |> UserPomodoroTask.for_user(user_id)
+    |> all
+  end
+
   def task_for(user_id, task_id) do
     PomodoroTask.get(task_id)
     |> UserPomodoroTask.for_user(user_id)
     |> one
   end
 
-  def create_pomodoro_task_for(user_id, task) do
+  def create_task_for(user_id, task) do
     case insert task do
       {:ok, pomodoro_task} ->
         insert %UserPomodoroTask{user_id: user_id, pomodoro_task_id: pomodoro_task.id}
@@ -65,7 +72,7 @@ defmodule Api.Repo do
     end
   end
 
-  def update_pomodoro_task_for(user_id, task) do
+  def update_task_for(user_id, task) do
     update task
   end
 

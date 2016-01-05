@@ -19,15 +19,21 @@ defmodule Api.Models.Pomodoro do
   def all do
     from p in Pomodoro
   end
-  def get(pomodoro_id) do
-    from p in all,
+  def get(query, pomodoro_id) do
+    from p in query,
       where: p.id == ^pomodoro_id
   end
-  def daily(day) do
+  def get(pomodoro_id) do
+    get(all(), pomodoro_id)
+  end
+  def daily(query, day) do
     {beginning_day, ending_day} = get_date_range(day)
-    from p in all,
+    from p in query,
       where: p.started_at >= ^beginning_day,
       where: p.started_at < ^ending_day
+  end
+  def daily(day) do
+    daily(all(), day)
   end
 
 
