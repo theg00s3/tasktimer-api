@@ -4,11 +4,12 @@ defmodule Api.Models.PomodoroTask do
   alias Api.Models.PomodoroTask
 
   @required_fields ~w(text)
-  @optional_fields ~w(completed deleted)
+  @optional_fields ~w(completed completed_at deleted)
 
   schema "pomodoro_task" do
     field :text,         :string
     field :completed,    :boolean, default: false
+    field :completed_at, Ecto.DateTime
     field :deleted,      :boolean, default: false
     timestamps
   end
@@ -28,7 +29,14 @@ defmodule Api.Models.PomodoroTask do
   end
 
   # changeset
-  def changeset(model, params \\ :empty) do
+  def changeset(model, params) do
+    if Map.has_key?(params, :completed) do
+      if params.completed do
+        params = Map.put params, :completed_at, Ecto.DateTime.local
+      else
+        params = Map.delete params, :completed_at
+      end
+    end
     cast(model, params, @required_fields, @optional_fields)
   end
 end

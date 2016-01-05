@@ -12,7 +12,6 @@ defmodule Api.Router.Tasks do
     user = conn.assigns[:user]
     user_id = Dict.get(user, "id")
     tasks = Repo.tasks_for(user_id)
-    IO.inspect tasks
     send_resp(conn, 200, Poison.encode!(tasks))
   end
 
@@ -20,16 +19,13 @@ defmodule Api.Router.Tasks do
     user = conn.assigns[:user]
     user_id = Dict.get(user, "id")
     task = Repo.task_for(user_id, task_id)
-    IO.inspect task
     send_resp(conn, 200, Poison.encode!(task))
   end
 
   post "/" do
     user = conn.assigns[:user]
     user_id = Dict.get(user, "id")
-    IO.inspect conn.params
     changeset = PomodoroTask.changeset(%PomodoroTask{}, conn.params)
-    IO.inspect changeset
     {:ok, pomodoro_task} = Repo.create_pomodoro_task_for(user_id, changeset)
     send_resp(conn, 201, Poison.encode!(pomodoro_task))
   end

@@ -39,10 +39,11 @@ defmodule Api.Repo.Test do
 
   test "#update_pomodoro_task_for" do
     {:ok, pomodoro_task} = create_pomodoro_task
-    updated_pomodoro_task = PomodoroTask.changeset(pomodoro_task, %{text: @updated_text})
+    updated_pomodoro_task = PomodoroTask.changeset(pomodoro_task, %{text: @updated_text, completed: true})
     Repo.update_pomodoro_task_for(@user_id, updated_pomodoro_task)
     updated_pomodoro_task_in_db = Repo.task_for(@user_id, pomodoro_task.id)
     assert updated_pomodoro_task_in_db.text == @updated_text
+    assert updated_pomodoro_task_in_db.completed_at
   end
 
 

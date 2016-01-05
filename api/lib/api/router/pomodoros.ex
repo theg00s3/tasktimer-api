@@ -13,7 +13,6 @@ defmodule Api.Router.Pomodoros do
     user_id = Dict.get(user, "id")
     conn = fetch_query_params(conn)
     query_params = conn.query_params
-    IO.inspect query_params
     pomodoros = nil
     if Map.has_key?(query_params, "day") do
       pomodoros = Repo.daily_pomodoros_for(user_id, Map.get(query_params, "day"))
