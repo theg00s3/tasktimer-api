@@ -21,7 +21,7 @@ defmodule Api.Models.PomodoroTask do
   end
   def in_progress(query) do
     from pt in query,
-      where: pt.deleted == false,
+      where: pt.completed == false,
       order_by: pt.completed
   end
   def in_progress() do
