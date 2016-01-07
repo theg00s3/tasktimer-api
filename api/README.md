@@ -7,23 +7,6 @@ mix deps.get
 ---
 
 
-# Development inside vagrant
-
-I suggest to develop and test inside vagrant and docker.
-To do so, simply run (inside vagrant)
-
-```
-/pomodoro.cc/opt/docker.restart DEV
-```
-
----
-
-Run the tests (inside vagrant) with
-
-```
-/pomodoro.cc/api/opt/test
-```
-
 
 # Development on own host machine
 
@@ -42,4 +25,23 @@ e.g with curl:
 
 ```
 curl localhost:4000/api/pomodoros -H "Cookie: authorized"
+```
+
+
+
+# Development inside vagrant
+
+I suggest to develop and test inside vagrant and docker.
+To do so, simply run (inside vagrant)
+
+```
+/pomodoro.cc/opt/docker.restart DEV
+```
+
+---
+
+Run the tests (inside vagrant) with
+
+```
+/pomodoro.cc/api/opt/test
 ```
