@@ -19,14 +19,16 @@ defmodule Api.Models.PomodoroTask do
   def all do
     from pt in PomodoroTask
   end
+
   def in_progress(query) do
     from pt in query,
       where: pt.deleted == false,
-      order_by: pt.completed
+      order_by: pt.updated_at
   end
   def in_progress() do
     in_progress(all())
   end
+
   def completed(query) do
     from pt in query,
       where: pt.completed == true,
@@ -35,6 +37,7 @@ defmodule Api.Models.PomodoroTask do
   def completed do
     completed(all())
   end
+
   def daily(query, day) do
     {beginning_day, ending_day} = get_date_range(day)
     from pt in query,
@@ -44,6 +47,7 @@ defmodule Api.Models.PomodoroTask do
   def daily(day) do
     daily(all(), day)
   end
+
   def get(query, pomodoro_task_id) do
     from pt in query,
       where: pt.id == ^pomodoro_task_id
