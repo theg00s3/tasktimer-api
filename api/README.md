@@ -4,7 +4,22 @@ Install the dependencies with
 mix deps.get
 ```
 
+# Development inside vagrant
+
+I suggest to develop and test inside vagrant and docker.
+To do so, simply run (inside vagrant) to restart the services
+
+```
+/pomodoro.cc/opt/docker.restart DEV
+```
+
 ---
+
+Run the tests (inside vagrant) with
+
+```
+/pomodoro.cc/api/opt/test
+```
 
 
 
@@ -13,6 +28,8 @@ mix deps.get
 The **MIX_ENV** in this case is `dev`, so be sure to set it.
 
 The api connects to your local Postgres instance.
+
+Setup postgres with a `postgres` role: `CREATE ROLE postgres SUPERUSER LOGIN;`
 
 Initialize the db by running `mix do ecto.create, ecto.migrate`
 
@@ -27,21 +44,10 @@ e.g with curl:
 curl localhost:4000/api/pomodoros -H "Cookie: authorized"
 ```
 
+### tests
 
-
-# Development inside vagrant
-
-I suggest to develop and test inside vagrant and docker.
-To do so, simply run (inside vagrant)
+run the tests with
 
 ```
-/pomodoro.cc/opt/docker.restart DEV
-```
-
----
-
-Run the tests (inside vagrant) with
-
-```
-/pomodoro.cc/api/opt/test
+env MIX_ENV=dev mix test
 ```

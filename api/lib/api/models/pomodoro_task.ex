@@ -4,7 +4,7 @@ defmodule Api.Models.PomodoroTask do
   alias Api.Models.PomodoroTask
 
   @required_fields ~w(text)
-  @optional_fields ~w(completed completed_at deleted)
+  @optional_fields ~w(completed completed_at deleted order)
   @one_day {60*60*24/1000000, 0, 0}
 
   schema "pomodoro_task" do
@@ -12,6 +12,7 @@ defmodule Api.Models.PomodoroTask do
     field :completed,    :boolean, default: false
     field :completed_at, Ecto.DateTime
     field :deleted,      :boolean, default: false
+    field :order,        :integer
     timestamps
   end
 
