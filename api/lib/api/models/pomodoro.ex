@@ -4,21 +4,26 @@ defmodule Api.Models.Pomodoro do
   alias Api.Models.Pomodoro
 
   @required_fields ~w(type minutes started_at)
-  @optional_fields ~w(cancelled_at)
+  @optional_fields ~w(cancelled_at finished)
   @one_day {60*60*24/1000000, 0, 0}
 
   schema "pomodoro" do
     field :type,         :string
     field :minutes,      :integer
+    field :finished,     :boolean, default: false
     field :started_at,   Ecto.DateTime
     field :cancelled_at, Ecto.DateTime
     timestamps
   end
 
+
+
+
   # query api
   def all do
     from p in Pomodoro
   end
+
   def get(query, pomodoro_id) do
     from p in query,
       where: p.id == ^pomodoro_id
@@ -26,6 +31,7 @@ defmodule Api.Models.Pomodoro do
   def get(pomodoro_id) do
     get(all(), pomodoro_id)
   end
+
   def daily(query, day) do
     {beginning_day, ending_day} = get_date_range(day)
     from p in query,
@@ -34,6 +40,24 @@ defmodule Api.Models.Pomodoro do
   end
   def daily(day) do
     daily(all(), day)
+  end
+
+  def obsolete(query \\ all()) do
+    obsolete_started_at_5 = obsolete_started_at_for_minutes(5)
+    obsolete_started_at_15 = obsolete_started_at_for_minutes(15)
+    obsolete_started_at_25 = obsolete_started_at_for_minutes(25)
+
+    from p in query,
+      where: ((p.started_at < ^obsolete_started_at_5 and p.minutes == 5)
+              or (p.started_at < ^obsolete_started_at_15 and p.minutes == 15)
+              or (p.started_at < ^obsolete_started_at_25 and p.minutes == 25))
+            and (p.finished == false)
+  end
+
+  defp obsolete_started_at_for_minutes(minutes) do
+    {:ok, obsolete_started_at} = Timex.Date.subtract(Timex.Date.universal, {minutes*60/1000000, 0, 0})
+                                 |> Timex.Ecto.DateTime.dump
+    obsolete_started_at
   end
 
 
@@ -48,6 +72,14 @@ defmodule Api.Models.Pomodoro do
       |> Ecto.DateTime.from_erl
     {beginning_day, ending_day}
   end
+
+
+
+
+
+
+
+
 
 
   # changeset
@@ -68,7 +100,6 @@ defmodule Api.Models.Pomodoro do
       end
     end)
   end
-
 
   defp validate_minutes(changeset) do
     validate_change(changeset, :minutes, fn (_, minutes) ->
