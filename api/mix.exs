@@ -26,7 +26,7 @@ defmodule Api.Mixfile do
       {:httpoison, "~> 0.8.0"},
       {:poison, "~> 1.5"},
       {:exrm, "~> 0.19.9"},
-      {:timex, "~> 1.0.0-rc3"},
+      {:timex, "~> 1.0.0-rc3"}
     ]
   end
 end
