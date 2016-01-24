@@ -9,9 +9,7 @@ defmodule Api.Router.Tasks do
   plug :dispatch
 
   get "/" do
-    user = conn.assigns[:user]
-    user_id = Dict.get(user, "id")
-    user_id = Integer.to_string(user_id)
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
     conn = fetch_query_params(conn)
     query = conn.query_params
     if Map.has_key?(query, "completed") && Map.has_key?(query, "day") do
@@ -23,26 +21,20 @@ defmodule Api.Router.Tasks do
   end
 
   get "/:task_id" do
-    user = conn.assigns[:user]
-    user_id = Dict.get(user, "id")
-    user_id = Integer.to_string(user_id)
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
     task = Repo.task_for(user_id, task_id)
     send_resp(conn, 200, Poison.encode!(task))
   end
 
   post "/" do
-    user = conn.assigns[:user]
-    user_id = Dict.get(user, "id")
-    user_id = Integer.to_string(user_id)
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
     changeset = PomodoroTask.changeset(%PomodoroTask{}, conn.params)
     {:ok, pomodoro_task} = Repo.create_task_for(user_id, changeset)
     send_resp(conn, 201, Poison.encode!(pomodoro_task))
   end
 
   put "/:task_id" do
-    user = conn.assigns[:user]
-    user_id = Dict.get(user, "id")
-    user_id = Integer.to_string(user_id)
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
     old_task = Repo.task_for(user_id, task_id)
     updated_task = PomodoroTask.changeset(old_task, conn.params)
     {:ok, pomodoro_task} = Repo.update_task_for(user_id, updated_task)

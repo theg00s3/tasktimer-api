@@ -9,9 +9,7 @@ defmodule Api.Router.Pomodoros do
   plug :dispatch
 
   get "/" do
-    user = conn.assigns[:user]
-    user_id = Dict.get(user, "id")
-    user_id = Integer.to_string(user_id)
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
     conn = fetch_query_params(conn)
     query_params = conn.query_params
     response = case query_params do
@@ -23,18 +21,14 @@ defmodule Api.Router.Pomodoros do
   end
 
   post "/" do
-    user = conn.assigns[:user]
-    user_id = Dict.get(user, "id")
-    user_id = Integer.to_string(user_id)
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
     changeset = Pomodoro.changeset(%Pomodoro{}, conn.params)
     {:ok, pomodoro} = Repo.create_pomodoro_for(user_id, changeset)
     send_resp(conn, 201, Poison.encode!(pomodoro))
   end
 
   put "/:pomodoro_id" do
-    user = conn.assigns[:user]
-    user_id = Dict.get(user, "id")
-    user_id = Integer.to_string(user_id)
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
     old_pomodoro = Repo.pomodoro_for(user_id, pomodoro_id)
     updated_pomodoro = Pomodoro.changeset(old_pomodoro, conn.params)
     {:ok, pomodoro} = Repo.update_pomodoro_for(user_id, updated_pomodoro)
