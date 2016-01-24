@@ -42,6 +42,13 @@ defmodule Api.Models.Pomodoro do
     daily(all(), day)
   end
 
+  def unfinished(query \\ all()) do
+    from p in query,
+      where: (p.finished == false),
+      limit: 1,
+      order_by: [desc: :started_at]
+  end
+
   def obsolete(query \\ all()) do
     obsolete_started_at_5 = obsolete_started_at_for_minutes(5)
     obsolete_started_at_15 = obsolete_started_at_for_minutes(15)

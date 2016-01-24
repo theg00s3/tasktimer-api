@@ -13,13 +13,12 @@ defmodule Api.Router.Pomodoros do
     user_id = Dict.get(user, "id")
     conn = fetch_query_params(conn)
     query_params = conn.query_params
-    pomodoros = nil
-    if Map.has_key?(query_params, "day") do
-      pomodoros = Repo.daily_pomodoros_for(user_id, Map.get(query_params, "day"))
-    else
-      pomodoros = Repo.pomodoros_for(user_id)
+    response = case query_params do
+      %{"day" => day}       -> Repo.daily_pomodoros_for(user_id, day)
+      %{"unfinished" => _}  -> Repo.unfinished_pomodoro_for(user_id)
+      _                     -> Repo.pomodoros_for(user_id)
     end
-    send_resp(conn, 200, Poison.encode!(pomodoros))
+    send_resp(conn, 200, Poison.encode!(response))
   end
 
   post "/" do

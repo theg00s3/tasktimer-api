@@ -79,6 +79,18 @@ defmodule Api.Repo.Test do
     assert Repo.pomodoro_for(@user_id, pomodoro.id) == pomodoro
   end
 
+  test "#unfinished_pomodoro_for" do
+    assert Repo.unfinished_pomodoro_for(@user_id) == nil
+
+    {:ok, pomodoro} = create_pomodoro
+
+    assert Repo.unfinished_pomodoro_for(@user_id) == pomodoro
+
+    Repo.complete_pomodoro(pomodoro)
+
+    assert Repo.unfinished_pomodoro_for(@user_id) == nil
+  end
+
   test "#daily_pomodoros_for" do
     {today, tomorrow} = get_today_and_tomorrow
     assert Repo.daily_pomodoros_for(@user_id, today) == []
