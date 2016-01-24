@@ -2,7 +2,6 @@ defmodule Api.Router.Tasks do
   use Plug.Router
 
   alias Api.Repo
-  alias Api.Models.Pomodoro
   alias Api.Models.PomodoroTask
 
   plug :match
@@ -12,10 +11,9 @@ defmodule Api.Router.Tasks do
     user_id = Utils.extract_user_id_from(conn.assigns[:user])
     conn = fetch_query_params(conn)
     query = conn.query_params
-    if Map.has_key?(query, "completed") && Map.has_key?(query, "day") do
-      tasks = Repo.daily_completed_tasks_for(user_id, Map.get(query, "day"))
-    else
-      tasks = Repo.tasks_for(user_id)
+    tasks = case query do
+      %{"completed" => _, "day" => day } -> Repo.daily_completed_tasks_for(user_id, day)
+      _ -> Repo.tasks_for(user_id)
     end
     send_resp(conn, 200, Poison.encode!(tasks))
   end

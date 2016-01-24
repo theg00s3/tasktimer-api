@@ -3,7 +3,6 @@ defmodule Api.Router.Pomodoros do
 
   alias Api.Repo
   alias Api.Models.Pomodoro
-  alias Api.Models.PomodoroTask
 
   plug :match
   plug :dispatch
