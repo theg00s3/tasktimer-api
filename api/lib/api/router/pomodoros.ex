@@ -11,6 +11,7 @@ defmodule Api.Router.Pomodoros do
   get "/" do
     user = conn.assigns[:user]
     user_id = Dict.get(user, "id")
+    user_id = Integer.to_string(user_id)
     conn = fetch_query_params(conn)
     query_params = conn.query_params
     response = case query_params do
@@ -24,6 +25,7 @@ defmodule Api.Router.Pomodoros do
   post "/" do
     user = conn.assigns[:user]
     user_id = Dict.get(user, "id")
+    user_id = Integer.to_string(user_id)
     changeset = Pomodoro.changeset(%Pomodoro{}, conn.params)
     {:ok, pomodoro} = Repo.create_pomodoro_for(user_id, changeset)
     send_resp(conn, 201, Poison.encode!(pomodoro))
@@ -32,6 +34,7 @@ defmodule Api.Router.Pomodoros do
   put "/:pomodoro_id" do
     user = conn.assigns[:user]
     user_id = Dict.get(user, "id")
+    user_id = Integer.to_string(user_id)
     old_pomodoro = Repo.pomodoro_for(user_id, pomodoro_id)
     updated_pomodoro = Pomodoro.changeset(old_pomodoro, conn.params)
     {:ok, pomodoro} = Repo.update_pomodoro_for(user_id, updated_pomodoro)

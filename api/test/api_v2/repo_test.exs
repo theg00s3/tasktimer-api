@@ -7,7 +7,7 @@ defmodule Api.Repo.Test do
   alias Api.Models.PomodoroTask
   alias Api.Models.UserPomodoroTask
 
-  @user_id 1
+  @user_id "1"
   @pomodoro %Pomodoro{minutes: 5, type: "break", started_at: Ecto.DateTime.utc}
   @pomodoro_task %PomodoroTask{text: "test pomodoro_task"}
   @updated_text "Rephrasing the task text"
