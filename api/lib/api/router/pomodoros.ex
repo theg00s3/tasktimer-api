@@ -28,4 +28,13 @@ defmodule Api.Router.Pomodoros do
     {:ok, pomodoro} = Repo.create_pomodoro_for(user_id, changeset)
     send_resp(conn, 201, Poison.encode!(pomodoro))
   end
+
+  put "/:pomodoro_id" do
+    user = conn.assigns[:user]
+    user_id = Dict.get(user, "id")
+    old_pomodoro = Repo.pomodoro_for(user_id, pomodoro_id)
+    updated_pomodoro = Pomodoro.changeset(old_pomodoro, conn.params)
+    {:ok, pomodoro} = Repo.update_pomodoro_for(user_id, updated_pomodoro)
+    send_resp(conn, 200, Poison.encode!(pomodoro))
+  end
 end

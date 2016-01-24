@@ -17,6 +17,7 @@ defmodule Api.Cron do
 
   def handle_info(:loop, state) do
     loop(state)
+    run_cron(state)
     {:noreply, state}
   end
 
