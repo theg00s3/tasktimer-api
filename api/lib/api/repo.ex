@@ -17,6 +17,11 @@ defmodule Api.Repo do
     end
   end
 
+  def complete_pomodoro(pomodoro) do
+    changeset = Pomodoro.changeset(pomodoro, %{finished: true})
+    update changeset
+  end
+
   def daily_pomodoros_for(user_id, day) do
     Pomodoro.daily(day)
     |> UserPomodoro.for_user(user_id)
@@ -36,6 +41,11 @@ defmodule Api.Repo do
 
   def update_pomodoro_for(user_id, pomodoro) do
     update pomodoro
+  end
+
+  def obsolete_pomodori do
+    Pomodoro.obsolete
+    |> all
   end
 
 

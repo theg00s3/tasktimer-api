@@ -74,7 +74,7 @@ defmodule Api.Models.PomodoroTask do
   def changeset(model, params) do
     if Map.has_key?(params, "completed") do
       if Map.get(params, "completed") do
-        params = Map.put params, "completed_at", Ecto.DateTime.local
+        params = Map.put params, "completed_at", Ecto.DateTime.utc
       else
         params = Map.delete params, "completed_at"
       end

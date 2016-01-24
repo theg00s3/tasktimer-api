@@ -2,11 +2,11 @@ defmodule Api.Models.Pomodoro.Test do
   use ExUnit.Case, async: true
 
   alias Api.Models.Pomodoro
-  @base_break %Pomodoro{type: "break", minutes: 5, started_at: Ecto.DateTime.local}
-  @base_pomodoro %Pomodoro{type: "pomodoro", minutes: 25, started_at: Ecto.DateTime.local}
+  @base_break %Pomodoro{type: "break", minutes: 5, started_at: Ecto.DateTime.utc}
+  @base_pomodoro %Pomodoro{type: "pomodoro", minutes: 25, started_at: Ecto.DateTime.utc}
 
   test "validates type" do
-    pomodoro = Pomodoro.changeset(%Pomodoro{}, %{type: "invalid_type", minutes: 5, started_at: Ecto.DateTime.local})
+    pomodoro = Pomodoro.changeset(%Pomodoro{}, %{type: "invalid_type", minutes: 5, started_at: Ecto.DateTime.utc})
     refute pomodoro.valid?
   end
 
@@ -25,6 +25,14 @@ defmodule Api.Models.Pomodoro.Test do
     invalid_pomodoro = Pomodoro.changeset(pomodoro, %{cancelled_at: TimeHelpers.datetime_for("00:30:00Z")})
     refute invalid_pomodoro.valid?
   end
+
+  @tag :skip
+  test "cannot change minutes and type" do
+    pomodoro = %Pomodoro{type: "pomodoro", minutes: 25, started_at: TimeHelpers.datetime_for("00:00:00Z")}
+    invalid_pomodoro = Pomodoro.changeset(pomodoro, %{minutes: 5, type: "break"})
+    refute invalid_pomodoro.valid?
+  end
+
 
 
   defp create_changeset_for(minutes, pomodoro, cb) do
