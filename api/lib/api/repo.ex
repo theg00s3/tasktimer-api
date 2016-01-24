@@ -39,6 +39,12 @@ defmodule Api.Repo do
     |> one
   end
 
+  def unfinished_pomodoro_for(user_id) do
+    Pomodoro.unfinished
+    |> UserPomodoro.for_user(user_id)
+    |> one
+  end
+
   def update_pomodoro_for(user_id, pomodoro) do
     update pomodoro
   end

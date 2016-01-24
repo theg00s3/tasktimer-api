@@ -7,7 +7,7 @@ defmodule Api.Repo.Test do
   alias Api.Models.PomodoroTask
   alias Api.Models.UserPomodoroTask
 
-  @user_id 1
+  @user_id "1"
   @pomodoro %Pomodoro{minutes: 5, type: "break", started_at: Ecto.DateTime.utc}
   @pomodoro_task %PomodoroTask{text: "test pomodoro_task"}
   @updated_text "Rephrasing the task text"
@@ -77,6 +77,18 @@ defmodule Api.Repo.Test do
     {:ok, pomodoro} = create_pomodoro
 
     assert Repo.pomodoro_for(@user_id, pomodoro.id) == pomodoro
+  end
+
+  test "#unfinished_pomodoro_for" do
+    assert Repo.unfinished_pomodoro_for(@user_id) == nil
+
+    {:ok, pomodoro} = create_pomodoro
+
+    assert Repo.unfinished_pomodoro_for(@user_id) == pomodoro
+
+    Repo.complete_pomodoro(pomodoro)
+
+    assert Repo.unfinished_pomodoro_for(@user_id) == nil
   end
 
   test "#daily_pomodoros_for" do

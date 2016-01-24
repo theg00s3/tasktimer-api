@@ -4,7 +4,7 @@ defmodule Api.Models.UserPomodoroTask do
   alias Api.Models.UserPomodoroTask
 
   schema "user_pomodoro_task" do
-    field :user_id,          :integer
+    field :user_id,          :string
     field :pomodoro_task_id, :integer
   end
 
