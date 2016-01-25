@@ -13,7 +13,7 @@ defmodule Api.Router do
   plug :dispatch
 
   forward "/api/pomodoros", to: Api.Router.Pomodoros
-  forward "/api/tasks", to: Api.Router.Tasks
+  forward "/api/todos", to: Api.Router.Todos
 
   match _ do
     send_resp(conn, 404, "404")

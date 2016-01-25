@@ -58,38 +58,38 @@ defmodule Api.Repo do
 
 
 
-  # tasks
-  def tasks_for(user_id) do
+  # todos
+  def todos_for(user_id) do
     Todo.in_progress
     |> UserTodo.for_user(user_id)
     |> all
   end
 
-  def daily_completed_tasks_for(user_id, day) do
+  def daily_completed_todos_for(user_id, day) do
     Todo.daily(day)
     |> Todo.completed
     |> UserTodo.for_user(user_id)
     |> all
   end
 
-  def task_for(user_id, task_id) do
-    Todo.get(task_id)
+  def todo_for(user_id, todo_id) do
+    Todo.get(todo_id)
     |> UserTodo.for_user(user_id)
     |> one
   end
 
-  def create_task_for(user_id, task) do
-    case insert task do
-      {:ok, todos} ->
-        insert %UserTodo{user_id: user_id, todo_id: todos.id}
-        {:ok, todos}
+  def create_todo_for(user_id, todo) do
+    case insert todo do
+      {:ok, todo} ->
+        insert %UserTodo{user_id: user_id, todo_id: todo.id}
+        {:ok, todo}
       {:error, changeset}  ->
         {:error, changeset}
     end
   end
 
-  def update_task_for(user_id, task) do
-    update task
+  def update_todo_for(user_id, todo) do
+    update todo
   end
 
 end
