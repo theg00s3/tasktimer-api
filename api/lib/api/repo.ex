@@ -2,9 +2,9 @@ defmodule Api.Repo do
   use Ecto.Repo, otp_app: :api
   import Ecto.Query
   alias Api.Models.Pomodoro
-  alias Api.Models.PomodoroTask
+  alias Api.Models.Todo
   alias Api.Models.UserPomodoro
-  alias Api.Models.UserPomodoroTask
+  alias Api.Models.UserTodo
 
   # pomodoros
   def create_pomodoro_for(user_id, pomodoro) do
@@ -60,29 +60,29 @@ defmodule Api.Repo do
 
   # tasks
   def tasks_for(user_id) do
-    PomodoroTask.in_progress
-    |> UserPomodoroTask.for_user(user_id)
+    Todo.in_progress
+    |> UserTodo.for_user(user_id)
     |> all
   end
 
   def daily_completed_tasks_for(user_id, day) do
-    PomodoroTask.daily(day)
-    |> PomodoroTask.completed
-    |> UserPomodoroTask.for_user(user_id)
+    Todo.daily(day)
+    |> Todo.completed
+    |> UserTodo.for_user(user_id)
     |> all
   end
 
   def task_for(user_id, task_id) do
-    PomodoroTask.get(task_id)
-    |> UserPomodoroTask.for_user(user_id)
+    Todo.get(task_id)
+    |> UserTodo.for_user(user_id)
     |> one
   end
 
   def create_task_for(user_id, task) do
     case insert task do
-      {:ok, pomodoro_task} ->
-        insert %UserPomodoroTask{user_id: user_id, pomodoro_task_id: pomodoro_task.id}
-        {:ok, pomodoro_task}
+      {:ok, todos} ->
+        insert %UserTodo{user_id: user_id, todo_id: todos.id}
+        {:ok, todos}
       {:error, changeset}  ->
         {:error, changeset}
     end

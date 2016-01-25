@@ -1,13 +1,13 @@
-defmodule Api.Models.PomodoroTask do
+defmodule Api.Models.Todo do
   use Ecto.Model
   import Ecto.Query
-  alias Api.Models.PomodoroTask
+  alias Api.Models.Todo
 
   @required_fields ~w(text)
   @optional_fields ~w(completed completed_at deleted order)
   @one_day {60*60*24/1000000, 0, 0}
 
-  schema "pomodoro_task" do
+  schema "todos" do
     field :text,         :string
     field :completed,    :boolean, default: false
     field :completed_at, Ecto.DateTime
@@ -18,7 +18,7 @@ defmodule Api.Models.PomodoroTask do
 
   # query api
   def all do
-    from pt in PomodoroTask
+    from pt in Todo
   end
 
   def in_progress(query) do
@@ -49,12 +49,12 @@ defmodule Api.Models.PomodoroTask do
     daily(all(), day)
   end
 
-  def get(query, pomodoro_task_id) do
+  def get(query, todo_id) do
     from pt in query,
-      where: pt.id == ^pomodoro_task_id
+      where: pt.id == ^todo_id
   end
-  def get(pomodoro_task_id) do
-    get(all(), pomodoro_task_id)
+  def get(todo_id) do
+    get(all(), todo_id)
   end
 
   defp get_date_range(day) do

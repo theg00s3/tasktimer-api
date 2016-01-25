@@ -4,17 +4,17 @@ defmodule Api.Repo.Test do
   alias Api.Repo
   alias Api.Models.Pomodoro
   alias Api.Models.UserPomodoro
-  alias Api.Models.PomodoroTask
-  alias Api.Models.UserPomodoroTask
+  alias Api.Models.Todo
+  alias Api.Models.UserTodo
 
   @user_id "1"
   @pomodoro %Pomodoro{minutes: 5, type: "break", started_at: Ecto.DateTime.utc}
-  @pomodoro_task %PomodoroTask{text: "test pomodoro_task"}
+  @todo %Todo{text: "test todos"}
   @updated_text "Rephrasing the task text"
 
   setup do
-    Repo.delete_all(UserPomodoroTask)
-    Repo.delete_all(PomodoroTask)
+    Repo.delete_all(UserTodo)
+    Repo.delete_all(Todo)
     Repo.delete_all(UserPomodoro)
     Repo.delete_all(Pomodoro)
     :ok
@@ -22,53 +22,53 @@ defmodule Api.Repo.Test do
 
   # tasks
   test "#create_task_for" do
-    {:ok, _pomodoro_task} = Repo.create_task_for(@user_id, @pomodoro_task)
+    {:ok, _todos} = Repo.create_task_for(@user_id, @todo)
   end
 
   test "#tasks_for" do
     assert Repo.tasks_for(@user_id) == []
-    {:ok, pomodoro_task} = create_pomodoro_task
-    assert Repo.tasks_for(@user_id) == [pomodoro_task]
+    {:ok, todos} = create_todos
+    assert Repo.tasks_for(@user_id) == [todos]
   end
 
   test "#daily_completed_tasks_for" do
     {today, tomorrow} = get_today_and_tomorrow
     assert Repo.daily_completed_tasks_for(@user_id, today) == []
 
-    {:ok, pomodoro_task} = create_pomodoro_task
+    {:ok, todos} = create_todos
     assert Repo.daily_completed_tasks_for(@user_id, today) == []
     assert Repo.daily_completed_tasks_for(@user_id, tomorrow) == []
 
-    updated_pomodoro_task = PomodoroTask.changeset(pomodoro_task, %{"completed" => true})
-    {:ok, pomodoro_task} = Repo.update_task_for(@user_id, updated_pomodoro_task)
-    assert Repo.daily_completed_tasks_for(@user_id, today) == [pomodoro_task]
+    updated_todos = Todo.changeset(todos, %{"completed" => true})
+    {:ok, todos} = Repo.update_task_for(@user_id, updated_todos)
+    assert Repo.daily_completed_tasks_for(@user_id, today) == [todos]
     assert Repo.daily_completed_tasks_for(@user_id, tomorrow) == []
   end
 
   test "#task_for" do
     assert Repo.task_for(@user_id, 0) == nil
 
-    {:ok, pomodoro_task} = create_pomodoro_task
+    {:ok, todos} = create_todos
 
-    assert Repo.task_for(@user_id, pomodoro_task.id) == pomodoro_task
+    assert Repo.task_for(@user_id, todos.id) == todos
   end
 
   test "#update_task_for" do
-    {:ok, pomodoro_task} = create_pomodoro_task
-    updated_pomodoro_task = PomodoroTask.changeset(pomodoro_task, %{"text" => @updated_text, "completed" => true})
+    {:ok, todos} = create_todos
+    updated_todos = Todo.changeset(todos, %{"text" => @updated_text, "completed" => true})
 
-    Repo.update_task_for(@user_id, updated_pomodoro_task)
+    Repo.update_task_for(@user_id, updated_todos)
 
-    updated_pomodoro_task_in_db = Repo.task_for(@user_id, pomodoro_task.id)
-    assert updated_pomodoro_task_in_db.text == @updated_text
-    assert updated_pomodoro_task_in_db.completed_at
+    updated_todos_in_db = Repo.task_for(@user_id, todos.id)
+    assert updated_todos_in_db.text == @updated_text
+    assert updated_todos_in_db.completed_at
   end
 
 
 
   # pomodoros
   test "#create_pomodoro_for" do
-    {:ok, _pomodoro_task} = Repo.create_pomodoro_for(@user_id, @pomodoro)
+    {:ok, _todos} = Repo.create_pomodoro_for(@user_id, @pomodoro)
   end
 
   test "#pomodoro_for" do
@@ -150,8 +150,8 @@ defmodule Api.Repo.Test do
     Repo.create_pomodoro_for(@user_id, obsolete_pomodoro)
   end
 
-  defp create_pomodoro_task do
-    Repo.create_task_for(@user_id, @pomodoro_task)
+  defp create_todos do
+    Repo.create_task_for(@user_id, @todo)
   end
 
   defp get_today_and_tomorrow do
