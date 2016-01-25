@@ -2,9 +2,6 @@ defmodule Api.Router do
   use Plug.Router
 
   alias Api.Authorizer.Plug, as: Authorizer
-  alias Api.Repo
-  alias Api.Models.Pomodoro
-  alias Api.Models.PomodoroTask
 
   plug Plug.Logger
   if Mix.env == :dev, do: use Plug.Debugger
@@ -16,7 +13,7 @@ defmodule Api.Router do
   plug :dispatch
 
   forward "/api/pomodoros", to: Api.Router.Pomodoros
-  forward "/api/tasks", to: Api.Router.Tasks
+  forward "/api/todos", to: Api.Router.Todos
 
   match _ do
     send_resp(conn, 404, "404")
