@@ -11,10 +11,9 @@ defmodule Api.Supervisor do
     children = [
       worker(Api.HttpServer,[]),
       worker(Api.Repo, []),
-      worker(Api.Cron, [fn ->
-        Api.Repo.obsolete_pomodori
-        |> Enum.each(&Api.Repo.complete_pomodoro(&1))
-      end, @every_minute]),
+      worker(Api.Cron, [
+        &Api.Repo.complete_obsolote_pomodori/0, @every_minute
+      ]),
     ]
     supervise(children, strategy: :one_for_one)
   end

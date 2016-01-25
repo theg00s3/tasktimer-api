@@ -1,6 +1,7 @@
 defmodule Api.Repo do
   use Ecto.Repo, otp_app: :api
   import Ecto.Query
+  alias Api.Repo
   alias Api.Models.Pomodoro
   alias Api.Models.Todo
   alias Api.Models.UserPomodoro
@@ -15,6 +16,11 @@ defmodule Api.Repo do
       {:error, changeset}  ->
         {:error, changeset}
     end
+  end
+
+  def complete_obsolote_pomodori do
+    Repo.obsolete_pomodori
+    |> Enum.each(&Repo.complete_pomodoro(&1))
   end
 
   def complete_pomodoro(pomodoro) do
