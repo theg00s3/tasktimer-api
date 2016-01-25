@@ -2,9 +2,6 @@ defmodule Api.Router do
   use Plug.Router
 
   alias Api.Authorizer.Plug, as: Authorizer
-  alias Api.Repo
-  alias Api.Models.Pomodoro
-  alias Api.Models.PomodoroTask
 
   plug Plug.Logger
   if Mix.env == :dev, do: use Plug.Debugger
