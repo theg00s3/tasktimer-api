@@ -12,7 +12,7 @@ defmodule Api.Supervisor do
       worker(Api.HttpServer,[]),
       worker(Api.Repo, []),
       worker(Api.Cron, [
-        &Api.Repo.complete_obsolote_pomodori/0, @every_minute
+        &Api.Repo.complete_obsolete_pomodori/0, @every_minute
       ]),
     ]
     supervise(children, strategy: :one_for_one)

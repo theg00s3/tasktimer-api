@@ -18,7 +18,7 @@ defmodule Api.Repo do
     end
   end
 
-  def complete_obsolote_pomodori do
+  def complete_obsolete_pomodori do
     Repo.obsolete_pomodori
     |> Enum.each(&Repo.complete_pomodoro(&1))
   end
