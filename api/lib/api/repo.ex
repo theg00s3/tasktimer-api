@@ -29,24 +29,24 @@ defmodule Api.Repo do
   end
 
   def daily_pomodoros_for(user_id, day) do
-    Pomodoro.daily(day)
+    Pomodoro.Query.daily(day)
     |> UserPomodoro.for_user(user_id)
     |> all
   end
   def pomodoros_for(user_id) do
-    Pomodoro.all
+    Pomodoro.Query.all
     |> UserPomodoro.for_user(user_id)
     |> all
   end
 
   def pomodoro_for(user_id, pomodoro_id) do
-    Pomodoro.get(pomodoro_id)
+    Pomodoro.Query.get(pomodoro_id)
     |> UserPomodoro.for_user(user_id)
     |> one
   end
 
   def unfinished_pomodoro_for(user_id) do
-    Pomodoro.unfinished
+    Pomodoro.Query.unfinished
     |> UserPomodoro.for_user(user_id)
     |> one
   end
@@ -56,7 +56,7 @@ defmodule Api.Repo do
   end
 
   def obsolete_pomodori do
-    Pomodoro.obsolete
+    Pomodoro.Query.obsolete
     |> all
   end
 
@@ -66,20 +66,20 @@ defmodule Api.Repo do
 
   # todos
   def todos_for(user_id) do
-    Todo.in_progress
+    Todo.Query.in_progress
     |> UserTodo.for_user(user_id)
     |> all
   end
 
   def daily_completed_todos_for(user_id, day) do
-    Todo.daily(day)
-    |> Todo.completed
+    Todo.Query.daily(day)
+    |> Todo.Query.completed
     |> UserTodo.for_user(user_id)
     |> all
   end
 
   def todo_for(user_id, todo_id) do
-    Todo.get(todo_id)
+    Todo.Query.get(todo_id)
     |> UserTodo.for_user(user_id)
     |> one
   end
