@@ -4,7 +4,6 @@ RUN apk --update add postgresql-client && rm -rf /var/cache/apk/*
 
 ADD mix.exs /app/mix.exs
 WORKDIR /app
-RUN echo "cache bust!"
 RUN yes | mix local.hex
 ENV MIX_ENV prod
 ENV HEX_EXPERIMENTAL_RESOLVER 1
