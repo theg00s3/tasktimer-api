@@ -25,7 +25,6 @@ docker run --name pomodoro-auth-sessions-test --detach=true smebberson/alpine-re
 docker run --name pomodoro-auth-test \
   --detach=true \
   --volume $PROJECT_DIR/credentials.json:/credentials.json \
-  --volume $PROJECT_DIR/shared:/shared \
   --link pomodoro-auth-sessions-test:pomodoro-auth-sessions \
   --link pomodoro-auth-db-test:pomodoro-auth-db \
   christianfei/pomodoro-auth
