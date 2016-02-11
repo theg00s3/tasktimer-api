@@ -15,4 +15,13 @@ defmodule Api.Router.Test do
 
     assert conn.status == 200
   end
+
+  @tag :skip
+  test "creates pomodoro" do
+    conn = conn(:post, "/api/pomodoros", "{\"type\":\"pomodoro\", \"minutes\": 25}")
+             |> put_req_header("cookie", "authorized")
+             |> Api.Router.call([])
+
+    assert conn.status == 200
+  end
 end
