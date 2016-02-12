@@ -33,4 +33,14 @@ defmodule Api.Router.Pomodoros do
     {:ok, pomodoro} = Repo.update_pomodoro_for(user_id, updated_pomodoro)
     send_resp(conn, 200, Poison.encode!(pomodoro))
   end
+
+  post "/:pomodoro_id/todos/:todo_id/associate" do
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
+    status_code = case Repo.associate_pomodoro_to_todo(user_id, pomodoro_id, todo_id) do
+      {:ok, _} -> 200
+      {:error, _} -> 400
+    end
+    send_resp(conn, status_code, "")
+  end
+
 end

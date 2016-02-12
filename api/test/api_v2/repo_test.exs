@@ -34,6 +34,14 @@ defmodule Api.Repo.Test do
     {:error, _} = Repo.associate_pomodoro_to_todo(@user_id, unexisting_id, unexisting_id)
   end
 
+  @tag :skip
+  test "#fails to associate_pomodoro_to_todo if already exists" do
+    {:ok, pomodoro} = Repo.create_pomodoro_for(@user_id, @pomodoro)
+    {:ok, todo} = Repo.create_todo_for(@user_id, @todo)
+    {:ok, _} = Repo.associate_pomodoro_to_todo(@user_id, pomodoro.id, todo.id)
+    {:error, _} = Repo.associate_pomodoro_to_todo(@user_id, pomodoro.id, todo.id)
+  end
+
   # todos
   test "#create_todo_for" do
     {:ok, todo} = Repo.create_todo_for(@user_id, @todo)
