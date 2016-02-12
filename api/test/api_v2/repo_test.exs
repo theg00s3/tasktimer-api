@@ -109,8 +109,8 @@ defmodule Api.Repo.Test do
 
     assert Repo.obsolete_pomodori() == [obsolete_pomodoro]
 
-    {:ok, x} = Repo.complete_pomodoro(pomodoro)
-    {:ok, y} = Repo.complete_pomodoro(obsolete_pomodoro)
+    {:ok, _} = Repo.complete_pomodoro(pomodoro)
+    {:ok, _} = Repo.complete_pomodoro(obsolete_pomodoro)
 
     assert Repo.obsolete_pomodori() == []
   end
