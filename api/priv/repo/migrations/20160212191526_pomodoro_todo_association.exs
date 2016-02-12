@@ -4,9 +4,8 @@ defmodule Api.Repo.Migrations.PomodoroTodoAssociation do
   def change do
     create table :pomodoro_todo do
       add :pomodoro_id,      :integer, required: true
-      add :user_id,          :integer, required: true
-      timestamps
+      add :todo_id,          :integer, required: true
     end
-    create unique_index(:pomodoro_todo, [:pomodoro_id, :user_id])
+    create unique_index(:pomodoro_todo, [:pomodoro_id, :todo_id])
   end
 end

@@ -2,6 +2,7 @@ defmodule Api.Repo.Test do
   use ExUnit.Case, async: false
 
   alias Api.Repo
+  alias Api.Models.PomodoroTodo
   alias Api.Models.Pomodoro
   alias Api.Models.UserPomodoro
   alias Api.Models.Todo
@@ -13,6 +14,7 @@ defmodule Api.Repo.Test do
   @updated_text "Rephrasing the todo text"
 
   setup do
+    Repo.delete_all(PomodoroTodo)
     Repo.delete_all(UserTodo)
     Repo.delete_all(Todo)
     Repo.delete_all(UserPomodoro)
@@ -20,9 +22,21 @@ defmodule Api.Repo.Test do
     :ok
   end
 
+  # pomodoro_todos
+  test "#associate_pomodoro_to_todo" do
+    {:ok, pomodoro} = Repo.create_pomodoro_for(@user_id, @pomodoro)
+    {:ok, todo} = Repo.create_todo_for(@user_id, @todo)
+    {:ok, _} = Repo.associate_pomodoro_to_todo(@user_id, pomodoro.id, todo.id)
+  end
+
+  test "#fails to associate_pomodoro_to_todo if id does not exist" do
+    unexisting_id = 0
+    {:error, _} = Repo.associate_pomodoro_to_todo(@user_id, unexisting_id, unexisting_id)
+  end
+
   # todos
   test "#create_todo_for" do
-    {:ok, _todos} = Repo.create_todo_for(@user_id, @todo)
+    {:ok, todo} = Repo.create_todo_for(@user_id, @todo)
   end
 
   test "#todos_for" do
@@ -55,13 +69,13 @@ defmodule Api.Repo.Test do
 
   test "#update_todo_for" do
     {:ok, todos} = create_todos
-    updated_todos = Todo.changeset(todos, %{"text" => @updated_text, "completed" => true})
+    todo_changeset = Todo.changeset(todos, %{"text" => @updated_text, "completed" => true})
 
-    Repo.update_todo_for(@user_id, updated_todos)
+    Repo.update_todo_for(@user_id, todo_changeset)
 
-    updated_todos_in_db = Repo.todo_for(@user_id, todos.id)
-    assert updated_todos_in_db.text == @updated_text
-    assert updated_todos_in_db.completed_at
+    saved_todo = Repo.todo_for(@user_id, todos.id)
+    assert saved_todo.text == @updated_text
+    assert saved_todo.completed_at
   end
 
 

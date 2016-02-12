@@ -14,5 +14,7 @@ defmodule Api.Models.PomodoroTodo do
   # changeset
   def changeset(model, params \\ :empty) do
     cast(model, params, @required_fields, @optional_fields)
+    |> foreign_key_constraint(:pomodoro_id)
+    |> foreign_key_constraint(:todo_id)
   end
 end
