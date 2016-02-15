@@ -23,7 +23,9 @@ defmodule Api.Router.Pomodoros do
     user_id = Utils.extract_user_id_from(conn.assigns[:user])
     changeset = Pomodoro.changeset(%Pomodoro{}, conn.params)
     {:ok, pomodoro} = Repo.create_pomodoro_for(user_id, changeset)
-    send_resp(conn, 201, Poison.encode!(pomodoro))
+    conn
+      |> put_resp_header("location", "/api/pomodoros/#{pomodoro.id}")
+      |> send_resp(201, Poison.encode!(pomodoro))
   end
 
   put "/:pomodoro_id" do
