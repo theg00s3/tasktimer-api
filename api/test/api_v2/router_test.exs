@@ -59,7 +59,7 @@ defmodule Api.Router.Test do
     filtered = Enum.filter headers, fn header -> elem(header, 0) == header_name end
     case filtered do
       [] -> {:error}
-      _  -> {:ok, Enum.reverse(filtered) |> hd |> elem(1)}
+      [{^header_name, value}]  -> {:ok, value}
     end
   end
 end
