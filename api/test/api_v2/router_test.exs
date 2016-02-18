@@ -20,30 +20,50 @@ defmodule Api.Router.Test do
   end
 
   test "creates pomodoro" do
-    conn = authorized_request(:post, "/api/pomodoros", @pomodoro)
-             |> Api.Router.call([])
+    conn = create_pomodoro
+    {:ok, location} = get_header(conn.resp_headers, "location")
 
     assert conn.status == 201
-    {:ok, location} = get_header(conn.resp_headers, "location")
     assert Regex.match?(~r/^\/api\/pomodoros\/\d*$/, location)
   end
 
-  test "creates todo" do
-    conn = authorized_request(:post, "/api/todos", @todo)
+  test "gets pomodoro" do
+    conn = create_pomodoro
+    {:ok, location} = get_header(conn.resp_headers, "location")
+    conn = authorized_request(:get, location)
              |> Api.Router.call([])
+
+    assert conn.status == 200
+  end
+
+  test "gets pomodoros" do
+    create_pomodoro
+    conn = authorized_request(:get, "/api/pomodoros")
+             |> Api.Router.call([])
+
+    assert conn.status == 200
+  end
+
+  test "creates todo" do
+    conn = create_todo
 
     assert conn.status == 201
     {:ok, location} = get_header(conn.resp_headers, "location")
     assert Regex.match?(~r/^\/api\/todos\/\d*$/, location)
   end
 
-  @tag :skip
   test "associates pomodoro to todo" do
-    pomodoro_conn = authorized_request(:post, "/api/pomodoros", @pomodoro) |> Api.Router.call([])
-    todo_conn = authorized_request(:post, "/api/todos", @todo) |> Api.Router.call([])
+    pomodoro_conn = create_pomodoro
+    todo_conn = create_todo
 
     {:ok, pomodoro_location} = get_header(pomodoro_conn.resp_headers, "location")
     {:ok, todo_location} = get_header(todo_conn.resp_headers, "location")
+
+    pomodoro_id = get_resource_id(pomodoro_location)
+    todo_id = get_resource_id(todo_location)
+
+    association_conn = authorized_request(:post, "/api/pomodoros/#{pomodoro_id}/todos/#{todo_id}/associate") |> Api.Router.call([])
+    assert association_conn.status == 200
   end
 
 
@@ -61,5 +81,20 @@ defmodule Api.Router.Test do
       [] -> {:error}
       [{^header_name, value}]  -> {:ok, value}
     end
+  end
+
+  defp get_resource_id(resource_location) do
+    capture = Regex.run ~r/^\/api\/[a-z]*\/(.*)$/, resource_location
+    [_, id] = capture
+    id
+  end
+
+  defp create_pomodoro do
+    authorized_request(:post, "/api/pomodoros", @pomodoro)
+    |> Api.Router.call([])
+  end
+  defp create_todo do
+    authorized_request(:post, "/api/todos", @todo)
+    |> Api.Router.call([])
   end
 end

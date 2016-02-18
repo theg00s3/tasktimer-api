@@ -44,7 +44,7 @@ defmodule Api.Repo.Test do
 
   # todos
   test "#create_todo_for" do
-    {:ok, todo} = create_todo
+    {:ok, _} = create_todo
   end
 
   test "#todos_for" do
@@ -159,7 +159,8 @@ defmodule Api.Repo.Test do
     {:ok, todo2} = create_todo
     {:ok, _} = Repo.associate_todo_to_pomodoro(@user_id, todo1.id, pomodoro.id)
     {:ok, _} = Repo.associate_todo_to_pomodoro(@user_id, todo2.id, pomodoro.id)
-    pomodoro = Repo.preload(pomodoro, :todos)
+
+    pomodoro = Repo.pomodoro_for(@user_id, pomodoro.id)
     assert pomodoro.todos == [todo1, todo2]
   end
 
@@ -184,10 +185,6 @@ defmodule Api.Repo.Test do
     obsolete_pomodoro = %Pomodoro{minutes: pomodoro_minutes, type: "pomodoro", started_at: obsolete_started_at}
 
     Repo.create_pomodoro_for(@user_id, obsolete_pomodoro)
-  end
-
-  defp create_todo do
-    create_todo
   end
 
   defp get_today_and_tomorrow do
