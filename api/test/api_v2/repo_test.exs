@@ -153,6 +153,16 @@ defmodule Api.Repo.Test do
     assert updated_pomodoro_in_db.cancelled_at == pomodoro.started_at
   end
 
+  @tag :skip
+  test "preloads associated todos for a pomodoro" do
+    {:ok, pomodoro} = Repo.create_pomodoro_for(@user_id, @pomodoro)
+    {:ok, todo} = Repo.create_todo_for(@user_id, @todo)
+    {:ok, _} = Repo.associate_pomodoro_to_todo(@user_id, pomodoro.id, todo.id)
+
+    pomodoro = Repo.preload(pomodoro, :todos)
+    assert pomodoro.todos == [todo]
+  end
+
 
 
 

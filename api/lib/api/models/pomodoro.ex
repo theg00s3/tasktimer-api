@@ -2,6 +2,7 @@ defmodule Api.Models.Pomodoro do
   use Ecto.Model
   import Ecto.Query
   alias Api.Models.Pomodoro
+  alias Api.Models.PomodoroTodo
 
   @required_fields ~w(type minutes started_at)
   @optional_fields ~w(cancelled_at finished)
