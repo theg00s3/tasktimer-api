@@ -9,7 +9,7 @@ defmodule Api.Repo do
   alias Api.Models.UserTodo
 
   # pomodoro_todos
-  def associate_pomodoro_to_todo(user_id, pomodoro_id, todo_id) do
+  def associate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
     pomodoro_todo = PomodoroTodo.changeset(%PomodoroTodo{}, %{pomodoro_id: pomodoro_id, todo_id: todo_id})
     insert pomodoro_todo
   end

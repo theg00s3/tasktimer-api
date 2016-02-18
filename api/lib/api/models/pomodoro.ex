@@ -13,6 +13,8 @@ defmodule Api.Models.Pomodoro do
     field :finished,     :boolean, default: false
     field :started_at,   Ecto.DateTime
     field :cancelled_at, Ecto.DateTime
+    has_many :pomodoro_todo, Api.Models.PomodoroTodo
+    has_many :todos, through: [:pomodoro_todo, :todo] 
     timestamps
   end
 

@@ -7,8 +7,8 @@ defmodule Api.Models.PomodoroTodo do
   @optional_fields ~w()
 
   schema "pomodoro_todo" do
-    field :pomodoro_id,     :integer
-    field :todo_id,         :integer
+    belongs_to :pomodoro, Api.Models.Pomodoro
+    belongs_to :todo, Api.Models.Todo
   end
 
   # changeset

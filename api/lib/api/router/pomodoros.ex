@@ -38,7 +38,7 @@ defmodule Api.Router.Pomodoros do
 
   post "/:pomodoro_id/todos/:todo_id/associate" do
     user_id = Utils.extract_user_id_from(conn.assigns[:user])
-    status_code = case Repo.associate_pomodoro_to_todo(user_id, pomodoro_id, todo_id) do
+    status_code = case Repo.associate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
       {:ok, _} -> 200
       {:error, _} -> 400
     end
