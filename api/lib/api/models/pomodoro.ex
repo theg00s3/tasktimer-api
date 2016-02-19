@@ -14,7 +14,7 @@ defmodule Api.Models.Pomodoro do
     field :started_at,   Ecto.DateTime
     field :cancelled_at, Ecto.DateTime
     has_many :pomodoro_todo, Api.Models.PomodoroTodo
-    has_many :todos, through: [:pomodoro_todo, :todo] 
+    has_many :todos, through: [:pomodoro_todo, :todo]
     timestamps
   end
 
