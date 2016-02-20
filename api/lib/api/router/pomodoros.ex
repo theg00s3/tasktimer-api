@@ -42,11 +42,21 @@ defmodule Api.Router.Pomodoros do
     send_resp(conn, 200, Poison.encode!(pomodoro))
   end
 
-  post "/:pomodoro_id/todos/:todo_id/associate" do
+  post "/:pomodoro_id/todos/:todo_id" do
     user_id = Utils.extract_user_id_from(conn.assigns[:user])
     status_code = case Repo.associate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
       {:ok, _} -> 201
       {:error, error} -> 400
+    end
+    send_resp(conn, status_code, "")
+  end
+
+  delete "/:pomodoro_id/todos/:todo_id" do
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
+    status_code = case Repo.deassociate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
+      {:ok, _} -> 204
+      {:error, error} -> 400
+      _               -> 500
     end
     send_resp(conn, status_code, "")
   end

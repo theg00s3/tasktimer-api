@@ -5,20 +5,6 @@ defmodule Api.Router.Test do
   @pomodoro %{type: "pomodoro", minutes: 25, started_at: Ecto.DateTime.utc}
   @todo     %{text: "just a todo", completed: false}
 
-  test "authenticates requests" do
-    conn = conn(:get, "/api/pomodoros")
-             |> put_req_header("cookie", "invalid")
-             |> Api.Router.call([])
-
-    assert conn.status == 401
-
-    conn = authorized_request(:get, "/api/pomodoros")
-             |> put_req_header("cookie", "authorized")
-             |> Api.Router.call([])
-
-    assert conn.status == 200
-  end
-
   test "creates pomodoro" do
     conn = create_pomodoro
     {:ok, location} = get_header(conn.resp_headers, "location")
@@ -53,17 +39,17 @@ defmodule Api.Router.Test do
   end
 
   test "associates pomodoro to todo" do
-    pomodoro_conn = create_pomodoro
-    todo_conn = create_todo
+    association_conn = create_pomodoro_todo_association
 
-    {:ok, pomodoro_location} = get_header(pomodoro_conn.resp_headers, "location")
-    {:ok, todo_location} = get_header(todo_conn.resp_headers, "location")
-
-    pomodoro_id = get_resource_id(pomodoro_location)
-    todo_id = get_resource_id(todo_location)
-
-    association_conn = authorized_request(:post, "/api/pomodoros/#{pomodoro_id}/todos/#{todo_id}/associate") |> Api.Router.call([])
     assert association_conn.status == 201
+  end
+
+  test "deassociates pomodoro to todo" do
+    resource_location = create_pomodoro_todo_association
+                        |> Map.get(:request_path)
+
+    deassociation_conn = authorized_request(:delete, resource_location) |> Api.Router.call([])
+    assert deassociation_conn.status == 204
   end
 
 
@@ -96,5 +82,18 @@ defmodule Api.Router.Test do
   defp create_todo do
     authorized_request(:post, "/api/todos", @todo)
     |> Api.Router.call([])
+  end
+
+  defp create_pomodoro_todo_association do
+    pomodoro_conn = create_pomodoro
+    todo_conn = create_todo
+
+    {:ok, pomodoro_location} = get_header(pomodoro_conn.resp_headers, "location")
+    {:ok, todo_location} = get_header(todo_conn.resp_headers, "location")
+
+    pomodoro_id = get_resource_id(pomodoro_location)
+    todo_id = get_resource_id(todo_location)
+
+    authorized_request(:post, "/api/pomodoros/#{pomodoro_id}/todos/#{todo_id}") |> Api.Router.call([])
   end
 end

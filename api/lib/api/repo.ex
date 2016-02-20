@@ -14,6 +14,11 @@ defmodule Api.Repo do
     insert pomodoro_todo
   end
 
+  def deassociate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
+    association = Repo.one(from pt in PomodoroTodo, where: pt.todo_id == ^todo_id and pt.pomodoro_id == ^pomodoro_id)
+    delete association
+  end
+
   # pomodoros
   def create_pomodoro_for(user_id, pomodoro) do
     case insert pomodoro do
