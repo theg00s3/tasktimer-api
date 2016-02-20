@@ -63,7 +63,7 @@ defmodule Api.Router.Test do
     todo_id = get_resource_id(todo_location)
 
     association_conn = authorized_request(:post, "/api/pomodoros/#{pomodoro_id}/todos/#{todo_id}/associate") |> Api.Router.call([])
-    assert association_conn.status == 200
+    assert association_conn.status == 201
   end
 
 
