@@ -5,10 +5,10 @@ defimpl Poison.Encoder, for: Any do
     map = struct
           |> Map.from_struct
           |> sanitize_map
-    Poison.Encoder.Map.encode(map, options)
+          |> Poison.Encoder.Map.encode(options)
   end
 
   defp sanitize_map(map) do
-    Map.drop(map, [:__meta__, :__struct__])
+    Map.drop(map, [:__meta__, :__struct__, :pomodoro_todo])
   end
 end
