@@ -4,14 +4,28 @@ defmodule Api.Repo do
   alias Api.Repo
   alias Api.Models.Pomodoro
   alias Api.Models.Todo
+  alias Api.Models.PomodoroTodo
   alias Api.Models.UserPomodoro
   alias Api.Models.UserTodo
+
+  # pomodoro_todos
+  def associate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
+    pomodoro_todo = PomodoroTodo.changeset(%PomodoroTodo{}, %{pomodoro_id: pomodoro_id, todo_id: todo_id})
+    insert pomodoro_todo
+  end
+
+  def deassociate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
+    association = Repo.one(from pt in PomodoroTodo, where: pt.todo_id == ^todo_id and pt.pomodoro_id == ^pomodoro_id)
+    delete association
+  end
 
   # pomodoros
   def create_pomodoro_for(user_id, pomodoro) do
     case insert pomodoro do
       {:ok, pomodoro} ->
         insert %UserPomodoro{user_id: user_id, pomodoro_id: pomodoro.id}
+        pomodoro = pomodoro
+          |> Repo.preload(:todos)
         {:ok, pomodoro}
       {:error, changeset}  ->
         {:error, changeset}
@@ -32,23 +46,35 @@ defmodule Api.Repo do
     Pomodoro.Query.daily(day)
     |> UserPomodoro.for_user(user_id)
     |> all
+    |> Repo.preload(:todos)
   end
   def pomodoros_for(user_id) do
     Pomodoro.Query.all
     |> UserPomodoro.for_user(user_id)
     |> all
+    |> Repo.preload(:todos)
   end
 
   def pomodoro_for(user_id, pomodoro_id) do
-    Pomodoro.Query.get(pomodoro_id)
+    pomodoro = Pomodoro.Query.get(pomodoro_id)
     |> UserPomodoro.for_user(user_id)
     |> one
+    if pomodoro do
+      pomodoro |> Repo.preload(:todos)
+    else
+      pomodoro
+    end
   end
 
   def unfinished_pomodoro_for(user_id) do
-    Pomodoro.Query.unfinished
+    pomodoro = Pomodoro.Query.unfinished
     |> UserPomodoro.for_user(user_id)
     |> one
+    if pomodoro do
+      pomodoro |> Repo.preload(:todos)
+    else
+      pomodoro
+    end
   end
 
   def update_pomodoro_for(user_id, pomodoro) do
@@ -58,6 +84,7 @@ defmodule Api.Repo do
   def obsolete_pomodori do
     Pomodoro.Query.obsolete
     |> all
+    |> Repo.preload(:todos)
   end
 
 

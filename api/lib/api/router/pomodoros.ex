@@ -19,11 +19,19 @@ defmodule Api.Router.Pomodoros do
     send_resp(conn, 200, Poison.encode!(response))
   end
 
+  get "/:pomodoro_id" do
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
+    pomodoro = Repo.pomodoro_for(user_id, pomodoro_id)
+    send_resp(conn, 200, Poison.encode!(pomodoro))
+  end
+
   post "/" do
     user_id = Utils.extract_user_id_from(conn.assigns[:user])
     changeset = Pomodoro.changeset(%Pomodoro{}, conn.params)
     {:ok, pomodoro} = Repo.create_pomodoro_for(user_id, changeset)
-    send_resp(conn, 201, Poison.encode!(pomodoro))
+    conn
+      |> put_resp_header("location", "/api/pomodoros/#{pomodoro.id}")
+      |> send_resp(201, Poison.encode!(pomodoro))
   end
 
   put "/:pomodoro_id" do
@@ -33,4 +41,24 @@ defmodule Api.Router.Pomodoros do
     {:ok, pomodoro} = Repo.update_pomodoro_for(user_id, updated_pomodoro)
     send_resp(conn, 200, Poison.encode!(pomodoro))
   end
+
+  post "/:pomodoro_id/todos/:todo_id" do
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
+    status_code = case Repo.associate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
+      {:ok, _} -> 201
+      {:error, error} -> 400
+    end
+    send_resp(conn, status_code, "")
+  end
+
+  delete "/:pomodoro_id/todos/:todo_id" do
+    user_id = Utils.extract_user_id_from(conn.assigns[:user])
+    status_code = case Repo.deassociate_todo_to_pomodoro(user_id, todo_id, pomodoro_id) do
+      {:ok, _} -> 204
+      {:error, error} -> 400
+      _               -> 500
+    end
+    send_resp(conn, status_code, "")
+  end
+
 end

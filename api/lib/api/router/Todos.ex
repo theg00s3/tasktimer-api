@@ -27,8 +27,10 @@ defmodule Api.Router.Todos do
   post "/" do
     user_id = Utils.extract_user_id_from(conn.assigns[:user])
     changeset = Todo.changeset(%Todo{}, conn.params)
-    {:ok, todos} = Repo.create_todo_for(user_id, changeset)
-    send_resp(conn, 201, Poison.encode!(todos))
+    {:ok, todo} = Repo.create_todo_for(user_id, changeset)
+    conn
+      |> put_resp_header("location", "/api/todos/#{todo.id}")
+      |> send_resp(201, Poison.encode!(todo))
   end
 
   put "/:todo_id" do

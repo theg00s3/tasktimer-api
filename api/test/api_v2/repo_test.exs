@@ -2,6 +2,7 @@ defmodule Api.Repo.Test do
   use ExUnit.Case, async: false
 
   alias Api.Repo
+  alias Api.Models.PomodoroTodo
   alias Api.Models.Pomodoro
   alias Api.Models.UserPomodoro
   alias Api.Models.Todo
@@ -13,6 +14,7 @@ defmodule Api.Repo.Test do
   @updated_text "Rephrasing the todo text"
 
   setup do
+    Repo.delete_all(PomodoroTodo)
     Repo.delete_all(UserTodo)
     Repo.delete_all(Todo)
     Repo.delete_all(UserPomodoro)
@@ -20,55 +22,75 @@ defmodule Api.Repo.Test do
     :ok
   end
 
+  # pomodoro_todos
+  test "#associate_todo_to_pomodoro" do
+    {:ok, pomodoro} = create_pomodoro
+    {:ok, todo} = create_todo
+    {:ok, _} = Repo.associate_todo_to_pomodoro(@user_id, todo.id, pomodoro.id)
+  end
+
+  test "#fails to associate_todo_to_pomodoro if id does not exist" do
+    unexisting_id = 0
+    {:error, _} = Repo.associate_todo_to_pomodoro(@user_id, unexisting_id, unexisting_id)
+  end
+
+  @tag :skip
+  test "#fails to associate_todo_to_pomodoro if already exists" do
+    {:ok, pomodoro} = create_pomodoro
+    {:ok, todo} = create_todo
+    {:ok, _} = Repo.associate_todo_to_pomodoro(@user_id, todo.id, pomodoro.id)
+    {:error, _} = Repo.associate_todo_to_pomodoro(@user_id, todo.id, pomodoro.id)
+  end
+
   # todos
   test "#create_todo_for" do
-    {:ok, _todos} = Repo.create_todo_for(@user_id, @todo)
+    {:ok, _} = create_todo
   end
 
   test "#todos_for" do
     assert Repo.todos_for(@user_id) == []
-    {:ok, todos} = create_todos
-    assert Repo.todos_for(@user_id) == [todos]
+    {:ok, todo} = create_todo
+    assert Repo.todos_for(@user_id) == [todo]
   end
 
   test "#daily_completed_todos_for" do
     {today, tomorrow} = get_today_and_tomorrow
     assert Repo.daily_completed_todos_for(@user_id, today) == []
 
-    {:ok, todos} = create_todos
+    {:ok, todo} = create_todo
     assert Repo.daily_completed_todos_for(@user_id, today) == []
     assert Repo.daily_completed_todos_for(@user_id, tomorrow) == []
 
-    updated_todos = Todo.changeset(todos, %{"completed" => true})
-    {:ok, todos} = Repo.update_todo_for(@user_id, updated_todos)
-    assert Repo.daily_completed_todos_for(@user_id, today) == [todos]
+    updated_todos = Todo.changeset(todo, %{"completed" => true})
+    {:ok, todo} = Repo.update_todo_for(@user_id, updated_todos)
+    assert Repo.daily_completed_todos_for(@user_id, today) == [todo]
     assert Repo.daily_completed_todos_for(@user_id, tomorrow) == []
   end
 
   test "#todo_for" do
     assert Repo.todo_for(@user_id, 0) == nil
 
-    {:ok, todos} = create_todos
+    {:ok, todo} = create_todo
 
-    assert Repo.todo_for(@user_id, todos.id) == todos
+    assert Repo.todo_for(@user_id, todo.id) == todo
   end
 
   test "#update_todo_for" do
-    {:ok, todos} = create_todos
-    updated_todos = Todo.changeset(todos, %{"text" => @updated_text, "completed" => true})
+    {:ok, todo} = create_todo
+    todo_changeset = Todo.changeset(todo, %{"text" => @updated_text, "completed" => true})
 
-    Repo.update_todo_for(@user_id, updated_todos)
+    Repo.update_todo_for(@user_id, todo_changeset)
 
-    updated_todos_in_db = Repo.todo_for(@user_id, todos.id)
-    assert updated_todos_in_db.text == @updated_text
-    assert updated_todos_in_db.completed_at
+    saved_todo = Repo.todo_for(@user_id, todo.id)
+    assert saved_todo.text == @updated_text
+    assert saved_todo.completed_at
   end
 
 
 
   # pomodoros
   test "#create_pomodoro_for" do
-    {:ok, _todos} = Repo.create_pomodoro_for(@user_id, @pomodoro)
+    {:ok, _todo} = create_pomodoro
   end
 
   test "#pomodoro_for" do
@@ -109,8 +131,8 @@ defmodule Api.Repo.Test do
 
     assert Repo.obsolete_pomodori() == [obsolete_pomodoro]
 
-    {:ok, x} = Repo.complete_pomodoro(pomodoro)
-    {:ok, y} = Repo.complete_pomodoro(obsolete_pomodoro)
+    {:ok, _} = Repo.complete_pomodoro(pomodoro)
+    {:ok, _} = Repo.complete_pomodoro(obsolete_pomodoro)
 
     assert Repo.obsolete_pomodori() == []
   end
@@ -131,12 +153,27 @@ defmodule Api.Repo.Test do
     assert updated_pomodoro_in_db.cancelled_at == pomodoro.started_at
   end
 
+  test "preloads associated todos for a pomodoro" do
+    {:ok, pomodoro} = create_pomodoro
+    {:ok, todo1} = create_todo
+    {:ok, todo2} = create_todo
+    {:ok, _} = Repo.associate_todo_to_pomodoro(@user_id, todo1.id, pomodoro.id)
+    {:ok, _} = Repo.associate_todo_to_pomodoro(@user_id, todo2.id, pomodoro.id)
+
+    pomodoro = Repo.pomodoro_for(@user_id, pomodoro.id)
+    assert pomodoro.todos == [todo1, todo2]
+  end
+
 
 
 
 
   defp create_pomodoro do
     Repo.create_pomodoro_for(@user_id, @pomodoro)
+  end
+
+  defp create_todo do
+    Repo.create_todo_for(@user_id, @todo)
   end
 
   def create_obsolete_pomodoro do
@@ -148,10 +185,6 @@ defmodule Api.Repo.Test do
     obsolete_pomodoro = %Pomodoro{minutes: pomodoro_minutes, type: "pomodoro", started_at: obsolete_started_at}
 
     Repo.create_pomodoro_for(@user_id, obsolete_pomodoro)
-  end
-
-  defp create_todos do
-    Repo.create_todo_for(@user_id, @todo)
   end
 
   defp get_today_and_tomorrow do
