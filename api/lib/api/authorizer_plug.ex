@@ -10,9 +10,15 @@ defmodule Api.Authorizer.Plug do
 
   def call(conn, opts) do
     authorizer = Keyword.get(opts, :authorizer, @authorizer)
-    get_req_header(conn, "cookie")
-    |> authorizer.authorize
-    |> handle_authorization(conn)
+    cookie = get_req_header(conn, "cookie")
+    authorization = get_req_header(conn, "authorization")
+    IO.inspect cookie
+    IO.inspect authorization
+    case {cookie, authorization} do
+      {[], []} -> handle_authorization(:unauthorized, conn)
+      {cookie, []} -> cookie |> authorizer.authorize(:cookie) |> handle_authorization(conn)
+      {[], authorization} -> authorization |> authorizer.authorize(:authorization) |> handle_authorization(conn)
+    end
   end
 
   defp handle_authorization({:authorized, user}, conn) do
