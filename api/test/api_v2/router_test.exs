@@ -5,6 +5,15 @@ defmodule Api.Router.Test do
   @pomodoro %{type: "pomodoro", minutes: 25, started_at: Ecto.DateTime.utc}
   @todo     %{text: "just a todo", completed: false}
 
+  test "authorizes request with token" do
+    conn = conn(:get, "/api/pomodoros")
+    |> put_req_header("content-type", "application/json")
+    |> put_req_header("authorization", "token 123fake")
+    |> Api.Router.call([])
+
+    assert conn.status == 200
+  end
+
   test "creates pomodoro" do
     conn = create_pomodoro
     {:ok, location} = get_header(conn.resp_headers, "location")
