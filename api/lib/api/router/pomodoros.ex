@@ -38,6 +38,7 @@ defmodule Api.Router.Pomodoros do
       %{"unfinished" => _}  -> Repo.unfinished_pomodoro_for(user_id)
       _                     -> Repo.pomodoros_for(user_id)
     end
+
     send_resp(conn, 200, Poison.encode!(response))
   end
 

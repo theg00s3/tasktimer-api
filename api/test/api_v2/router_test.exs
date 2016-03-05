@@ -16,7 +16,7 @@ defmodule Api.Router.Test do
 
   test "creates pomodoro" do
     conn = create_pomodoro
-    {:ok, location} = get_header(conn.resp_headers, "location")
+    location = get_header(conn, "location")
 
     assert conn.status == 201
     assert Regex.match?(~r/^\/api\/pomodoros\/\d*$/, location)
@@ -24,7 +24,7 @@ defmodule Api.Router.Test do
 
   test "gets pomodoro" do
     conn = create_pomodoro
-    {:ok, location} = get_header(conn.resp_headers, "location")
+    location = get_header(conn, "location")
     conn = authorized_request(:get, location)
              |> Api.Router.call([])
 
@@ -43,7 +43,7 @@ defmodule Api.Router.Test do
     conn = create_todo
 
     assert conn.status == 201
-    {:ok, location} = get_header(conn.resp_headers, "location")
+    location = get_header(conn, "location")
     assert Regex.match?(~r/^\/api\/todos\/\d*$/, location)
   end
 
@@ -70,14 +70,6 @@ defmodule Api.Router.Test do
      |> put_req_header("cookie", "authorized")
   end
 
-  defp get_header(headers, header_name) when is_list(headers) do
-    filtered = Enum.filter headers, fn header -> elem(header, 0) == header_name end
-    case filtered do
-      [] -> {:error}
-      [{^header_name, value}]  -> {:ok, value}
-    end
-  end
-
   defp get_resource_id(resource_location) do
     capture = Regex.run ~r/^\/api\/[a-z]*\/(.*)$/, resource_location
     [_, id] = capture
@@ -97,12 +89,16 @@ defmodule Api.Router.Test do
     pomodoro_conn = create_pomodoro
     todo_conn = create_todo
 
-    {:ok, pomodoro_location} = get_header(pomodoro_conn.resp_headers, "location")
-    {:ok, todo_location} = get_header(todo_conn.resp_headers, "location")
+    pomodoro_location = get_header(pomodoro_conn, "location")
+    todo_location = get_header(todo_conn, "location")
 
     pomodoro_id = get_resource_id(pomodoro_location)
     todo_id = get_resource_id(todo_location)
 
     authorized_request(:post, "/api/pomodoros/#{pomodoro_id}/todos/#{todo_id}") |> Api.Router.call([])
+  end
+
+  defp get_header(conn, header_name) do
+    hd(get_resp_header(conn, header_name))
   end
 end
