@@ -3,9 +3,12 @@ defmodule Api.Router.Pomodoros do
 
   alias Api.Repo
   alias Api.Models.Pomodoro
+  alias Api.Utils.Pagination
 
   plug :match
   plug :dispatch
+
+  @pagination Application.get_env(:api, :pagination)
 
   @apidoc """
   @api {get} /api/pomodoros Get pomodoros
@@ -39,7 +42,19 @@ defmodule Api.Router.Pomodoros do
       _                     -> Repo.pomodoros_for(user_id)
     end
 
-    send_resp(conn, 200, Poison.encode!(response))
+    page = Pagination.page(query_params["page"])
+    pages = Pagination.pages(response)
+    paginated_response = Pagination.paginate(response, page)
+
+    conn
+    |> put_resp_header("x-page", "#{page}")
+    |> put_resp_header("x-pages", "#{pages}")
+    |> send_resp(200, Poison.encode!(paginated_response))
+  end
+
+  defp total_pages(list, pagination) do
+    count = Enum.count(list)
+    round(Float.floor(count / pagination)) + 1
   end
 
   @apidoc """

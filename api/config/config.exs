@@ -10,7 +10,8 @@ config :api, Api.Repo,
 config :api,
   http_port: 4000,
   authorizer_url: "http://pomodoro-auth:6000/auth/info",
-  authorizer:     Api.Authorizer
+  authorizer:     Api.Authorizer,
+  pagination:     10
 
 config :logger, level: :info
 
