@@ -56,7 +56,7 @@ defmodule Api.Router.Test do
   end
 
   test "paginates pomodoros" do
-    create_11_pomodoros
+    for i <- 1..11, do: create_pomodoro
     conn = authorized_request(:get, "/api/pomodoros")
            |> Api.Router.call([])
 
@@ -136,19 +136,5 @@ defmodule Api.Router.Test do
   defp get_header(conn, header_name) do
     header = get_resp_header(conn, header_name)
     if Enum.empty?(header), do: nil, else: hd(header)
-  end
-
-  defp create_11_pomodoros do
-    create_pomodoro
-    create_pomodoro
-    create_pomodoro
-    create_pomodoro
-    create_pomodoro
-    create_pomodoro
-    create_pomodoro
-    create_pomodoro
-    create_pomodoro
-    create_pomodoro # 10
-    create_pomodoro # 11
   end
 end
