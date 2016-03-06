@@ -10,13 +10,15 @@ defmodule Api.Utils.Pagination do
   end
 
   def pages(nil, _), do: 1
-  def pages(set, pagination \\ @pagination) do
-    count = Enum.count(set)
+  def pages(x, _) when is_map(x), do: 1
+  def pages(list, pagination \\ @pagination) when is_list(list) do
+    count = Enum.count(list)
     round(Float.floor(count / pagination)) + 1
   end
 
-  def paginate(nil, _,_), do: nil
-  def paginate(set, page \\ 1, pagination \\ @pagination) do
-    set |> Enum.slice((page - 1) * pagination, pagination)
+  def paginate(nil, _, _), do: nil
+  def paginate(x, _, _) when is_map(x), do: x
+  def paginate(list, page \\ 1, pagination \\ @pagination) when is_list(list) do
+    list |> Enum.slice((page - 1) * pagination, pagination)
   end
 end
