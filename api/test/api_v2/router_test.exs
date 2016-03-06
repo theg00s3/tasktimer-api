@@ -2,6 +2,23 @@ defmodule Api.Router.Test do
   use ExUnit.Case, async: true
   use Plug.Test
 
+  alias Api.Repo
+  alias Api.Models.PomodoroTodo
+  alias Api.Models.Pomodoro
+  alias Api.Models.UserPomodoro
+  alias Api.Models.Todo
+  alias Api.Models.UserTodo
+
+  setup do
+    Repo.delete_all(PomodoroTodo)
+    Repo.delete_all(UserTodo)
+    Repo.delete_all(Todo)
+    Repo.delete_all(UserPomodoro)
+    Repo.delete_all(Pomodoro)
+    :ok
+  end
+
+
   @pomodoro %{type: "pomodoro", minutes: 25, started_at: Ecto.DateTime.utc}
   @todo     %{text: "just a todo", completed: false}
 
@@ -37,6 +54,25 @@ defmodule Api.Router.Test do
              |> Api.Router.call([])
 
     assert conn.status == 200
+  end
+
+  test "paginates pomodoros" do
+    create_11_pomodoros
+    conn = authorized_request(:get, "/api/pomodoros")
+           |> Api.Router.call([])
+
+    assert conn.status == 200
+    assert Enum.count(Poison.decode!(conn.resp_body)) == 10
+    assert get_header(conn, "x-page") == "1"
+    assert get_header(conn, "x-pages") == "2"
+
+    conn = authorized_request(:get, "/api/pomodoros?page=2")
+           |> Api.Router.call([])
+
+    assert conn.status == 200
+    assert Enum.count(Poison.decode!(conn.resp_body)) == 1
+    assert get_header(conn, "x-page") == "2"
+    assert get_header(conn, "x-pages") == "2"
   end
 
   test "creates todo" do
@@ -99,6 +135,21 @@ defmodule Api.Router.Test do
   end
 
   defp get_header(conn, header_name) do
-    hd(get_resp_header(conn, header_name))
+    header = get_resp_header(conn, header_name)
+    if Enum.empty?(header), do: nil, else: hd(header)
+  end
+
+  defp create_11_pomodoros do
+    create_pomodoro
+    create_pomodoro
+    create_pomodoro
+    create_pomodoro
+    create_pomodoro
+    create_pomodoro
+    create_pomodoro
+    create_pomodoro
+    create_pomodoro
+    create_pomodoro # 10
+    create_pomodoro # 11
   end
 end
