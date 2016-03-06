@@ -15,6 +15,7 @@ defmodule Api.Utils.Pagination.Test do
     custom_pagination = 5
     assert Pagination.pages(@set) == 2
     assert Pagination.pages(@set, custom_pagination) == 4
+    assert Pagination.pages(nil) == 1
   end
 
   test "#paginate" do
@@ -22,5 +23,6 @@ defmodule Api.Utils.Pagination.Test do
     pagination = 10
     assert Pagination.paginate(@set, page, pagination) == Enum.slice(1..10, 0, 10)
     assert Pagination.paginate(@set, 2, pagination) == Enum.slice(11..19, 0, 9)
+    assert Pagination.paginate(nil) == nil
   end
 end
