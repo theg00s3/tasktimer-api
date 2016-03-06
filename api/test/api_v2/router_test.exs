@@ -18,7 +18,6 @@ defmodule Api.Router.Test do
     :ok
   end
 
-
   @pomodoro %{type: "pomodoro", minutes: 25, started_at: Ecto.DateTime.utc}
   @todo     %{text: "just a todo", completed: false}
 

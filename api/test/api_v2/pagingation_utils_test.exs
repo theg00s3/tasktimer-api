@@ -1,0 +1,26 @@
+defmodule Api.Utils.Pagination.Test do
+  use ExUnit.Case, async: true
+
+  alias Api.Utils.Pagination
+  @set Enum.slice(1..19, 0, 19)
+
+  test "#page" do
+    assert Pagination.page("1") == 1
+    assert Pagination.page("2") == 2
+    assert Pagination.page("") == 1
+    assert Pagination.page(nil) == 1
+  end
+
+  test "#pages" do
+    custom_pagination = 5
+    assert Pagination.pages(@set) == 2
+    assert Pagination.pages(@set, custom_pagination) == 4
+  end
+
+  test "#paginate" do
+    page = 1
+    pagination = 10
+    assert Pagination.paginate(@set, page, pagination) == Enum.slice(1..10, 0, 10)
+    assert Pagination.paginate(@set, 2, pagination) == Enum.slice(11..19, 0, 9)
+  end
+end
