@@ -4,6 +4,14 @@ defmodule Api.Authorizer.Plug.Test do
 
   alias Api.Authorizer.Plug, as: AuthorizerPlug
 
+  test "when no authorization credentials are passed responds with 401" do
+    conn = conn(:get, "/")
+             |> AuthorizerPlug.call([])
+
+    assert conn.status == 401
+    assert conn.state == :sent
+  end
+
   test "when unauthorized responds with 401" do
     conn = conn(:get, "/")
              |> put_req_header("cookie", "unauthorized")
