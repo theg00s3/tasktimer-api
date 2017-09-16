@@ -1,6 +1,5 @@
 defmodule Api.Models.PomodoroTodo do
   use Ecto.Repo
-  use Ecto.Schema
   import Ecto
   import Ecto.Query
   alias Api.Models.PomodoroTodo
