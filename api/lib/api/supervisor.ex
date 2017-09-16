@@ -10,7 +10,7 @@ defmodule Api.Supervisor do
     IO.puts "-- Supervisor started"
     children = [
       worker(Api.HttpServer,[]),
-      worker(Api.Repo, []),
+      supervisor(Api.Repo, []),
       worker(Api.Cron, [
         &Api.Repo.complete_obsolete_pomodori/0, @every_minute
       ]),
