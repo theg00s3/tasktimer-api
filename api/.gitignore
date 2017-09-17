@@ -15,3 +15,5 @@ opt/docker.env
 rel
 
 _build
+data/
+logfile
