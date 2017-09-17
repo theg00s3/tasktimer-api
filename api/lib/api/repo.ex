@@ -1,5 +1,5 @@
 defmodule Api.Repo do
-  use Ecto.Repo, otp_app: :api
+  use Ecto.Repo, otp_app: :api  
   import Ecto.Query
   alias Api.Repo
   alias Api.Models.Pomodoro

@@ -1,5 +1,7 @@
 use Mix.Config
 
+config :api, ecto_repos: [Api.Repo]
+
 config :api, Api.Repo,
   adapter: Ecto.Adapters.Postgres,
   database: "pomodoro_cc",

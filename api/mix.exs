@@ -27,8 +27,8 @@ defmodule Api.Mixfile do
       {:plug, "~> 1.4.3"},
       {:httpoison, "~> 0.13.0"},
       {:poison, "~> 3.1.0"},
-      {:timex, "~> 3.1.24"},
-      {:timex_ecto, "~> 3.0.3"},
+      {:timex, "~> 2.1.5"},
+      {:timex_ecto, "~> 1.1.3"},
     ]
   end
 end

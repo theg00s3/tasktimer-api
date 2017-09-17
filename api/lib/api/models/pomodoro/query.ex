@@ -1,5 +1,4 @@
 defmodule Api.Models.Pomodoro.Query do
-  import Timex.Ecto
   import Ecto.Query
   alias Api.Models.Pomodoro
 
@@ -48,20 +47,18 @@ defmodule Api.Models.Pomodoro.Query do
   end
 
   defp obsolete_started_at_for_minutes(minutes) do
-    {:ok, obsolete_started_at} = Timex.Date.subtract(Timex.Date.universal, {minutes*60/1000000, 0, 0})
-                                 |> Timex.Ecto.DateTime.dump
-    obsolete_started_at
+    Timex.DateTime.universal |> Timex.subtract({0, minutes*60, 0})
   end
 
 
   defp get_date_range(day) do
-    beginning_day = Timex.DateFormat.parse!(day, "{YYYY}/{0M}/{0D}")
-    ending_day = Timex.Date.add(beginning_day, @one_day)
+    beginning_day = Timex.Ecto.DateFormat.parse!(day, "{YYYY}/{0M}/{0D}")
+    ending_day = Timex.DateTime.add(beginning_day, @one_day)
     beginning_day = beginning_day
-      |> Timex.Date.Convert.to_erlang_datetime
+      |> Timex.DateTime.Convert.to_erlang_datetime
       |> Ecto.DateTime.from_erl
     ending_day = ending_day
-      |> Timex.Date.Convert.to_erlang_datetime
+      |> Timex.DateTime.Convert.to_erlang_datetime
       |> Ecto.DateTime.from_erl
     {beginning_day, ending_day}
   end
