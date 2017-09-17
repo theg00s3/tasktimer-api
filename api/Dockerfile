@@ -16,6 +16,4 @@ RUN mix compile
 RUN mix compile.protocols
 EXPOSE 6000
 
-# USER DEFAULT
-
 CMD ["mix","run","--no-halt"]
