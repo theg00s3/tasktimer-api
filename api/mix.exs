@@ -5,7 +5,7 @@ defmodule Api.Mixfile do
     [
       app: :api,
       version: "0.0.1",
-      elixir: "~> 1.0",
+      elixir: "~> 1.4",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps()
@@ -14,7 +14,7 @@ defmodule Api.Mixfile do
 
   def application do
     [
-      applications: [:logger, :tzdata, :cowboy, :plug, :httpoison, :postgrex, :ecto],
+      applications: [:logger, :tzdata, :cowboy, :plug, :httpoison, :postgrex, :ecto, :mix],
       mod: {Api, []},
     ]
   end
