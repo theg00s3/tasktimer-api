@@ -19,7 +19,7 @@ id_for_container(){
   echo $CONTAINER_ID
 }
 
-docker run --name pomodoro-api-db-test  --detach=true kiasaki/alpine-postgres:latest
+docker run --name pomodoro-api-db-test --detach=true postgres
 docker run --name pomodoro-auth-db-test --detach=true mongo:latest
 docker run --name pomodoro-auth-sessions-test --detach=true smebberson/alpine-redis
 docker run --name pomodoro-auth-test \

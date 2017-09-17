@@ -1,4 +1,5 @@
 defmodule Api.Models.Pomodoro.Query do
+  import Timex.Ecto
   import Ecto.Query
   alias Api.Models.Pomodoro
 
@@ -52,14 +53,8 @@ defmodule Api.Models.Pomodoro.Query do
 
 
   defp get_date_range(day) do
-    beginning_day = Timex.Ecto.DateFormat.parse!(day, "{YYYY}/{0M}/{0D}")
-    ending_day = Timex.DateTime.add(beginning_day, @one_day)
-    beginning_day = beginning_day
-      |> Timex.DateTime.Convert.to_erlang_datetime
-      |> Ecto.DateTime.from_erl
-    ending_day = ending_day
-      |> Timex.DateTime.Convert.to_erlang_datetime
-      |> Ecto.DateTime.from_erl
+    beginning_day = Timex.parse!(day, "{YYYY}/{0M}/{0D}")
+    ending_day = beginning_day |> Timex.shift(days: 1)
     {beginning_day, ending_day}
   end
 end

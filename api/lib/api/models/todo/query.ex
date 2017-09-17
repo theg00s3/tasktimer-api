@@ -46,14 +46,8 @@ defmodule Api.Models.Todo.Query do
   end
 
   defp get_date_range(day) do
-    beginning_day = Timex.DateFormat.parse!(day, "{YYYY}/{0M}/{0D}")
-    ending_day = Timex.Date.add(beginning_day, @one_day)
-    beginning_day = beginning_day
-      |> Timex.Date.Convert.to_erlang_datetime
-      |> Ecto.DateTime.from_erl
-    ending_day = ending_day
-      |> Timex.Date.Convert.to_erlang_datetime
-      |> Ecto.DateTime.from_erl
+    beginning_day = Timex.parse!(day, "{YYYY}/{0M}/{0D}")
+    ending_day = beginning_day |> Timex.shift(days: 1)
     {beginning_day, ending_day}
   end
 end
