@@ -14,7 +14,7 @@ defmodule Api.Models.PomodoroTodo do
 
   # changeset
   def changeset(model, params \\ :empty) do
-    Ecto.Model.cast(model, params, @required_fields)
+    Ecto.Changeset.cast(model, params, @required_fields)
     |> Ecto.Model.foreign_key_constraint(:pomodoro_id)
     |> Ecto.Model.foreign_key_constraint(:todo_id)
   end

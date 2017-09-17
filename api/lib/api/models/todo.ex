@@ -27,6 +27,6 @@ defmodule Api.Models.Todo do
         params = Map.delete params, "completed_at"
       end
     end
-    Ecto.Model.cast(model, params, @required_fields)
+    Ecto.Changeset.cast(model, params, @required_fields)
   end
 end

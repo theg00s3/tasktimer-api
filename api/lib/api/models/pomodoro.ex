@@ -24,22 +24,18 @@ defmodule Api.Models.Pomodoro do
 
   # changeset
   def changeset(model, params \\ :empty) do
-    Ecto.Model.cast(model, params, @required_fields, @optional_fields)
-    |> Ecto.Model.validate_inclusion(:minutes, [5,15,25])
-    |> Ecto.Model.validate_type
-    |> Ecto.Model.validate_minutes
-    |> Ecto.Model.validate_cancelled_at
+    Ecto.Changeset.cast(model, params, @required_fields, @optional_fields)
+    |> Ecto.Changeset.validate_inclusion(:minutes, [5,15,25])
+    # |> validate_minutes
+    # |> validate_cancelled_at
   end
-
-  defp validate_type(changeset) do
-    validate_change(changeset, :type, fn (_, type) ->
-      case type do
-        "break" -> []
-        "pomodoro" -> []
-        _ -> [:type, "invalid type"]
-      end
-    end)
-  end
+    # |> Ecto.Changeset.validate_change(changeset, :type, fn (_, type) ->
+    #   case type do
+    #     "break" -> []
+    #     "pomodoro" -> []
+    #     _ -> [:type, "invalid type"]
+    #   end
+    # end)
 
   defp validate_minutes(changeset) do
     validate_change(changeset, :minutes, fn (_, minutes) ->
