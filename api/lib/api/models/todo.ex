@@ -1,6 +1,5 @@
 defmodule Api.Models.Todo do
-  use Ecto.Repo
-  import Ecto
+  use Ecto.Schema
   import Ecto.Query
   alias Api.Models.Todo
 
@@ -28,6 +27,6 @@ defmodule Api.Models.Todo do
         params = Map.delete params, "completed_at"
       end
     end
-    cast(model, params, @required_fields, @optional_fields)
+    Ecto.Model.cast(model, params, @required_fields)
   end
 end

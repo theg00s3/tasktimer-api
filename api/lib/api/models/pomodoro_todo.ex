@@ -1,5 +1,5 @@
 defmodule Api.Models.PomodoroTodo do
-  use Ecto.Repo
+  use Ecto.Schema
   import Ecto
   import Ecto.Query
   alias Api.Models.PomodoroTodo
@@ -14,8 +14,8 @@ defmodule Api.Models.PomodoroTodo do
 
   # changeset
   def changeset(model, params \\ :empty) do
-    cast(model, params, @required_fields, @optional_fields)
-    |> foreign_key_constraint(:pomodoro_id)
-    |> foreign_key_constraint(:todo_id)
+    Ecto.Model.cast(model, params, @required_fields)
+    |> Ecto.Model.foreign_key_constraint(:pomodoro_id)
+    |> Ecto.Model.foreign_key_constraint(:todo_id)
   end
 end

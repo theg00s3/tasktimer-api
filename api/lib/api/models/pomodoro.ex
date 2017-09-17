@@ -1,5 +1,5 @@
 defmodule Api.Models.Pomodoro do
-  use Ecto.Repo
+  use Ecto.Schema
   import Ecto
   import Ecto.Query
   alias Api.Models.Pomodoro
@@ -24,11 +24,11 @@ defmodule Api.Models.Pomodoro do
 
   # changeset
   def changeset(model, params \\ :empty) do
-    cast(model, params, @required_fields, @optional_fields)
-    |> validate_inclusion(:minutes, [5,15,25])
-    |> validate_type
-    |> validate_minutes
-    |> validate_cancelled_at
+    Ecto.Model.cast(model, params, @required_fields, @optional_fields)
+    |> Ecto.Model.validate_inclusion(:minutes, [5,15,25])
+    |> Ecto.Model.validate_type
+    |> Ecto.Model.validate_minutes
+    |> Ecto.Model.validate_cancelled_at
   end
 
   defp validate_type(changeset) do
