@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "name": "api.pomodoro.cc",
+  "alias": "api.pomodoro.cc",
+  "regions": ["bru"],
+  "env": {
+    "TWITTER_CONSUMER_KEY": "@twitter_consumer_key",
+    "TWITTER_CONSUMER_SECRET": "@twitter_consumer_secret",
+    "TWITTER_CALLBACK_URL": "@twitter_callback_url",
+    "GITHUB_CLIENT_ID": "@github_client_id",
+    "GITHUB_CLIENT_SECRET": "@github_client_secret",
+    "GITHUB_CALLBACK_URL": "@github_callback_url",
+    "MONGO_URL": "@mongo_url"
+  },
+  "builds": [
+    { "src": "routes/healthcheck.js", "use": "@now/node" },
+    { "src": "routes/api.js", "use": "@now/node" }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/routes/healthcheck.js" },
+    { "src": "/healthcheck", "dest": "/routes/healthcheck.js" },
+    { "src": "/info", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
+    { "src": "/logout", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
+    { "src": "/twitter", "dest": "/routes/api.js" },
+    { "src": "/twitter/callback*", "dest": "/routes/api.js" },
+    { "src": "/github", "dest": "/routes/api.js" },
+    { "src": "/github/callback*", "dest": "/routes/api.js" }
+  ]
+}
