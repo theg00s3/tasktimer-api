@@ -10,20 +10,6 @@ const redirectRoutes = { failureRedirect: 'https://pomodoro.cc', successRedirect
 
 module.exports = app
 
-app.get('/info', (req, res) => {
-  console.log('req.user', req.user)
-  if (!req.user) {
-    res.writeHead(401)
-    return res.end()
-  }
-  res.json(req.user)
-})
-app.get('/logout', (req, res) => {
-  console.log('req.user', req.user)
-  req.logout()
-  res.end()
-})
-
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -64,6 +50,20 @@ app.get('/twitter', passport.authenticate('twitter'))
 app.get('/twitter/callback', passport.authenticate('twitter', redirectRoutes))
 app.get('/github', passport.authenticate('github'))
 app.get('/github/callback', passport.authenticate('github', redirectRoutes))
+
+app.get('/info', (req, res) => {
+  console.log('req.user', req.user)
+  if (!req.user) {
+    res.writeHead(401)
+    return res.end()
+  }
+  res.json(req.user)
+})
+app.get('/logout', (req, res) => {
+  console.log('req.user', req.user)
+  req.logout()
+  res.end()
+})
 
 if (process.env.NODE_ENV !== 'production') {
   app.get('/fake', (req, res) => {
