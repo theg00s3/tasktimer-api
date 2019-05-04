@@ -19,6 +19,7 @@
   "routes": [
     { "src": "/", "dest": "/routes/healthcheck.js" },
     { "src": "/healthcheck", "dest": "/routes/healthcheck.js" },
+    { "src": "/fake", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
     { "src": "/info", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
     { "src": "/logout", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
     { "src": "/twitter", "dest": "/routes/api.js" },
