@@ -22,4 +22,4 @@ backup
 opt/docker.env
 api/rel
 .env
-.env.development
+.env*
