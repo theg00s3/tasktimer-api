@@ -6,7 +6,7 @@ serial('healthcheck', async t => {
   t.is(response.status, 200)
 })
 
-serial.skip('unauthorized response', async t => {
+serial('unauthorized response', async t => {
   const response = await fetch('http://localhost:3000/info')
   t.is(response.status, 401)
 })
