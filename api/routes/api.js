@@ -10,46 +10,48 @@ const redirectRoutes = { failureRedirect: 'https://pomodoro.cc', successRedirect
 
 module.exports = app
 
-app.use(session({
-  resave: true,
-  saveUninitialized: true,
-  secret: 'foo',
-  cookie: {
-    domain: '.pomodoro.cc',
-    sameSite: false
-  },
-  store: new MongoStore({
-    collection: 'sessions',
-    url: process.env.MONGO_URL
+if (process.env.NODE_ENV === 'production') {
+  app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: 'foo',
+    cookie: {
+      domain: '.pomodoro.cc',
+      sameSite: false
+    },
+    store: new MongoStore({
+      collection: 'sessions',
+      url: process.env.MONGO_URL
+    })
+  }))
+
+  app.use(passport.initialize())
+  app.use(passport.session())
+
+  passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: process.env.TWITTER_CALLBACK_URL
+  }, upsertAuthenticatedUser))
+  passport.use(new GithubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: process.env.GITHUB_CALLBACK_URL
+  }, upsertAuthenticatedUser))
+
+  passport.serializeUser(function (user, done) {
+    done(null, user)
   })
-}))
 
-app.use(passport.initialize())
-app.use(passport.session())
+  passport.deserializeUser(function (user, done) {
+    done(null, user)
+  })
 
-passport.use(new TwitterStrategy({
-  consumerKey: process.env.TWITTER_CONSUMER_KEY,
-  consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL: process.env.TWITTER_CALLBACK_URL
-}, upsertAuthenticatedUser))
-passport.use(new GithubStrategy({
-  clientID: process.env.GITHUB_CLIENT_ID,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: process.env.GITHUB_CALLBACK_URL
-}, upsertAuthenticatedUser))
-
-passport.serializeUser(function (user, done) {
-  done(null, user)
-})
-
-passport.deserializeUser(function (user, done) {
-  done(null, user)
-})
-
-app.get('/twitter', passport.authenticate('twitter'))
-app.get('/twitter/callback', passport.authenticate('twitter', redirectRoutes))
-app.get('/github', passport.authenticate('github'))
-app.get('/github/callback', passport.authenticate('github', redirectRoutes))
+  app.get('/twitter', passport.authenticate('twitter'))
+  app.get('/twitter/callback', passport.authenticate('twitter', redirectRoutes))
+  app.get('/github', passport.authenticate('github'))
+  app.get('/github/callback', passport.authenticate('github', redirectRoutes))
+}
 
 app.get('/info', (req, res) => {
   console.log('req.user', req.user)
