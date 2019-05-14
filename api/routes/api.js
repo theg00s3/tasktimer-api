@@ -6,6 +6,15 @@ const GithubStrategy = require('passport-github').Strategy
 const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('../modules/UserInfo')
 const User = require('../models/User')
+const Pusher = require('pusher')
+var pusher = new Pusher({
+  appId: '781806',
+  key: 'd50be9e8b6b4af4885ce',
+  secret: 'c78e3d8cbdfb31c9a98a',
+  cluster: 'eu',
+  useTLS: true
+})
+
 const redirectRoutes = { failureRedirect: 'https://pomodoro.cc', successRedirect: 'https://pomodoro.cc' }
 
 module.exports = app
@@ -65,6 +74,22 @@ app.get('/logout', (req, res) => {
   console.log('req.user', req.user)
   req.logout()
   res.end()
+})
+
+app.post('/pair/:channel', (req, res) => {
+  const channel = req.params.channel
+  const body = req.body
+  pusher.trigger(channel, 'event', {
+    channel,
+    body
+  }, (err, response) => {
+    if (err) throw err
+    res.json({
+      channel,
+      test: true,
+      now: Date.now()
+    })
+  })
 })
 
 if (process.env.NODE_ENV !== 'production') {
