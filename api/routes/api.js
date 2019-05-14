@@ -78,13 +78,15 @@ app.get('/logout', (req, res) => {
 
 app.post('/pair/:channel', (req, res) => {
   const channel = req.params.channel
-  const body = req.body
+  const body = JSON.parse(JSON.stringify(req.body))
+  console.log('body', body)
+
   pusher.trigger(channel, 'event', {
     channel,
     body
   }, (err, response) => {
     if (err) throw err
-    res.end()
+    res.json(body)
   })
 })
 
