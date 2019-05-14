@@ -2,7 +2,6 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
-// const app = require('express')()
 
 module.exports = [
   morgan(':status\t :method\t :response-time ms\t :date[clf]\t :url\t\t'),
