@@ -84,11 +84,7 @@ app.post('/pair/:channel', (req, res) => {
     body
   }, (err, response) => {
     if (err) throw err
-    res.json({
-      channel,
-      test: true,
-      now: Date.now()
-    })
+    res.end()
   })
 })
 
