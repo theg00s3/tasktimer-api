@@ -91,17 +91,17 @@ function getRemaining (pomodoro) {
 app.post('/pair/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
   const channel = req.params.channel
-  let pomodoro = await PairPomodoro.findOne({ channel }) || body
-  console.log('pomodoro', pomodoro)
+  let pomodoro = await PairPomodoro.findOne({ channel }) || {}
 
   const remaining = getRemaining(pomodoro)
 
-  if (remaining === 0) {
+  if (remaining === 0 || (pomodoro.minutes !== body.minutes)) {
     pomodoro.startedAt = new Date()
     pomodoro.cancelled = false
   } else {
     pomodoro.cancelled = (pomodoro.minutes === body.minutes)
   }
+  pomodoro = Object.assign({}, pomodoro, body)
 
   pomodoro = await PairPomodoro.findOneAndUpdate({ channel }, { $set: pomodoro }, { new: true, upsert: true })
 
@@ -116,8 +116,7 @@ app.post('/pair/:channel', async (req, res) => {
 
 app.get('/pair/:channel', async (req, res) => {
   const channel = req.params.channel
-  const pomodoro = await PairPomodoro.findOne({ channel })
-  console.log('pomodoro', pomodoro)
+  const pomodoro = await PairPomodoro.findOne({ channel }) || {}
 
   res.json(pomodoro)
 })
