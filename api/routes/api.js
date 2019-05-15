@@ -88,16 +88,21 @@ function getRemaining (pomodoro) {
   return remaining
 }
 
-app.options('/pair/:channel', async (req, res) => {
-  res.writeHead(200, {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, content-type'
-  })
-  res.end()
-})
+// app.options('/pair/:channel', async (req, res) => {
+//   res.writeHead(200, {
+//     'Access-Control-Allow-Origin': 'https://pomodoro.cc',
+//     'Access-Control-Allow-Headers': 'Content-Type'
+//   })
+//   res.end()
+// })
 
 app.post('/pair/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
+  console.log('body', body)
+  if (!body.minutes || !body.type) {
+    res.writeHead(422)
+    return res.end()
+  }
   const channel = req.params.channel
   let pomodoro = await PairPomodoro.findOne({ channel }) || {}
 
@@ -122,7 +127,7 @@ app.post('/pair/:channel', async (req, res) => {
   })
 })
 
-app.get('/pair/:channel', async (req, res) => {
+app.post('/pair/:channel/status', async (req, res) => {
   const channel = req.params.channel
   const pomodoro = await PairPomodoro.findOne({ channel }) || {}
 
