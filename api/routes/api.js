@@ -88,6 +88,14 @@ function getRemaining (pomodoro) {
   return remaining
 }
 
+app.options('/pair/:channel', async (req, res) => {
+  res.writeHead(200, {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, content-type'
+  })
+  res.end()
+})
+
 app.post('/pair/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
   const channel = req.params.channel
