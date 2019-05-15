@@ -9,9 +9,9 @@ const User = require('../models/User')
 const PairPomodoro = require('../models/PairPomodoro')
 const Pusher = require('pusher')
 var pusher = new Pusher({
-  appId: '781806',
-  key: 'd50be9e8b6b4af4885ce',
-  secret: 'c78e3d8cbdfb31c9a98a',
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_KEY,
+  secret: process.env.PUSHER_SECRET,
   cluster: 'eu',
   useTLS: true
 })
@@ -87,14 +87,6 @@ function getRemaining (pomodoro) {
   remaining = remaining << 0
   return remaining
 }
-
-// app.options('/pair/:channel', async (req, res) => {
-//   res.writeHead(200, {
-//     'Access-Control-Allow-Origin': 'https://pomodoro.cc',
-//     'Access-Control-Allow-Headers': 'Content-Type'
-//   })
-//   res.end()
-// })
 
 app.post('/pair/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
