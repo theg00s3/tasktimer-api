@@ -6,6 +6,7 @@ const GithubStrategy = require('passport-github').Strategy
 const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('../modules/UserInfo')
 const User = require('../models/User')
+const PairPomodoro = require('../models/PairPomodoro')
 const Pusher = require('pusher')
 var pusher = new Pusher({
   appId: '781806',
@@ -76,18 +77,49 @@ app.get('/logout', (req, res) => {
   res.end()
 })
 
-app.post('/pair/:channel', (req, res) => {
-  const channel = req.params.channel
+function getRemaining (pomodoro) {
+  let remaining = 0
+  if (pomodoro && !pomodoro.cancelled && pomodoro.minutes && pomodoro.startedAt) {
+    let elapsed = (Date.now() - +new Date(pomodoro.startedAt))
+    elapsed = elapsed / 1000 << 0
+    remaining = pomodoro.minutes * 60 - elapsed
+  }
+  remaining = remaining << 0
+  return remaining
+}
+
+app.post('/pair/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
-  console.log('body', body)
+  const channel = req.params.channel
+  let pomodoro = await PairPomodoro.findOne({ channel }) || body
+  console.log('pomodoro', pomodoro)
+
+  const remaining = getRemaining(pomodoro)
+
+  if (remaining === 0) {
+    pomodoro.startedAt = new Date()
+    pomodoro.cancelled = false
+  } else {
+    pomodoro.cancelled = (pomodoro.minutes === body.minutes)
+  }
+
+  pomodoro = await PairPomodoro.findOneAndUpdate({ channel }, { $set: pomodoro }, { new: true, upsert: true })
 
   pusher.trigger(channel, 'event', {
     channel,
-    body
+    pomodoro
   }, (err, response) => {
     if (err) throw err
-    res.json(body)
+    res.json(pomodoro)
   })
+})
+
+app.get('/pair/:channel', async (req, res) => {
+  const channel = req.params.channel
+  const pomodoro = await PairPomodoro.findOne({ channel })
+  console.log('pomodoro', pomodoro)
+
+  res.json(pomodoro)
 })
 
 if (process.env.NODE_ENV !== 'production') {
