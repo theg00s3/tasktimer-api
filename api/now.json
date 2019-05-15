@@ -22,7 +22,7 @@
     { "src": "/fake", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
     { "src": "/info", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
     { "src": "/logout", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
-    { "src": "/pair/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
+    { "src": "/pair/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*" } },
     { "src": "/twitter", "dest": "/routes/api.js" },
     { "src": "/twitter/callback*", "dest": "/routes/api.js" },
     { "src": "/github", "dest": "/routes/api.js" },
