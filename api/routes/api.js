@@ -127,7 +127,7 @@ app.post('/pair/:channel', async (req, res) => {
   })
 })
 
-app.post('/pair/:channel/status', async (req, res) => {
+app.get('/pair/:channel/status', async (req, res) => {
   const channel = req.params.channel
   const pomodoro = await PairPomodoro.findOne({ channel }) || {}
 
