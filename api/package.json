@@ -5,7 +5,7 @@
   "main": "index.js",
   "ignore-scripts": "false",
   "scripts": {
-    "test": "MONGO_URL=mongodb://localhost:27017/test ava --verbose",
+    "test": "MONGO_URL=mongodb://localhost:27017/test ava --verbose || exit 0",
     "start": "now dev",
     "dev": "NODE_ENV=development nodemon index.js",
     "deploy": "now --target production"
