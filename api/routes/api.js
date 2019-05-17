@@ -110,7 +110,7 @@ app.post('/pair/:channel', async (req, res) => {
 
   pomodoro = await PairPomodoro.findOneAndUpdate({ channel }, { $set: pomodoro }, { new: true, upsert: true })
 
-  if (process.env !== 'test') {
+  if (process.env.NODE_ENV !== 'test') {
     pusher.trigger(channel, 'event', {
       channel,
       pomodoro
