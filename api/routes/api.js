@@ -110,13 +110,17 @@ app.post('/pair/:channel', async (req, res) => {
 
   pomodoro = await PairPomodoro.findOneAndUpdate({ channel }, { $set: pomodoro }, { new: true, upsert: true })
 
-  pusher.trigger(channel, 'event', {
-    channel,
-    pomodoro
-  }, (err, response) => {
-    if (err) throw err
+  if (process.env !== 'test') {
+    pusher.trigger(channel, 'event', {
+      channel,
+      pomodoro
+    }, (err, response) => {
+      if (err) throw err
+      res.json(pomodoro)
+    })
+  } else {
     res.json(pomodoro)
-  })
+  }
 })
 
 app.get('/pair/:channel/status', async (req, res) => {
