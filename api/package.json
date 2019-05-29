@@ -5,7 +5,7 @@
   "main": "index.js",
   "ignore-scripts": "false",
   "scripts": {
-    "test": "NODE_ENV=test MONGO_URL=mongodb://localhost:27017/test ava --verbose --timeout=1m || exit 0",
+    "test": "NODE_ENV=test MONGO_URL=mongodb://localhost:27017/test ava --fail-fast --verbose --timeout=1m",
     "start": "now dev",
     "dev": "NODE_ENV=development nodemon index.js",
     "deploy": "now --target production"

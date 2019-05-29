@@ -77,6 +77,10 @@ app.get('/logout', (req, res) => {
   res.end()
 })
 
+app.get('/api', (req, res) => {
+  res.end('ok')
+})
+
 function getRemaining (pomodoro) {
   let remaining = 0
   if (pomodoro && !pomodoro.cancelled && pomodoro.minutes && pomodoro.startedAt) {

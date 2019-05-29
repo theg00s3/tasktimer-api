@@ -25,6 +25,7 @@
     { "src": "/fake", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
     { "src": "/info", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
     { "src": "/logout", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
+    { "src": "/api.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "https://pomodoro.cc", "Access-Control-Allow-Headers": "x-now-id, x-now-trace, x-powered-by, Origin, Content-Type, Set-Cookie", "Access-Control-Allow-Credentials": "true" } },
     { "src": "/pair/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "https://pomodoro.cc", "Access-Control-Allow-Headers": "x-now-id, x-now-trace, x-powered-by, Origin, Content-Type, Set-Cookie", "Access-Control-Allow-Credentials": "true" } },
     { "src": "/twitter", "dest": "/routes/api.js" },
     { "src": "/twitter/callback*", "dest": "/routes/api.js" },
