@@ -1,3 +1,3 @@
 const db = require('../db')
 
-module.exports = db.get('pairPomodoro')
+module.exports = db.get('teamPomodoro')

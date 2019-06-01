@@ -6,7 +6,7 @@ const GithubStrategy = require('passport-github').Strategy
 const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('../modules/UserInfo')
 const User = require('../models/User')
-const PairPomodoro = require('../models/PairPomodoro')
+const TeamPomodoro = require('../models/TeamPomodoro')
 const Pusher = require('pusher')
 var pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -92,7 +92,7 @@ function getRemaining (pomodoro) {
   return remaining
 }
 
-app.post('/pair/:channel', async (req, res) => {
+app.post('/team/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
   console.log('body', body)
   if (!body.minutes || !body.type) {
@@ -100,7 +100,7 @@ app.post('/pair/:channel', async (req, res) => {
     return res.end()
   }
   const channel = req.params.channel
-  let pomodoro = await PairPomodoro.findOne({ channel }) || {}
+  let pomodoro = await TeamPomodoro.findOne({ channel }) || {}
 
   const remaining = getRemaining(pomodoro)
 
@@ -112,7 +112,7 @@ app.post('/pair/:channel', async (req, res) => {
   }
   pomodoro = Object.assign({}, pomodoro, body)
 
-  pomodoro = await PairPomodoro.findOneAndUpdate({ channel }, { $set: pomodoro }, { new: true, upsert: true })
+  pomodoro = await TeamPomodoro.findOneAndUpdate({ channel }, { $set: pomodoro }, { new: true, upsert: true })
 
   if (process.env.NODE_ENV !== 'test') {
     pusher.trigger(channel, 'event', {
@@ -127,9 +127,9 @@ app.post('/pair/:channel', async (req, res) => {
   }
 })
 
-app.get('/pair/:channel/status', async (req, res) => {
+app.get('/team/:channel/status', async (req, res) => {
   const channel = req.params.channel
-  const pomodoro = await PairPomodoro.findOne({ channel }) || {}
+  const pomodoro = await TeamPomodoro.findOne({ channel }) || {}
 
   res.json(pomodoro)
 })
