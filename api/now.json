@@ -34,6 +34,6 @@
     { "src": "/twitter/callback*", "dest": "/routes/api.js" },
     { "src": "/github", "dest": "/routes/api.js" },
     { "src": "/github/callback*", "dest": "/routes/api.js" },
-    { "src": "/create-subscription", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } }
+    { "src": "/create-subscription", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "https://pomodoro.cc", "Access-Control-Allow-Headers": "x-now-id, x-now-trace, x-powered-by, Origin, Content-Type, Set-Cookie", "Access-Control-Allow-Credentials": "true" } }
   ]
 }
