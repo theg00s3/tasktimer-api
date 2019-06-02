@@ -36,18 +36,6 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
 
   app.use(passport.initialize())
   app.use(passport.session())
-
-  passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: process.env.TWITTER_CALLBACK_URL
-  }, upsertAuthenticatedUser))
-  passport.use(new GithubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: process.env.GITHUB_CALLBACK_URL
-  }, upsertAuthenticatedUser))
-
   passport.serializeUser(function (user, done) {
     done(null, user)
   })
@@ -56,10 +44,29 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
     done(null, user)
   })
 
-  app.get('/twitter', passport.authenticate('twitter'))
-  app.get('/twitter/callback', passport.authenticate('twitter', redirectRoutes))
-  app.get('/github', passport.authenticate('github'))
-  app.get('/github/callback', passport.authenticate('github', redirectRoutes))
+  if (process.env.TWITTER_CONSUMER_KEY) {
+    passport.use(new TwitterStrategy({
+      consumerKey: process.env.TWITTER_CONSUMER_KEY,
+      consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+      callbackURL: process.env.TWITTER_CALLBACK_URL
+    }, upsertAuthenticatedUser))
+    app.get('/twitter', passport.authenticate('twitter'))
+    app.get('/twitter/callback', passport.authenticate('twitter', redirectRoutes))
+  } else {
+    console.log('process.env.TWITTER_CONSUMER_KEY not set', process.env.TWITTER_CONSUMER_KEY)
+  }
+
+  if (process.env.GITHUB_CLIENT_ID) {
+    passport.use(new GithubStrategy({
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: process.env.GITHUB_CALLBACK_URL
+    }, upsertAuthenticatedUser))
+    app.get('/github', passport.authenticate('github'))
+    app.get('/github/callback', passport.authenticate('github', redirectRoutes))
+  } else {
+    console.log('process.env.GITHUB_CLIENT_ID not set', process.env.GITHUB_CLIENT_ID)
+  }
 } else {
   console.log('not using auth')
 }
