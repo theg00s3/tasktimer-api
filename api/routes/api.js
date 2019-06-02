@@ -42,6 +42,7 @@ api.post('/api/pomodoro', (req, res) => {
     res.writeHead(401)
     return res.end()
   }
+  console.log('creating pomodoro', req.user, req.body)
   res.writeHead(200)
   res.end()
 })
