@@ -8,7 +8,7 @@ const GithubStrategy = require('passport-github').Strategy
 const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('./modules/UserInfo')
 const User = require('./models/User')
-const Event = require('../models/Event')
+const Event = require('./models/Event')
 
 const middlewares = require('./middlewares')
 
