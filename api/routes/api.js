@@ -141,6 +141,8 @@ api.post('/create-subscription', async function (req, res) {
 
   const user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), customer, customerUpdatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
 
+  req.session = user
+
   return res.json({ message: 'create-subscription-succeeded', user })
 })
 
