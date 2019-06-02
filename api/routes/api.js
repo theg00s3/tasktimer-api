@@ -152,7 +152,7 @@ app.post('/create-subscription', async function (req, res) {
     return res.end()
   }
   const { stripeToken } = req.body
-  const { email } = req.user
+  const { _id: userId, email } = req.user
 
   if (!stripeToken) {
     return res.json({ error: 'missing stripeToken' })
@@ -161,48 +161,57 @@ app.post('/create-subscription', async function (req, res) {
     return res.json({ error: 'missing email' })
   }
 
-  console.log('email, stripeToken', email, stripeToken)
+  console.log('userId, email, stripeToken', userId, email, stripeToken)
 
-  let customer
-  return createCustomer(email, stripeToken)
-    .then(_customer => {
-      customer = _customer
-      console.log('  customer.create', customer)
-      return createSubscription(customer.id)
-    })
-    .then(async subscription => {
-      console.log('  subscriptions.create', subscription)
-      await User.findOneAndUpdate({
-        email
-      }, {
-        $set: { customer, subscription }
-      }, { new: true })
-      res.json({ message: 'subscription-success' })
-      Event.insert({ name: 'createSubscription', createdAt: new Date(), email, customer, subscription }).catch(Function.prototype)
-    })
-    .catch((err) => {
-      console.error(err)
-      res.json({ error: 'subscription-failed', data: err })
-    })
+  let [customerError, customer] = await createCustomer(email, stripeToken)
+  if (customerError) {
+    console.error(customerError)
+    await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
+    return res.json({ error: 'create-customer-failed' })
+  }
+  console.log('  customer created', customer, userId, email)
+  await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
+
+  const [subscriptionError, subscription] = await createSubscription(customer.id)
+  if (subscriptionError) {
+    console.error(subscriptionError)
+    await Event.insert({ name: 'createSubscriptionFailed', createdAt: new Date(), userId, email, subscriptionError }).catch(Function.prototype)
+    return res.json({ error: 'create-subscription-failed' })
+  }
+  console.log('  subscription created', subscription, userId, email)
+  await Event.insert({ name: 'createSubscriptionSucceeded', createdAt: new Date(), userId, email, customer, subscription }).catch(Function.prototype)
+
+  await User.findOneAndUpdate({ _id: userId }, { $set: { customer, subscription } }, { new: true })
+
+  return res.json({ message: 'create-subscription-succeeded' })
 })
 
 function createCustomer (email, source) {
   process.nextTick(() => {
     Event.insert({ name: 'createCustomer', createdAt: new Date(), email, source }).catch(Function.prototype)
   })
-  return stripe.customers.create({ email, source })
+
+  try {
+    return [null, stripe.customers.create({ email, source })]
+  } catch (err) {
+    return [err]
+  }
 }
 
 function createSubscription (customerId) {
   process.nextTick(() => {
     Event.insert({ name: 'createSubscription', createdAt: new Date(), customerId }).catch(Function.prototype)
   })
-  return stripe.subscriptions.create({
-    customer: customerId,
-    items: [{
-      plan
-    }]
-  })
+  try {
+    return [null, stripe.subscriptions.create({
+      customer: customerId,
+      items: [{
+        plan
+      }]
+    })]
+  } catch (err) {
+    return [err]
+  }
 }
 
 if (process.env.NODE_ENV !== 'production') {
