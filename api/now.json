@@ -19,7 +19,7 @@
     "STRIPE_SECRET_KEY": "@stripe_secret_key",
     "STRIPE_PLAN": "@stripe_plan",
     "USE_AUTH": "@use_auth",
-    "BASE_URL": "http://localhost:3000"
+    "BASE_URL": "@base_url"
   },
   "builds": [
     { "src": "routes/healthcheck.js", "use": "@now/node" },
