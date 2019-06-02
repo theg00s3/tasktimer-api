@@ -182,7 +182,7 @@ app.post('/create-subscription', async function (req, res) {
     })
     .catch((err) => {
       console.error(err)
-      res.json({ message: 'subscription-failed' })
+      res.json({ error: 'subscription-failed', data: err })
     })
 })
 
