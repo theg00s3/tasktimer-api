@@ -181,9 +181,9 @@ app.post('/create-subscription', async function (req, res) {
   console.log('  subscription created', subscription, userId, email)
   await Event.insert({ name: 'createSubscriptionSucceeded', createdAt: new Date(), userId, email, customer, subscription }).catch(Function.prototype)
 
-  await User.findOneAndUpdate({ _id: userId }, { $set: { customer, subscription } }, { new: true })
+  const user = await User.findOneAndUpdate({ _id: userId }, { $set: { customer, subscription } }, { new: true })
 
-  return res.json({ message: 'create-subscription-succeeded' })
+  return res.json({ message: 'create-subscription-succeeded', user })
 })
 
 function createCustomer (email, source) {
