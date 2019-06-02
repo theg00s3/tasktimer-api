@@ -6,20 +6,6 @@ const plan = process.env.STRIPE_PLAN || 'pro'
 
 module.exports = api
 
-api.get('/user/info', (req, res) => {
-  console.log('req.user', req.user)
-  if (!req.user) {
-    res.writeHead(401)
-    return res.end()
-  }
-  res.json(req.user)
-})
-api.get('/user/logout', (req, res) => {
-  console.log('req.user', req.user)
-  req.logout()
-  res.end()
-})
-
 api.get('/api', (req, res) => {
   console.log('BASE_URL', process.env.BASE_URL)
   res.writeHead(200)

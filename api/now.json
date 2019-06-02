@@ -22,6 +22,7 @@
     "BASE_URL": "@base_url"
   },
   "builds": [
+    { "src": "app.js", "use": "@now/node" },
     { "src": "routes/healthcheck.js", "use": "@now/node" },
     { "src": "routes/api.js", "use": "@now/node" },
     { "src": "routes/user.js", "use": "@now/node" }
@@ -31,10 +32,10 @@
     { "src": "/healthcheck", "dest": "/routes/healthcheck.js" },
     { "src": "/user.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/user.js" },
     { "src": "/api.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" },
-    { "src": "/team/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/team.js" },
-    { "src": "/twitter", "dest": "/routes/api.js" },
-    { "src": "/twitter/callback*", "dest": "/routes/api.js" },
-    { "src": "/github", "dest": "/routes/api.js" },
-    { "src": "/github/callback*", "dest": "/routes/api.js" }
+    { "src": "/team.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/team.js" },
+    { "src": "/twitter", "dest": "/app.js" },
+    { "src": "/twitter/callback*", "dest": "/app.js" },
+    { "src": "/github", "dest": "/app.js" },
+    { "src": "/github/callback*", "dest": "/app.js" }
   ]
 }
