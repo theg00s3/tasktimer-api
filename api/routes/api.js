@@ -32,9 +32,7 @@ api.get('/logout', (req, res) => {
 
 api.get('/api', (req, res) => {
   console.log('BASE_URL', process.env.BASE_URL)
-  res.writeHead(301, {
-    Location: process.env.BASE_URL
-  })
+  res.writeHead(200)
   res.end()
 })
 
