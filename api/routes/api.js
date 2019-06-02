@@ -6,7 +6,11 @@ const GithubStrategy = require('passport-github').Strategy
 const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('../modules/UserInfo')
 const User = require('../models/User')
+const Event = require('../models/Event')
 const TeamPomodoro = require('../models/TeamPomodoro')
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+const plan = process.env.STRIPE_PLAN || 'monthly'
+
 const Pusher = require('pusher')
 var pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -92,6 +96,7 @@ function getRemaining (pomodoro) {
   return remaining
 }
 
+// team
 app.post('/team/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
   console.log('body', body)
@@ -133,6 +138,62 @@ app.get('/team/:channel/status', async (req, res) => {
 
   res.json(pomodoro)
 })
+
+// stripe
+app.post('/create-subscription/:userId', async function (req, res) {
+  console.log('req.params', req.params)
+  console.log('req.body', req.body)
+  const { userId } = req.params
+  const { stripeToken } = req.body
+
+  if (!userId) return res.end(422)
+  if (!stripeToken) return res.end(422)
+
+  const { email } = await User.findOne({ _id: userId })
+
+  console.log('email, stripeToken', email, stripeToken)
+
+  let customer
+  return createCustomer(email, stripeToken)
+    .then(_customer => {
+      customer = _customer
+      console.log('  customer.create', customer)
+      return createSubscription(customer.id)
+    })
+    .then(async subscription => {
+      console.log('  subscriptions.create', subscription)
+      await User.findOneAndUpdate({
+        email
+      }, {
+        $set: { customer, subscription }
+      }, { new: true })
+      res.json({ message: 'subscription-success' })
+      Event.insert({ name: 'createSubscription', createdAt: new Date(), email, customer, subscription }).catch(Function.prototype)
+    })
+    .catch((err) => {
+      console.error(err)
+      res.json({ message: 'subscription-failed' })
+    })
+})
+
+function createCustomer (email, source) {
+  process.nextTick(() => {
+    Event.insert({ name: 'createCustomer', createdAt: new Date(), email, source }).catch(Function.prototype)
+  })
+  return stripe.customers.create({ email, source })
+}
+
+function createSubscription (customerId) {
+  process.nextTick(() => {
+    Event.insert({ name: 'createSubscription', createdAt: new Date(), customerId }).catch(Function.prototype)
+  })
+  return stripe.subscriptions.create({
+    customer: customerId,
+    items: [{
+      plan
+    }]
+  })
+}
 
 if (process.env.NODE_ENV !== 'production') {
   app.get('/fake', (req, res) => {
