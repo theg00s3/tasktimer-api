@@ -24,7 +24,7 @@ api.get('/user/info', (req, res) => {
   }
   res.json(req.user)
 })
-api.get('/logout', (req, res) => {
+api.get('/user/logout', (req, res) => {
   console.log('req.user', req.user)
   req.logout()
   res.end()
@@ -177,7 +177,7 @@ async function createSubscription (customerId) {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  api.get('/fake', (req, res) => {
+  api.get('/user/fake', (req, res) => {
     console.log('req.user', req.user)
     const user = {
       '_id': '5a9fe4e085d766000c002636',

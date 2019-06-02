@@ -21,7 +21,7 @@ serial.skip('api', async t => {
 })
 serial.skip('save pomodoro', async t => {
   let response, cookie
-  response = await fetch('http://localhost:3000/fake', { credentials: true })
+  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
   t.is(response.status, 200)
   cookie = response.headers.get('set-cookie')
   t.truthy(cookie)
