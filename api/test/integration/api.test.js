@@ -15,7 +15,7 @@ serial.beforeEach(async () => {
   })
 })
 
-serial('api', async t => {
+serial.skip('api', async t => {
   const response = await fetch('http://localhost:3000/api')
   t.is(response.status, 200)
 })
