@@ -25,15 +25,15 @@
   "routes": [
     { "src": "/", "dest": "/routes/healthcheck.js" },
     { "src": "/healthcheck", "dest": "/routes/healthcheck.js" },
-    { "src": "/fake", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
-    { "src": "/info", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
-    { "src": "/logout", "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } },
-    { "src": "/api.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "https://pomodoro.cc", "Access-Control-Allow-Headers": "x-now-id, x-now-trace, x-powered-by, Origin, Content-Type, Set-Cookie", "Access-Control-Allow-Credentials": "true" } },
-    { "src": "/team/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "https://pomodoro.cc", "Access-Control-Allow-Headers": "x-now-id, x-now-trace, x-powered-by, Origin, Content-Type, Set-Cookie", "Access-Control-Allow-Credentials": "true" } },
+    { "src": "/fake", "dest": "/routes/api.js" },
+    { "src": "/info", "dest": "/routes/api.js" },
+    { "src": "/logout", "dest": "/routes/api.js" },
+    { "src": "/api.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" },
+    { "src": "/team/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" },
     { "src": "/twitter", "dest": "/routes/api.js" },
     { "src": "/twitter/callback*", "dest": "/routes/api.js" },
     { "src": "/github", "dest": "/routes/api.js" },
     { "src": "/github/callback*", "dest": "/routes/api.js" },
-    { "src": "/create-subscription", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "x-now-id, x-now-trace, x-powered-by, Origin, Content-Type, Set-Cookie", "Access-Control-Allow-Credentials": "true" } }
+    { "src": "/create-subscription", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" }
   ]
 }

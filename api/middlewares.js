@@ -9,7 +9,6 @@ module.exports = [
     origin: ['https://pomodoro.cc', 'http://beta.pomodoro.cc', 'https://beta.pomodoro.cc', 'https://app.pomodoro.cc', 'https://dev.pomodoro.cc', 'http://dev.pomodoro.cc', 'http://dev.pomodoro.cc:9000'],
     methods: ['HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['x-now-id', 'x-now-trace', 'x-powered-by', 'Origin', 'Content-Type', 'Set-Cookie'],
-    // allowedHeaders: ['*'],
     credentials: true
   }),
   cookieParser(),
