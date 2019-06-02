@@ -151,19 +151,19 @@ app.post('/create-subscription', async function (req, res) {
     res.writeHead(401)
     return res.end()
   }
-  const { email, stripeToken } = req.body
+  const { email, token } = req.body
   const { _id: userId } = req.user
 
-  if (!stripeToken) {
-    return res.json({ error: 'missing stripeToken' })
+  if (!token) {
+    return res.json({ error: 'missing token' })
   }
   if (!email) {
     return res.json({ error: 'missing email' })
   }
 
-  console.log('userId, email, stripeToken', userId, email, stripeToken)
+  console.log('userId, email, token', userId, email, token)
 
-  let [customerError, customer] = await createCustomer(email, stripeToken)
+  let [customerError, customer] = await createCustomer(email, token)
   if (customerError) {
     console.error(customerError)
     await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
