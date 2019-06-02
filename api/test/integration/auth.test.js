@@ -2,7 +2,7 @@ const { serial } = require('ava')
 const fetch = require('node-fetch')
 
 serial('unauthorized response', async t => {
-  const response = await fetch('http://localhost:3000/info')
+  const response = await fetch('http://localhost:3000/user/info')
   t.is(response.status, 401)
 })
 

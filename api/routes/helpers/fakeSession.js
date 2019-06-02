@@ -16,7 +16,7 @@ function middleware (req, res, next) {
 
 function route (req, res) {
   setTempUser(req)
-  res.redirect('/info')
+  res.redirect('/user/info')
 
   function setTempUser (req) {
     if (!req.session) { req.session = {} }

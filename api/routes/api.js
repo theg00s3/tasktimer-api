@@ -16,7 +16,7 @@ var pusher = new Pusher({
 
 module.exports = api
 
-api.get('/info', (req, res) => {
+api.get('/user/info', (req, res) => {
   console.log('req.user', req.user)
   if (!req.user) {
     res.writeHead(401)
