@@ -23,12 +23,13 @@
   },
   "builds": [
     { "src": "routes/healthcheck.js", "use": "@now/node" },
-    { "src": "routes/api.js", "use": "@now/node" }
+    { "src": "routes/api.js", "use": "@now/node" },
+    { "src": "routes/user.js", "use": "@now/node" }
   ],
   "routes": [
     { "src": "/", "dest": "/routes/healthcheck.js" },
     { "src": "/healthcheck", "dest": "/routes/healthcheck.js" },
-    { "src": "/user.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" },
+    { "src": "/user.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/user.js" },
     { "src": "/api.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" },
     { "src": "/team/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" },
     { "src": "/twitter", "dest": "/routes/api.js" },
