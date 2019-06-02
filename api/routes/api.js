@@ -3,7 +3,7 @@ const User = require('../models/User')
 const Event = require('../models/Event')
 const TeamPomodoro = require('../models/TeamPomodoro')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
-const plan = process.env.STRIPE_PLAN || 'monthly'
+const plan = process.env.STRIPE_PLAN || 'pro'
 
 const Pusher = require('pusher')
 var pusher = new Pusher({
