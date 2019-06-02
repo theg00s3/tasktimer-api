@@ -30,6 +30,7 @@
     { "src": "/twitter", "dest": "/routes/api.js" },
     { "src": "/twitter/callback*", "dest": "/routes/api.js" },
     { "src": "/github", "dest": "/routes/api.js" },
-    { "src": "/github/callback*", "dest": "/routes/api.js" }
+    { "src": "/github/callback*", "dest": "/routes/api.js" },
+    { "src": "/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js", "headers": { "Access-Control-Allow-Origin": "*" } }
   ]
 }

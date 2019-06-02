@@ -24,7 +24,8 @@ const redirectRoutes = { failureRedirect: 'https://pomodoro.cc', successRedirect
 
 module.exports = app
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.USE_AUTH === true || process.env.NODE_ENV === 'production') {
+  console.log('using auth')
   app.use(session({
     resave: true,
     saveUninitialized: true,
@@ -65,6 +66,8 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/twitter/callback', passport.authenticate('twitter', redirectRoutes))
   app.get('/github', passport.authenticate('github'))
   app.get('/github/callback', passport.authenticate('github', redirectRoutes))
+} else {
+  console.log('not using auth')
 }
 
 app.get('/info', (req, res) => {
@@ -140,16 +143,16 @@ app.get('/team/:channel/status', async (req, res) => {
 })
 
 // stripe
-app.post('/create-subscription/:userId', async function (req, res) {
+app.post('/create-subscription', async function (req, res) {
   console.log('req.params', req.params)
   console.log('req.body', req.body)
-  const { userId } = req.params
+  console.log('req.user', req.user)
+  if (!req.user) return res.end(422)
   const { stripeToken } = req.body
 
-  if (!userId) return res.end(422)
   if (!stripeToken) return res.end(422)
 
-  const { email } = await User.findOne({ _id: userId })
+  const { email } = req.user
 
   console.log('email, stripeToken', email, stripeToken)
 
