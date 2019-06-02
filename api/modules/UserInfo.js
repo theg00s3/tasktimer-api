@@ -8,6 +8,8 @@ module.exports = function UserInfo (raw) {
   self.username = self.avatar = self.id = null
 
   self.id = raw.id
+  self.customer = raw.customer
+  self.subscription = raw.subscription
 
   switch (raw.provider) {
     case 'twitter':
