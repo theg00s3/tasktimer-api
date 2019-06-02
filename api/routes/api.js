@@ -147,12 +147,21 @@ app.post('/create-subscription', async function (req, res) {
   console.log('req.params', req.params)
   console.log('req.body', req.body)
   console.log('req.user', req.user)
-  if (!req.user) return res.end(422)
+  if (!req.user) {
+    res.writeHead(401)
+    return res.end()
+  }
   const { stripeToken } = req.body
-
-  if (!stripeToken) return res.end(422)
-
   const { email } = req.user
+
+  if (!stripeToken) {
+    res.writeHead(422, 'missing stripeToken')
+    return res.end()
+  }
+  if (!email) {
+    res.writeHead(422, 'missing email')
+    return res.end()
+  }
 
   console.log('email, stripeToken', email, stripeToken)
 
