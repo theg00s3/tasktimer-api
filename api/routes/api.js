@@ -35,6 +35,51 @@ api.get('/api', (req, res) => {
   res.writeHead(200)
   res.end()
 })
+api.post('/api/create-subscription', async function (req, res) {
+  console.log('req.params', req.params)
+  console.log('req.body', req.body)
+  console.log('req.user', req.user)
+  if (!req.user) {
+    res.writeHead(401)
+    return res.end()
+  }
+  const { email, token } = req.body
+  const { _id: userId } = req.user
+
+  if (!token) {
+    return res.json({ error: 'missing token' })
+  }
+  if (!email) {
+    return res.json({ error: 'missing email' })
+  }
+
+  console.log('userId, email, token', userId, email, token)
+
+  let [customerError, customer] = await createCustomer(email, token)
+  if (customerError) {
+    console.error(customerError)
+    await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
+    return res.json({ error: 'create-customer-failed' })
+  }
+  console.log('  customer created', customer, userId, email)
+  await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
+
+  const [subscriptionError, subscription] = await createSubscription(customer.id)
+  if (subscriptionError) {
+    console.error(subscriptionError)
+    await Event.insert({ name: 'createSubscriptionFailed', createdAt: new Date(), userId, email, subscriptionError }).catch(Function.prototype)
+    return res.json({ error: 'create-subscription-failed' })
+  }
+  console.log('  subscription created', subscription, userId, email)
+  await Event.insert({ name: 'createSubscriptionSucceeded', createdAt: new Date(), userId, email, customer, subscription }).catch(Function.prototype)
+
+  const user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), customer, customerUpdatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
+
+  req.session = user
+
+  return res.json({ message: 'create-subscription-succeeded', user })
+})
+
 api.post('/api/pomodoro', (req, res) => {
   console.log('req.user', req.user)
   console.log('req.body', req.body)
@@ -99,52 +144,6 @@ api.get('/team/:channel/status', async (req, res) => {
   const pomodoro = await TeamPomodoro.findOne({ channel }) || {}
 
   res.json(pomodoro)
-})
-
-// stripe
-api.post('/create-subscription', async function (req, res) {
-  console.log('req.params', req.params)
-  console.log('req.body', req.body)
-  console.log('req.user', req.user)
-  if (!req.user) {
-    res.writeHead(401)
-    return res.end()
-  }
-  const { email, token } = req.body
-  const { _id: userId } = req.user
-
-  if (!token) {
-    return res.json({ error: 'missing token' })
-  }
-  if (!email) {
-    return res.json({ error: 'missing email' })
-  }
-
-  console.log('userId, email, token', userId, email, token)
-
-  let [customerError, customer] = await createCustomer(email, token)
-  if (customerError) {
-    console.error(customerError)
-    await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
-    return res.json({ error: 'create-customer-failed' })
-  }
-  console.log('  customer created', customer, userId, email)
-  await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
-
-  const [subscriptionError, subscription] = await createSubscription(customer.id)
-  if (subscriptionError) {
-    console.error(subscriptionError)
-    await Event.insert({ name: 'createSubscriptionFailed', createdAt: new Date(), userId, email, subscriptionError }).catch(Function.prototype)
-    return res.json({ error: 'create-subscription-failed' })
-  }
-  console.log('  subscription created', subscription, userId, email)
-  await Event.insert({ name: 'createSubscriptionSucceeded', createdAt: new Date(), userId, email, customer, subscription }).catch(Function.prototype)
-
-  const user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), customer, customerUpdatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
-
-  req.session = user
-
-  return res.json({ message: 'create-subscription-succeeded', user })
 })
 
 async function createCustomer (email, source) {
