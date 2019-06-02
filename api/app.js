@@ -8,7 +8,7 @@ const GithubStrategy = require('passport-github').Strategy
 const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('./modules/UserInfo')
 const User = require('./models/User')
-// const Event = require('../models/Event')
+const Event = require('../models/Event')
 
 const middlewares = require('./middlewares')
 
@@ -74,10 +74,12 @@ function upsertAuthenticatedUser (token, tokenSecret, profile, done) {
     .then(user => {
       if (user) return done(null, user)
       User.insert(new UserInfo(profile))
-        .then(user => {
+        .then(async user => {
+          await Event.insert({ name: 'createUserSucceeded', createdAt: new Date(), user }).catch(Function.prototype)
           done(null, user)
         })
-        .catch(err => {
+        .catch(async err => {
+          await Event.insert({ name: 'createUserFailed', createdAt: new Date(), err }).catch(Function.prototype)
           if (err) return done(err, null)
         })
     })
