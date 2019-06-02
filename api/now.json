@@ -13,7 +13,10 @@
     "PUSHER_APP_ID": "@pusher_app_id",
     "PUSHER_KEY": "@pusher_key",
     "PUSHER_SECRET": "@pusher_secret",
-    "MONGO_URL": "@mongo_url"
+    "MONGO_URL": "@mongo_url",
+    "SENTRY_DSN": "@sentry_dsn",
+    "STRIPE_SECRET_KEY": "@stripe_secret_key",
+    "STRIPE_PLAN": "@stripe_plan"
   },
   "builds": [
     { "src": "routes/healthcheck.js", "use": "@now/node" },
