@@ -1,4 +1,4 @@
-const app = require('../app')
+const api = require('../app')
 const User = require('../models/User')
 const Event = require('../models/Event')
 const TeamPomodoro = require('../models/TeamPomodoro')
@@ -14,9 +14,9 @@ var pusher = new Pusher({
   useTLS: true
 })
 
-module.exports = app
+module.exports = api
 
-app.get('/info', (req, res) => {
+api.get('/info', (req, res) => {
   console.log('req.user', req.user)
   if (!req.user) {
     res.writeHead(401)
@@ -24,14 +24,18 @@ app.get('/info', (req, res) => {
   }
   res.json(req.user)
 })
-app.get('/logout', (req, res) => {
+api.get('/logout', (req, res) => {
   console.log('req.user', req.user)
   req.logout()
   res.end()
 })
 
-app.get('/api', (req, res) => {
-  res.end('ok')
+api.get('/api', (req, res) => {
+  console.log('BASE_URL', process.env.BASE_URL)
+  res.writeHead(301, {
+    Location: process.env.BASE_URL
+  })
+  res.end()
 })
 
 function getRemaining (pomodoro) {
@@ -46,7 +50,7 @@ function getRemaining (pomodoro) {
 }
 
 // team
-app.post('/team/:channel', async (req, res) => {
+api.post('/team/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
   console.log('body', body)
   if (!body.minutes || !body.type) {
@@ -81,7 +85,7 @@ app.post('/team/:channel', async (req, res) => {
   }
 })
 
-app.get('/team/:channel/status', async (req, res) => {
+api.get('/team/:channel/status', async (req, res) => {
   const channel = req.params.channel
   const pomodoro = await TeamPomodoro.findOne({ channel }) || {}
 
@@ -89,7 +93,7 @@ app.get('/team/:channel/status', async (req, res) => {
 })
 
 // stripe
-app.post('/create-subscription', async function (req, res) {
+api.post('/create-subscription', async function (req, res) {
   console.log('req.params', req.params)
   console.log('req.body', req.body)
   console.log('req.user', req.user)
@@ -132,36 +136,38 @@ app.post('/create-subscription', async function (req, res) {
   return res.json({ message: 'create-subscription-succeeded', user })
 })
 
-function createCustomer (email, source) {
+async function createCustomer (email, source) {
   process.nextTick(() => {
     Event.insert({ name: 'createCustomer', createdAt: new Date(), email, source }).catch(Function.prototype)
   })
 
   try {
-    return [null, stripe.customers.create({ email, source })]
+    const res = await stripe.customers.create({ email, source })
+    return [null, res]
   } catch (err) {
     return [err]
   }
 }
 
-function createSubscription (customerId) {
+async function createSubscription (customerId) {
   process.nextTick(() => {
     Event.insert({ name: 'createSubscription', createdAt: new Date(), customerId }).catch(Function.prototype)
   })
   try {
-    return [null, stripe.subscriptions.create({
+    const res = await stripe.subscriptions.create({
       customer: customerId,
       items: [{
         plan
       }]
-    })]
+    })
+    return [null, res]
   } catch (err) {
     return [err]
   }
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  app.get('/fake', (req, res) => {
+  api.get('/fake', (req, res) => {
     console.log('req.user', req.user)
     req.user = {
       '_id': '5a9fe4e085d766000c002636',

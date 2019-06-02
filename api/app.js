@@ -15,15 +15,17 @@ const middlewares = require('./middlewares')
 app.set('trust proxy', 1)
 app.use(...middlewares)
 
-if (process.env.USE_AUTH === true || process.env.NODE_ENV === 'production') {
-  const redirectRoutes = { failureRedirect: 'https://pomodoro.cc', successRedirect: 'https://pomodoro.cc' }
-  console.log('using auth')
+console.log(JSON.stringify(process.env))
+
+if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
+  const redirectRoutes = { failureRedirect: process.env.BASE_URL, successRedirect: process.env.BASE_URL }
+  console.log('using auth', { redirectRoutes })
   app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: 'foo',
     cookie: {
-      domain: '.pomodoro.cc',
+      domain: process.env.NODE_ENV === 'production' ? '.pomodoro.cc' : 'localhost',
       sameSite: false
     },
     store: new MongoStore({
@@ -66,6 +68,7 @@ module.exports = app
 
 function upsertAuthenticatedUser (token, tokenSecret, profile, done) {
   var user = new UserInfo(profile).toJSON()
+  console.log('user', user)
 
   User.findOne({ id: user.id })
     .then(user => {
