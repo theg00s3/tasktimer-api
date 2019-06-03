@@ -56,16 +56,18 @@ api.post('/api/create-subscription', async function (req, res) {
   return res.json({ message: 'create-subscription-succeeded', user })
 })
 
-api.post('/api/pomodoro', (req, res) => {
+api.post('/api/pomodoro', async (req, res) => {
   console.log('req.user', req.user)
   console.log('req.body', req.body)
   if (!req.user) {
     res.writeHead(401)
     return res.end()
   }
-  console.log('creating pomodoro', req.user, req.body)
-  res.writeHead(200)
-  res.end()
+
+  await Event.insert({ name: 'pomodoroCreated', createdAt: new Date(), userId: req.user._id }).catch(Function.prototype)
+
+  console.log('creating pomodoro [todo]', req.user, req.body)
+  req.json(req.body)
 })
 
 async function createCustomer (email, source) {
