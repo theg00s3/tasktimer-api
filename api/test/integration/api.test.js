@@ -32,7 +32,7 @@ serial.skip('save pomodoro', async t => {
     method: 'POST',
     json: true,
     body,
-    credentials: true,
+    // credentials: 'include',
     headers: {
       // 'Accept': 'application/json',
       // 'Content-Type': 'application/json',

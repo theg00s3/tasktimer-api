@@ -15,8 +15,6 @@ const middlewares = require('./middlewares')
 app.set('trust proxy', 1)
 app.use(...middlewares)
 
-console.log(JSON.stringify(process.env))
-
 if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
   const redirectRoutes = { failureRedirect: process.env.BASE_URL, successRedirect: process.env.BASE_URL }
   console.log('using auth', { redirectRoutes })

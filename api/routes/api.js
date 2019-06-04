@@ -1,8 +1,10 @@
 const api = require('../app')
 const User = require('../models/User')
 const Event = require('../models/Event')
+const Pomodoro = require('../models/Pomodoro')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const plan = process.env.STRIPE_PLAN || 'pro'
+const validationErrors = require('../modules/validation-errors')
 
 module.exports = api
 
@@ -57,17 +59,28 @@ api.post('/api/create-subscription', async function (req, res) {
 })
 
 api.post('/api/pomodoro', async (req, res) => {
-  console.log('req.user', req.user)
-  console.log('req.body', req.body)
+  console.log('create pomodoro for user', req.user && req.user.username)
   if (!req.user) {
     res.writeHead(401)
     return res.end()
   }
 
-  await Event.insert({ name: 'pomodoroCreated', createdAt: new Date(), userId: req.user._id }).catch(Function.prototype)
+  const pomodoro = req.body
 
-  console.log('creating pomodoro [todo]', req.user, req.body)
-  req.json(req.body)
+  await Event.insert({ name: 'createPomodoro', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
+
+  const errors = validationErrors(pomodoro)
+  console.log('pomodoro, errors', errors)
+  if (errors === null) {
+    Object.assign(pomodoro, { userId: req.user._id })
+    await Pomodoro.insert(pomodoro)
+    await Event.insert({ name: 'pomodoroCreated', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
+  } else {
+    await Event.insert({ name: 'pomodoroFailedValidation', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
+    res.writeHead(422)
+  }
+
+  res.json(pomodoro)
 })
 
 async function createCustomer (email, source) {
