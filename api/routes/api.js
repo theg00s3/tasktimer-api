@@ -40,7 +40,7 @@ api.post('/api/create-subscription', async function (req, res) {
   console.log('  customer created', customer, userId, email)
   await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
 
-  const [subscriptionError, subscription] = await createSubscription(customer.id)
+  const [subscriptionError, subscription] = await createSubscription(userId, customer.id)
   if (subscriptionError) {
     console.error(subscriptionError)
     await Event.insert({ name: 'createSubscriptionFailed', createdAt: new Date(), userId, email, subscriptionError }).catch(Function.prototype)
@@ -83,9 +83,9 @@ async function createCustomer (email, source) {
   }
 }
 
-async function createSubscription (customerId) {
+async function createSubscription (userId, customerId) {
   process.nextTick(() => {
-    Event.insert({ name: 'createSubscription', createdAt: new Date(), customerId }).catch(Function.prototype)
+    Event.insert({ name: 'createSubscription', createdAt: new Date(), userId, customerId }).catch(Function.prototype)
   })
   try {
     const res = await stripe.subscriptions.create({
