@@ -22,10 +22,10 @@
     "BASE_URL": "@base_url"
   },
   "builds": [
-    { "src": "app.js", "use": "@now/node" },
-    { "src": "routes/healthcheck.js", "use": "@now/node" },
-    { "src": "routes/api.js", "use": "@now/node" },
-    { "src": "routes/user.js", "use": "@now/node" }
+    { "src": "app.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
+    { "src": "routes/healthcheck.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
+    { "src": "routes/api.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
+    { "src": "routes/user.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } }
   ],
   "routes": [
     { "src": "/", "dest": "/routes/healthcheck.js" },
