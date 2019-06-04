@@ -15,11 +15,11 @@ serial.beforeEach(async () => {
   })
 })
 
-serial.skip('api', async t => {
+serial('api', async t => {
   const response = await fetch('http://localhost:3000/api')
   t.is(response.status, 200)
 })
-serial.skip('save pomodoro', async t => {
+serial('save pomodoro', async t => {
   let response, cookie
   response = await fetch('http://localhost:3000/user/fake', { credentials: true })
   t.is(response.status, 200)
@@ -27,20 +27,24 @@ serial.skip('save pomodoro', async t => {
   t.truthy(cookie)
   console.log('cookie', cookie)
 
-  const body = {}
+  const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
   response = await fetch('http://localhost:3000/api/pomodoro', {
     method: 'POST',
     json: true,
-    body,
-    // credentials: 'include',
+    body: JSON.stringify(pomodoro),
+    credentials: true,
     headers: {
-      // 'Accept': 'application/json',
-      // 'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
       cookie
     }
   })
-  // const json = await response.json()
-  // console.log('json', json)
-  // console.log('response', response)
+
+  const json = await response.json()
   t.is(response.status, 200)
+  t.is(json.minutes, 25)
+  t.true(new Date(json.startedAt) < new Date())
+  t.is(json.type, 'pomodoro')
+  t.truthy(json._id)
+  t.truthy(json.userId)
 })

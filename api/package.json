@@ -5,7 +5,7 @@
   "main": "index.js",
   "ignore-scripts": "false",
   "scripts": {
-    "test": "NODE_ENV=test MONGO_URL=mongodb://localhost:27017/test ava --fail-fast --verbose --timeout=1m --concurrency 1",
+    "test": "NODE_ENV=test MONGO_URL=mongodb://localhost:27017/test ava --fail-fast --verbose --timeout=30s --concurrency 1",
     "start": "now dev",
     "dev": "NODE_ENV=development nodemon index.js",
     "deploy": "now --target production"
@@ -16,6 +16,7 @@
   "devDependencies": {
     "ava": "^2.0.0",
     "nodemon": "^1.19.1",
+    "passport-mock-strategy": "^2.0.0",
     "r2": "git+https://github.com/mikeal/r2.git"
   },
   "dependencies": {

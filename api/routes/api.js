@@ -59,7 +59,7 @@ api.post('/api/create-subscription', async function (req, res) {
 })
 
 api.post('/api/pomodoro', async (req, res) => {
-  console.log('create pomodoro for user', req.user && req.user.username)
+  console.log('create pomodoro for user', req.user && req.user.username, req.body)
   if (!req.user) {
     res.writeHead(401)
     return res.end()
@@ -70,7 +70,7 @@ api.post('/api/pomodoro', async (req, res) => {
   await Event.insert({ name: 'createPomodoro', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
 
   const errors = validationErrors(pomodoro)
-  console.log('pomodoro, errors', errors)
+  console.log('pomodoro, errors', pomodoro, errors)
   if (errors === null) {
     Object.assign(pomodoro, { userId: req.user._id })
     await Pomodoro.insert(pomodoro)
@@ -78,6 +78,7 @@ api.post('/api/pomodoro', async (req, res) => {
   } else {
     await Event.insert({ name: 'pomodoroFailedValidation', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
     res.writeHead(422)
+    return res.end()
   }
 
   res.json(pomodoro)

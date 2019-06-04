@@ -65,6 +65,25 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
   } else {
     console.log('process.env.GITHUB_CLIENT_ID not set', process.env.GITHUB_CLIENT_ID)
   }
+
+  if (process.env.NODE_ENV !== 'production') {
+    const MockStrategy = require('passport-mock-strategy')
+    passport.use(
+      new MockStrategy({
+        name: 'mock',
+        user: {
+          _id: '5a9fe4e085d766000c002636',
+          apikey: 'xxx',
+          id: '2662706',
+          avatar: 'https://avatars0.githubusercontent.com/u/2662706?v=4',
+          username: 'christian-fei'
+        }
+      })
+    )
+    app.get('/user/fake', passport.authenticate('mock'), (req, res) => { res.writeHead(200); res.end() })
+  } else {
+    console.log('using mock auth - process.env.NODE_ENV', process.env.NODE_ENV)
+  }
 } else {
   console.log('not using auth')
 }

@@ -6,7 +6,7 @@ serial('unauthorized response', async t => {
   t.is(response.status, 401)
 })
 
-serial.skip('authorizes response with fake cookie', async t => {
+serial('authorizes response with fake cookie', async t => {
   let response, cookie
   response = await fetch('http://localhost:3000/user/fake', { credentials: true })
   cookie = response.headers.get('set-cookie')
