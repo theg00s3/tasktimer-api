@@ -6,18 +6,19 @@ const Pomodoro = require('../models/Pomodoro')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const plan = process.env.STRIPE_PLAN || 'pro'
 const validationErrors = require('../modules/validation-errors')
+const logger = require('pino')()
 
 module.exports = api
 
 api.get('/api', (req, res) => {
-  console.log('BASE_URL', process.env.BASE_URL)
+  logger.info('BASE_URL', process.env.BASE_URL)
   res.writeHead(200)
   res.end()
 })
 api.post('/api/create-subscription', async function (req, res) {
-  // console.log('req.params', req.params)
-  // console.log('req.body', req.body)
-  // console.log('req.user', req.user)
+  // logger.info('req.params', req.params)
+  // logger.info('req.body', req.body)
+  // logger.info('req.user', req.user)
   if (!req.user) {
     res.writeHead(401)
     return res.end()
@@ -32,24 +33,24 @@ api.post('/api/create-subscription', async function (req, res) {
     return res.json({ error: 'missing email' })
   }
 
-  console.log('createSubscription userId, email, token', userId, email, token)
+  logger.info('createSubscription userId, email, token', userId, email, token)
 
   let [customerError, customer] = await createCustomer(email, token)
   if (customerError) {
-    console.error(customerError)
+    logger.error(customerError)
     await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
     return res.json({ error: 'create-customer-failed' })
   }
-  console.log('  customer created', customer, userId, email)
+  logger.info('  customer created', customer, userId, email)
   await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
 
   const [subscriptionError, subscription] = await createSubscription(userId, customer.id)
   if (subscriptionError) {
-    console.error(subscriptionError)
+    logger.error(subscriptionError)
     await Event.insert({ name: 'createSubscriptionFailed', createdAt: new Date(), userId, email, subscriptionError }).catch(Function.prototype)
     return res.json({ error: 'create-subscription-failed' })
   }
-  console.log('  subscription created', subscription, userId, email)
+  logger.info('  subscription created', subscription, userId, email)
   await Event.insert({ name: 'createSubscriptionSucceeded', createdAt: new Date(), userId, email, customer, subscription }).catch(Function.prototype)
 
   const user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), customer, customerUpdatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
@@ -58,17 +59,15 @@ api.post('/api/create-subscription', async function (req, res) {
 })
 
 api.get('/pomodoros', async (req, res) => {
-  console.log('api process.env.MONGO_URL', process.env.MONGO_URL)
   const pomodoroQuery = { userId: monk.id(req.user._id) }
-  console.log('pomodoroQuery', pomodoroQuery)
-  // console.log(Object.keys(Pomodoro))
+  logger.info('pomodoroQuery', pomodoroQuery)
   const pomodoros = await Pomodoro.find(pomodoroQuery)
-  console.log('pomodoros', pomodoros)
+  logger.info('pomodoros', pomodoros)
   res.json(pomodoros)
 })
 
 api.post('/pomodoros', async (req, res) => {
-  console.log('create pomodoro for user', req.user && req.user.username, req.body)
+  logger.info('create pomodoro for user', req.user && req.user.username, req.body)
   if (!req.user) {
     res.writeHead(401)
     return res.end()
@@ -79,7 +78,7 @@ api.post('/pomodoros', async (req, res) => {
   await Event.insert({ name: 'createPomodoro', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
 
   const errors = validationErrors(pomodoro)
-  console.log('pomodoro, errors', pomodoro, errors)
+  logger.info('pomodoro, errors', pomodoro, errors)
   if (errors === null) {
     Object.assign(pomodoro, { userId: req.user._id })
     await Pomodoro.insert(pomodoro)
@@ -125,7 +124,7 @@ async function createSubscription (userId, customerId) {
 
 if (process.env.NODE_ENV !== 'production') {
   api.get('/user/fake', (req, res) => {
-    console.log('req.user', req.user)
+    logger.info('req.user', req.user)
     const user = {
       '_id': '5a9fe4e085d766000c002636',
       'apikey': 'xxx',

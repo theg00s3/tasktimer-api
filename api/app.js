@@ -9,6 +9,7 @@ const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('./modules/UserInfo')
 const User = require('./models/User')
 const Event = require('./models/Event')
+const logger = require('pino')()
 
 const middlewares = require('./middlewares')
 
@@ -17,7 +18,7 @@ app.use(...middlewares)
 
 if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
   const redirectRoutes = { failureRedirect: process.env.BASE_URL, successRedirect: process.env.BASE_URL }
-  console.log('using auth', { redirectRoutes })
+  logger.info('using auth', { redirectRoutes })
   app.use(session({
     resave: true,
     saveUninitialized: true,
@@ -51,7 +52,7 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
     app.get('/twitter', passport.authenticate('twitter'))
     app.get('/twitter/callback', passport.authenticate('twitter', redirectRoutes))
   } else {
-    console.log('process.env.TWITTER_CONSUMER_KEY not set', process.env.TWITTER_CONSUMER_KEY)
+    logger.info('process.env.TWITTER_CONSUMER_KEY not set', process.env.TWITTER_CONSUMER_KEY)
   }
 
   if (process.env.GITHUB_CLIENT_ID) {
@@ -63,7 +64,7 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
     app.get('/github', passport.authenticate('github'))
     app.get('/github/callback', passport.authenticate('github', redirectRoutes))
   } else {
-    console.log('process.env.GITHUB_CLIENT_ID not set', process.env.GITHUB_CLIENT_ID)
+    logger.info('process.env.GITHUB_CLIENT_ID not set', process.env.GITHUB_CLIENT_ID)
   }
 
   if (process.env.NODE_ENV !== 'production') {
@@ -81,19 +82,19 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
       })
     )
     app.get('/user/fake', passport.authenticate('mock'), (req, res) => { res.writeHead(200); res.end() })
-    console.log('using mock auth - process.env.NODE_ENV', process.env.NODE_ENV)
+    logger.info('using mock auth - process.env.NODE_ENV', process.env.NODE_ENV)
   } else {
-    console.log('not using mock auth - process.env.NODE_ENV', process.env.NODE_ENV)
+    logger.info('not using mock auth - process.env.NODE_ENV', process.env.NODE_ENV)
   }
 } else {
-  console.log('not using auth')
+  logger.info('not using auth')
 }
 
 module.exports = app
 
 function upsertAuthenticatedUser (token, tokenSecret, profile, done) {
   var user = new UserInfo(profile).toJSON()
-  console.log('user', user)
+  logger.info('user', user)
 
   User.findOne({ id: user.id })
     .then(user => {

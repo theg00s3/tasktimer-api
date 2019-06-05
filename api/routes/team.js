@@ -1,5 +1,6 @@
 const api = require('../app')
 const TeamPomodoro = require('../models/TeamPomodoro')
+const logger = require('pino')()
 
 const Pusher = require('pusher')
 var pusher = new Pusher({
@@ -26,7 +27,7 @@ function getRemaining (pomodoro) {
 // team
 api.post('/team/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
-  console.log('body', body)
+  logger.info('body', body)
   if (!body.minutes || !body.type) {
     res.writeHead(422)
     return res.end()
@@ -62,6 +63,7 @@ api.post('/team/:channel', async (req, res) => {
 api.get('/team/:channel/status', async (req, res) => {
   const channel = req.params.channel
   const pomodoro = await TeamPomodoro.findOne({ channel }) || {}
+  logger.info('channel, status, pomodoro', channel, status, pomodoro)
 
   res.json(pomodoro)
 })

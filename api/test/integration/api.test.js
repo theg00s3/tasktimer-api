@@ -20,6 +20,7 @@ test('api', async t => {
   const response = await fetch('http://localhost:3000/api')
   t.is(response.status, 200)
 })
+
 test('save pomodoro', async t => {
   let response, cookie
   response = await fetch('http://localhost:3000/user/fake', { credentials: true })
@@ -73,6 +74,7 @@ test('retrieve pomodoros', async t => {
   const json = await response.json()
   t.truthy(json)
   t.is(response.status, 200)
+  t.is(json.length, 1)
   t.is(json[0].minutes, 25)
   t.true(new Date(json[0].startedAt) < new Date())
   t.is(json[0].type, 'pomodoro')
