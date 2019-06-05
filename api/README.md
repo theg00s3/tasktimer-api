@@ -15,7 +15,8 @@ npm i
 ## test
 
 ```
-npm t
+env MONGO_URL=mongodb://localhost:27017/test NODE_ENV=test npm start # or change in .env
+env MONGO_URL=mongodb://localhost:27017/test npm t
 ```
 
 ## deployment with up

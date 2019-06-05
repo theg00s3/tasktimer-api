@@ -1,4 +1,5 @@
 const api = require('../app')
+const monk = require('monk')
 const User = require('../models/User')
 const Event = require('../models/Event')
 const Pomodoro = require('../models/Pomodoro')
@@ -14,9 +15,9 @@ api.get('/api', (req, res) => {
   res.end()
 })
 api.post('/api/create-subscription', async function (req, res) {
-  console.log('req.params', req.params)
-  console.log('req.body', req.body)
-  console.log('req.user', req.user)
+  // console.log('req.params', req.params)
+  // console.log('req.body', req.body)
+  // console.log('req.user', req.user)
   if (!req.user) {
     res.writeHead(401)
     return res.end()
@@ -31,7 +32,7 @@ api.post('/api/create-subscription', async function (req, res) {
     return res.json({ error: 'missing email' })
   }
 
-  console.log('userId, email, token', userId, email, token)
+  console.log('createSubscription userId, email, token', userId, email, token)
 
   let [customerError, customer] = await createCustomer(email, token)
   if (customerError) {
@@ -54,6 +55,16 @@ api.post('/api/create-subscription', async function (req, res) {
   const user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), customer, customerUpdatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
 
   return res.json({ message: 'create-subscription-succeeded', user })
+})
+
+api.get('/pomodoros', async (req, res) => {
+  console.log('api process.env.MONGO_URL', process.env.MONGO_URL)
+  const pomodoroQuery = { userId: monk.id(req.user._id) }
+  console.log('pomodoroQuery', pomodoroQuery)
+  // console.log(Object.keys(Pomodoro))
+  const pomodoros = await Pomodoro.find(pomodoroQuery)
+  console.log('pomodoros', pomodoros)
+  res.json(pomodoros)
 })
 
 api.post('/pomodoros', async (req, res) => {
