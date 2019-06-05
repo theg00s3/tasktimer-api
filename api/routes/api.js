@@ -56,7 +56,7 @@ api.post('/api/create-subscription', async function (req, res) {
   return res.json({ message: 'create-subscription-succeeded', user })
 })
 
-api.post('/api/pomodoro', async (req, res) => {
+api.post('/pomodoros', async (req, res) => {
   console.log('create pomodoro for user', req.user && req.user.username, req.body)
   if (!req.user) {
     res.writeHead(401)

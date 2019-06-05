@@ -81,8 +81,9 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
       })
     )
     app.get('/user/fake', passport.authenticate('mock'), (req, res) => { res.writeHead(200); res.end() })
-  } else {
     console.log('using mock auth - process.env.NODE_ENV', process.env.NODE_ENV)
+  } else {
+    console.log('not using mock auth - process.env.NODE_ENV', process.env.NODE_ENV)
   }
 } else {
   console.log('not using auth')

@@ -28,7 +28,7 @@ serial('save pomodoro', async t => {
   console.log('cookie', cookie)
 
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
-  response = await fetch('http://localhost:3000/api/pomodoro', {
+  response = await fetch('http://localhost:3000/pomodoros', {
     method: 'POST',
     json: true,
     body: JSON.stringify(pomodoro),
