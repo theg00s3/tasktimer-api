@@ -1,4 +1,4 @@
-var ObjectID = require('mongodb').ObjectID
+var monk = require('monk')
 var url = require('url')
 
 module.exports = function PomodoroQueryBuilder () {
@@ -31,7 +31,6 @@ module.exports = function PomodoroQueryBuilder () {
     this
       .withUser(req.user)
       .withDay(query.day)
-      .withId(req.params.id)
     return this
   }
 
@@ -54,8 +53,8 @@ module.exports = function PomodoroQueryBuilder () {
   this.build = function () {
     var result = {}
 
-    if (_user && _user.id) {
-      result.userId = _user.id
+    if (_user && _user._id) {
+      result.userId = monk.id(_user._id)
     }
 
     if (_day) {
@@ -74,7 +73,7 @@ module.exports = function PomodoroQueryBuilder () {
 
     if (_id) {
       try {
-        result._id = new ObjectID(_id)
+        result._id = monk.id(_id)
       } catch (e) {
       }
     }

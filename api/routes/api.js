@@ -3,6 +3,7 @@ const monk = require('monk')
 const User = require('../models/User')
 const Event = require('../models/Event')
 const Pomodoro = require('../models/Pomodoro')
+const PomodoroQueryBuilder = require('../modules/PomodoroQueryBuilder')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const plan = process.env.STRIPE_PLAN || 'pro'
 const validationErrors = require('../modules/validation-errors')
@@ -59,7 +60,7 @@ api.post('/api/create-subscription', async function (req, res) {
 })
 
 api.get('/pomodoros', async (req, res) => {
-  const pomodoroQuery = { userId: monk.id(req.user._id) }
+  const pomodoroQuery = PomodoroQueryBuilder().withRequest(req).build()
   logger.info('pomodoroQuery', pomodoroQuery)
   const pomodoros = await Pomodoro.find(pomodoroQuery)
   logger.info('pomodoros', pomodoros)

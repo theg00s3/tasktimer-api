@@ -1,3 +1,4 @@
+const logger = require('pino')()
 const app = require('express')()
 const Sentry = require('@sentry/node')
 Sentry.init({ dsn: process.env.SENTRY_DSN })
@@ -9,8 +10,6 @@ const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('./modules/UserInfo')
 const User = require('./models/User')
 const Event = require('./models/Event')
-const logger = require('pino')()
-
 const middlewares = require('./middlewares')
 
 app.set('trust proxy', 1)
