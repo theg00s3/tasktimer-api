@@ -3,6 +3,7 @@ const monk = require('monk')
 const fetch = require('node-fetch')
 const User = require('../../models/User')
 const Pomodoro = require('../../models/Pomodoro')
+let cookie
 
 test.beforeEach(async () => {
   await Pomodoro.remove({})
@@ -14,6 +15,13 @@ test.beforeEach(async () => {
     'avatar': 'https://avatars0.githubusercontent.com/u/2662706?v=4',
     'username': 'christian-fei'
   })
+})
+
+test.beforeEach(async t => {
+  const response = await fetch('http://localhost:3000/user/fake', { credentials: true })
+  t.is(response.status, 200)
+  cookie = response.headers.get('set-cookie')
+  t.truthy(cookie)
 })
 
 test('api', async t => {
