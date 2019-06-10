@@ -97,7 +97,11 @@ function upsertAuthenticatedUser (token, tokenSecret, profile, done) {
 
   User.findOne({ id: user.id })
     .then(user => {
-      if (user) return done(null, user)
+      if (user) {
+        const hasActiveSubscription = user.subscription && user.subscription.status === 'active'
+        Object.assign(user, { hasActiveSubscription })
+        return done(null, user)
+      }
       User.insert(new UserInfo(profile))
         .then(async user => {
           await Event.insert({ name: 'createUserSucceeded', createdAt: new Date(), user }).catch(Function.prototype)
