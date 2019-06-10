@@ -21,7 +21,7 @@ test('api', async t => {
   t.is(response.status, 200)
 })
 
-test('save pomodoro', async t => {
+test('save user pomodoro', async t => {
   let response, cookie
   response = await fetch('http://localhost:3000/user/fake', { credentials: true })
   t.is(response.status, 200)
@@ -50,9 +50,11 @@ test('save pomodoro', async t => {
   t.truthy(json.userId)
 })
 
-test('retrieve pomodoros', async t => {
+test('retrieve user pomodoros', async t => {
   const pomodoro = { '_id': monk.id('5cf6c7ff8985d5f68443f7e3'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id('5a9fe4e085d766000c002636') }
   await Pomodoro.insert(pomodoro)
+  const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id() }
+  await Pomodoro.insert(pomodoroOtherUser)
 
   let response, cookie
   response = await fetch('http://localhost:3000/user/fake', { credentials: true })
