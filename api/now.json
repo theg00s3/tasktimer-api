@@ -25,6 +25,7 @@
     { "src": "app.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/healthcheck.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/api.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
+    { "src": "routes/team.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/user.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } }
   ],
   "routes": [

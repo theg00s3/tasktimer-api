@@ -63,7 +63,7 @@ api.post('/team/:channel', async (req, res) => {
 api.get('/team/:channel/status', async (req, res) => {
   const channel = req.params.channel
   const pomodoro = await TeamPomodoro.findOne({ channel }) || {}
-  logger.info('channel, status, pomodoro', channel, status, pomodoro)
+  logger.info('channel, pomodoro', channel, pomodoro)
 
   res.json(pomodoro)
 })

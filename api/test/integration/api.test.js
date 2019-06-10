@@ -3,7 +3,6 @@ const monk = require('monk')
 const fetch = require('node-fetch')
 const User = require('../../models/User')
 const Pomodoro = require('../../models/Pomodoro')
-let cookie
 
 test.beforeEach(async () => {
   await Pomodoro.remove({})
@@ -17,6 +16,7 @@ test.beforeEach(async () => {
   })
 })
 
+let cookie
 test.beforeEach(async t => {
   const response = await fetch('http://localhost:3000/user/fake', { credentials: true })
   t.is(response.status, 200)
@@ -30,14 +30,8 @@ test('api', async t => {
 })
 
 test('create user pomodoro', async t => {
-  let response, cookie
-  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
-  response = await fetch('http://localhost:3000/pomodoros', {
+  const response = await fetch('http://localhost:3000/pomodoros', {
     method: 'POST',
     json: true,
     body: JSON.stringify(pomodoro),
