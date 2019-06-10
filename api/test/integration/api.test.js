@@ -21,7 +21,7 @@ test('api', async t => {
   t.is(response.status, 200)
 })
 
-test('save user pomodoro', async t => {
+test('create user pomodoro', async t => {
   let response, cookie
   response = await fetch('http://localhost:3000/user/fake', { credentials: true })
   t.is(response.status, 200)
@@ -82,4 +82,35 @@ test('retrieve user pomodoros', async t => {
   t.is(json[0].type, 'pomodoro')
   t.truthy(json[0]._id)
   t.truthy(json[0].userId)
+})
+
+test('create user todo', async t => {
+  let response, cookie
+  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
+  t.is(response.status, 200)
+  cookie = response.headers.get('set-cookie')
+  t.truthy(cookie)
+
+  const todo = { completed: true, text: 'write some tests', id: 18, completed_at: new Date('2019-06-01T16:56:05.726Z') }
+  response = await fetch('http://localhost:3000/todos', {
+    method: 'POST',
+    json: true,
+    body: JSON.stringify(todo),
+    credentials: true,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      cookie
+    }
+  })
+
+  const json = await response.json()
+  t.is(response.status, 200)
+
+  t.is(json.completed, true)
+  t.is(json.text, 'write some tests')
+  t.is(json.id, 18)
+  t.deepEqual(new Date(json.completed_at), new Date('2019-06-01T16:56:05.726Z'))
+  t.truthy(json._id)
+  t.truthy(json.userId)
 })
