@@ -30,12 +30,13 @@
   "routes": [
     { "src": "/", "dest": "/routes/healthcheck.js" },
     { "src": "/healthcheck", "dest": "/routes/healthcheck.js" },
-    { "src": "/user.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/user.js" },
-    { "src": "/team.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/team.js" },
+    { "src": "/user/info", "dest": "/routes/user.js" },
+    { "src": "/user/logout", "dest": "/routes/user.js" },
     { "src": "/twitter", "dest": "/app.js" },
     { "src": "/twitter/callback*", "dest": "/app.js" },
     { "src": "/github", "dest": "/app.js" },
     { "src": "/github/callback*", "dest": "/app.js" },
+    { "src": "/team.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/team.js" },
     { "src": "/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" }
   ]
 }
