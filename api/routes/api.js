@@ -12,13 +12,7 @@ const logger = require('pino')()
 
 module.exports = api
 
-api.get('/api', (req, res) => {
-  logger.info('BASE_URL', process.env.BASE_URL)
-  res.writeHead(200)
-  res.end()
-})
-
-api.post('/api/create-subscription', async function (req, res) {
+api.post('/subscriptions', async function (req, res) {
   // logger.info('req.params', req.params)
   // logger.info('req.body', req.body)
   // logger.info('req.user', req.user)
