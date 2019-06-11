@@ -12,7 +12,6 @@ module.exports = {
       minutes: rawPomodoro.minutes,
       type: rawPomodoro.type,
       tags: rawPomodoro.tags,
-      distractions: rawPomodoro.distractions,
       cancelledAt: rawPomodoro.cancelledAt
     }
   }
