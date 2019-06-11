@@ -156,7 +156,7 @@ test('create user todo', async t => {
   cookie = response.headers.get('set-cookie')
   t.truthy(cookie)
 
-  const todo = { completed: true, text: 'write some tests', id: 18, completed_at: new Date('2019-06-01T16:56:05.726Z') }
+  const todo = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z') }
   response = await fetch('http://localhost:3000/todos', {
     method: 'POST',
     json: true,
@@ -175,7 +175,7 @@ test('create user todo', async t => {
   t.is(json.completed, true)
   t.is(json.text, 'write some tests')
   t.is(json.id, 18)
-  t.deepEqual(new Date(json.completed_at), new Date('2019-06-01T16:56:05.726Z'))
+  t.deepEqual(new Date(json.completedAt), new Date('2019-06-01T16:56:05.726Z'))
   t.truthy(json._id)
   t.truthy(json.userId)
 
@@ -189,7 +189,7 @@ test('create user todo', async t => {
   t.true(createTodoEvent.todo.completed)
   t.is(createTodoEvent.todo.text, 'write some tests')
   t.is(createTodoEvent.todo.id, 18)
-  t.is(createTodoEvent.todo.completed_at, '2019-06-01T16:56:05.726Z')
+  t.is(createTodoEvent.todo.completedAt, '2019-06-01T16:56:05.726Z')
   t.truthy(new Date(createTodoEvent.todo.createdAt))
 
   const todoCreatedEvent = events.find(e => e.name === 'todoCreated')
@@ -199,7 +199,7 @@ test('create user todo', async t => {
   t.true(todoCreatedEvent.todo.completed)
   t.is(todoCreatedEvent.todo.text, 'write some tests')
   t.is(todoCreatedEvent.todo.id, 18)
-  t.is(todoCreatedEvent.todo.completed_at, '2019-06-01T16:56:05.726Z')
+  t.is(todoCreatedEvent.todo.completedAt, '2019-06-01T16:56:05.726Z')
   t.is(todoCreatedEvent.todo.userId, '5a9fe4e085d766000c002636')
   t.truthy(new Date(todoCreatedEvent.todo.createdAt))
 })
