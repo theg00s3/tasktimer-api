@@ -3,6 +3,7 @@ const monk = require('monk')
 const fetch = require('node-fetch')
 const User = require('../../models/User')
 const Pomodoro = require('../../models/Pomodoro')
+const Todo = require('../../models/Todo')
 
 test.beforeEach(async () => {
   await Pomodoro.remove({})
@@ -16,12 +17,12 @@ test.beforeEach(async () => {
   })
 })
 
+const authCookie = require('../../helpers/before-each-auth-cookie')
 let cookie
-test.beforeEach(async t => {
-  const response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
+test.beforeEach(async t => { cookie = await authCookie(t) })
+test.beforeEach(async () => {
+  await Pomodoro.remove({})
+  await Todo.remove({})
 })
 
 test('api', async t => {
@@ -50,6 +51,33 @@ test('create user pomodoro', async t => {
   t.is(json.type, 'pomodoro')
   t.truthy(json._id)
   t.truthy(json.userId)
+})
+test('cannot create duplicate user pomodoro (same userId + startedAt)', async t => {
+  const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
+  const response = await fetch('http://localhost:3000/pomodoros', {
+    method: 'POST',
+    json: true,
+    body: JSON.stringify(pomodoro),
+    credentials: true,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      cookie
+    }
+  })
+
+  t.is(response.status, 200)
+  const duplicateResponse = await fetch('http://localhost:3000/pomodoros', {
+    method: 'POST',
+    body: JSON.stringify(pomodoro),
+    credentials: true,
+    headers: {
+      'Content-Type': 'application/json',
+      cookie
+    }
+  })
+
+  t.is(duplicateResponse.status, 409)
 })
 
 test('retrieve user pomodoros', async t => {

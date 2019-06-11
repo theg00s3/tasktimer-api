@@ -1,14 +1,9 @@
 const { serial: test } = require('ava')
 const fetch = require('node-fetch')
 const TeamPomodoro = require('../../models/TeamPomodoro')
+const authCookie = require('../../helpers/before-each-auth-cookie')
 let cookie
-
-test.beforeEach(async t => {
-  const response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-})
+test.beforeEach(async t => { cookie = await authCookie(t) })
 
 test('get team channel status (new channel)', async t => {
   await TeamPomodoro.remove({ channel: '1' })

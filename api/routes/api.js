@@ -1,5 +1,4 @@
 const api = require('../app')
-const monk = require('monk')
 const User = require('../models/User')
 const Event = require('../models/Event')
 const Pomodoro = require('../models/Pomodoro')
@@ -18,6 +17,7 @@ api.get('/api', (req, res) => {
   res.writeHead(200)
   res.end()
 })
+
 api.post('/api/create-subscription', async function (req, res) {
   // logger.info('req.params', req.params)
   // logger.info('req.body', req.body)
@@ -76,18 +76,29 @@ api.post('/pomodoros', async (req, res) => {
     return res.end()
   }
 
+  const userId = req.user._id
   const pomodoro = req.body
 
-  await Event.insert({ name: 'createPomodoro', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
+  await Event.insert({ name: 'createPomodoro', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
 
   const errors = pomodoroValidationErrors(pomodoro)
   logger.info('pomodoro, errors', pomodoro, errors)
+
   if (errors === null) {
-    Object.assign(pomodoro, { userId: req.user._id })
+    const duplicateCount = await Pomodoro.count({ userId, startedAt: pomodoro.startedAt })
+    console.log('duplicateCount', duplicateCount)
+    if (duplicateCount > 0) {
+      await Event.insert({ name: 'pomodoroDuplicate', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
+      res.writeHead(409)
+      return res.end()
+    }
+
+    Object.assign(pomodoro, { userId })
+
     await Pomodoro.insert(pomodoro)
-    await Event.insert({ name: 'pomodoroCreated', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
+    await Event.insert({ name: 'pomodoroCreated', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
   } else {
-    await Event.insert({ name: 'pomodoroFailedValidation', createdAt: new Date(), userId: req.user._id, pomodoro }).catch(Function.prototype)
+    await Event.insert({ name: 'pomodoroFailedValidation', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
     res.writeHead(422)
     return res.end()
   }
