@@ -84,24 +84,24 @@ api.post('/pomodoros', async (req, res) => {
   const errors = pomodoroValidationErrors(pomodoro)
   logger.info('pomodoro, errors', pomodoro, errors)
 
-  if (errors === null) {
-    const duplicateCount = await Pomodoro.count({ userId, startedAt: pomodoro.startedAt })
-    console.log('duplicateCount', duplicateCount)
-    if (duplicateCount > 0) {
-      await Event.insert({ name: 'pomodoroDuplicate', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
-      res.writeHead(409)
-      return res.end()
-    }
-
-    Object.assign(pomodoro, { userId })
-
-    await Pomodoro.insert(pomodoro)
-    await Event.insert({ name: 'pomodoroCreated', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
-  } else {
+  if (errors) {
     await Event.insert({ name: 'pomodoroFailedValidation', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
     res.writeHead(422)
     return res.end()
   }
+
+  const duplicateCount = await Pomodoro.count({ userId, startedAt: pomodoro.startedAt })
+  console.log('duplicateCount', duplicateCount)
+  if (duplicateCount > 0) {
+    await Event.insert({ name: 'pomodoroDuplicate', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
+    res.writeHead(409)
+    return res.end()
+  }
+
+  Object.assign(pomodoro, { userId })
+
+  await Pomodoro.insert(pomodoro)
+  await Event.insert({ name: 'pomodoroCreated', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
 
   res.json(pomodoro)
 })

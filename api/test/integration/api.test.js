@@ -29,7 +29,6 @@ test('api', async t => {
   const response = await fetch('http://localhost:3000/api')
   t.is(response.status, 200)
 })
-
 test('create user pomodoro', async t => {
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
   const response = await fetch('http://localhost:3000/pomodoros', {
