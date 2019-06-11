@@ -91,7 +91,6 @@ api.post('/pomodoros', async (req, res) => {
   }
 
   const duplicateCount = await Pomodoro.count({ userId, startedAt: pomodoro.startedAt })
-  console.log('duplicateCount', duplicateCount)
   if (duplicateCount > 0) {
     await Event.insert({ name: 'pomodoroDuplicate', createdAt: new Date(), userId: userId, pomodoro }).catch(Function.prototype)
     res.writeHead(409)
