@@ -19,7 +19,8 @@
     "STRIPE_SECRET_KEY": "@stripe_secret_key",
     "STRIPE_PLAN": "@stripe_plan",
     "USE_AUTH": "@use_auth",
-    "BASE_URL": "@base_url"
+    "BASE_URL": "@base_url",
+    "LEVEL": "@level"
   },
   "builds": [
     { "src": "app.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
