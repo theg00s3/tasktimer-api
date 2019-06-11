@@ -47,6 +47,7 @@ test('create user pomodoro', async t => {
   t.truthy(json._id)
   t.truthy(json.userId)
 })
+
 test('cannot create duplicate user pomodoro (same userId + startedAt)', async t => {
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
   const response = await fetch('http://localhost:3000/pomodoros', {
