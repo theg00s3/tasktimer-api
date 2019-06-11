@@ -4,6 +4,7 @@ const fetch = require('node-fetch')
 const User = require('../../models/User')
 const Pomodoro = require('../../models/Pomodoro')
 const Todo = require('../../models/Todo')
+const Event = require('../../models/Event')
 
 test.beforeEach(async () => {
   await Pomodoro.remove({})
@@ -23,6 +24,7 @@ test.beforeEach(async t => { cookie = await authCookie(t) })
 test.beforeEach(async () => {
   await Pomodoro.remove({})
   await Todo.remove({})
+  await Event.remove({})
 })
 
 test('create user pomodoro', async t => {
@@ -46,6 +48,25 @@ test('create user pomodoro', async t => {
   t.is(json.type, 'pomodoro')
   t.truthy(json._id)
   t.truthy(json.userId)
+
+  const events = await Event.find()
+
+  t.is(events.length, 2)
+  const createPomodoroEvent = events.find(e => e.name === 'createPomodoro')
+  const pomodoroCreatedEvent = events.find(e => e.name === 'pomodoroCreated')
+  t.is(createPomodoroEvent.userId, '5a9fe4e085d766000c002636')
+  t.is(pomodoroCreatedEvent.userId, '5a9fe4e085d766000c002636')
+  t.truthy(createPomodoroEvent.createdAt)
+  t.truthy(pomodoroCreatedEvent.createdAt)
+  t.truthy(createPomodoroEvent.pomodoro)
+  t.truthy(pomodoroCreatedEvent.pomodoro)
+  t.is(createPomodoroEvent.pomodoro.minutes, 25)
+  t.is(createPomodoroEvent.pomodoro.type, 'pomodoro')
+  t.truthy(new Date(createPomodoroEvent.pomodoro.startedAt))
+  t.is(pomodoroCreatedEvent.pomodoro.minutes, 25)
+  t.is(pomodoroCreatedEvent.pomodoro.type, 'pomodoro')
+  t.truthy(new Date(pomodoroCreatedEvent.pomodoro.startedAt))
+  t.truthy(pomodoroCreatedEvent.pomodoro.userId, '5a9fe4e085d766000c002636')
 })
 
 test('cannot create duplicate user pomodoro (same userId + startedAt)', async t => {
@@ -74,6 +95,24 @@ test('cannot create duplicate user pomodoro (same userId + startedAt)', async t 
   })
 
   t.is(duplicateResponse.status, 409)
+
+  const events = await Event.find()
+
+  t.is(events.length, 4)
+  const pomodoroDuplicateEvent = events.find(e => e.name === 'pomodoroDuplicate')
+  const pomodoroCreatedEvent = events.find(e => e.name === 'pomodoroCreated')
+  t.is(pomodoroDuplicateEvent.userId, '5a9fe4e085d766000c002636')
+  t.truthy(pomodoroDuplicateEvent.createdAt)
+  t.truthy(pomodoroDuplicateEvent.pomodoro)
+  t.is(pomodoroDuplicateEvent.pomodoro.minutes, 25)
+  t.is(pomodoroDuplicateEvent.pomodoro.type, 'pomodoro')
+  t.truthy(new Date(pomodoroDuplicateEvent.pomodoro.startedAt))
+  t.is(pomodoroCreatedEvent.userId, '5a9fe4e085d766000c002636')
+  t.truthy(pomodoroCreatedEvent.createdAt)
+  t.truthy(pomodoroCreatedEvent.pomodoro)
+  t.is(pomodoroCreatedEvent.pomodoro.minutes, 25)
+  t.is(pomodoroCreatedEvent.pomodoro.type, 'pomodoro')
+  t.truthy(new Date(pomodoroCreatedEvent.pomodoro.startedAt))
 })
 
 test('retrieve user pomodoros', async t => {
@@ -139,4 +178,28 @@ test('create user todo', async t => {
   t.deepEqual(new Date(json.completed_at), new Date('2019-06-01T16:56:05.726Z'))
   t.truthy(json._id)
   t.truthy(json.userId)
+
+  const events = await Event.find()
+
+  t.is(events.length, 2)
+  const createTodoEvent = events.find(e => e.name === 'createTodo')
+  t.is(createTodoEvent.userId, '5a9fe4e085d766000c002636')
+  t.truthy(createTodoEvent.createdAt)
+  t.truthy(createTodoEvent.todo)
+  t.true(createTodoEvent.todo.completed)
+  t.is(createTodoEvent.todo.text, 'write some tests')
+  t.is(createTodoEvent.todo.id, 18)
+  t.is(createTodoEvent.todo.completed_at, '2019-06-01T16:56:05.726Z')
+  t.truthy(new Date(createTodoEvent.todo.createdAt))
+
+  const todoCreatedEvent = events.find(e => e.name === 'todoCreated')
+  t.is(todoCreatedEvent.userId, '5a9fe4e085d766000c002636')
+  t.truthy(todoCreatedEvent.createdAt)
+  t.truthy(todoCreatedEvent.todo)
+  t.true(todoCreatedEvent.todo.completed)
+  t.is(todoCreatedEvent.todo.text, 'write some tests')
+  t.is(todoCreatedEvent.todo.id, 18)
+  t.is(todoCreatedEvent.todo.completed_at, '2019-06-01T16:56:05.726Z')
+  t.is(todoCreatedEvent.todo.userId, '5a9fe4e085d766000c002636')
+  t.truthy(new Date(todoCreatedEvent.todo.createdAt))
 })
