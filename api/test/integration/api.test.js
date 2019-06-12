@@ -10,7 +10,7 @@ test.beforeEach(async () => {
   await Pomodoro.remove({})
   await User.remove({})
   await User.insert({
-    '_id': '5a9fe4e085d766000c002636',
+    '_id': monk.id('5a9fe4e085d766000c002636'),
     'apikey': 'xxx',
     'id': '2662706',
     'avatar': 'https://avatars0.githubusercontent.com/u/2662706?v=4',
@@ -54,8 +54,9 @@ test('create user pomodoro', async t => {
   t.is(events.length, 2)
   const createPomodoroEvent = events.find(e => e.name === 'createPomodoro')
   const pomodoroCreatedEvent = events.find(e => e.name === 'pomodoroCreated')
-  t.is(createPomodoroEvent.userId, '5a9fe4e085d766000c002636')
-  t.is(pomodoroCreatedEvent.userId, '5a9fe4e085d766000c002636')
+  console.log('createPomodoroEvent.user', createPomodoroEvent.user)
+  t.is(createPomodoroEvent.user.username, 'christian-fei')
+  t.is(pomodoroCreatedEvent.user.username, 'christian-fei')
   t.truthy(createPomodoroEvent.createdAt)
   t.truthy(pomodoroCreatedEvent.createdAt)
   t.truthy(createPomodoroEvent.pomodoro)
@@ -66,7 +67,7 @@ test('create user pomodoro', async t => {
   t.is(pomodoroCreatedEvent.pomodoro.minutes, 25)
   t.is(pomodoroCreatedEvent.pomodoro.type, 'pomodoro')
   t.truthy(new Date(pomodoroCreatedEvent.pomodoro.startedAt))
-  t.truthy(pomodoroCreatedEvent.pomodoro.userId, '5a9fe4e085d766000c002636')
+  t.truthy(pomodoroCreatedEvent.user.username, 'christian-fei')
 })
 
 test('cannot create duplicate user pomodoro (same userId + startedAt)', async t => {
@@ -82,8 +83,8 @@ test('cannot create duplicate user pomodoro (same userId + startedAt)', async t 
       cookie
     }
   })
-
   t.is(response.status, 200)
+
   const duplicateResponse = await fetch('http://localhost:3000/pomodoros', {
     method: 'POST',
     body: JSON.stringify(pomodoro),
@@ -93,7 +94,6 @@ test('cannot create duplicate user pomodoro (same userId + startedAt)', async t 
       cookie
     }
   })
-
   t.is(duplicateResponse.status, 409)
 
   const events = await Event.find()
@@ -101,13 +101,13 @@ test('cannot create duplicate user pomodoro (same userId + startedAt)', async t 
   t.is(events.length, 4)
   const pomodoroDuplicateEvent = events.find(e => e.name === 'pomodoroDuplicate')
   const pomodoroCreatedEvent = events.find(e => e.name === 'pomodoroCreated')
-  t.is(pomodoroDuplicateEvent.userId, '5a9fe4e085d766000c002636')
+  t.is(pomodoroDuplicateEvent.user.username, 'christian-fei')
   t.truthy(pomodoroDuplicateEvent.createdAt)
   t.truthy(pomodoroDuplicateEvent.pomodoro)
   t.is(pomodoroDuplicateEvent.pomodoro.minutes, 25)
   t.is(pomodoroDuplicateEvent.pomodoro.type, 'pomodoro')
   t.truthy(new Date(pomodoroDuplicateEvent.pomodoro.startedAt))
-  t.is(pomodoroCreatedEvent.userId, '5a9fe4e085d766000c002636')
+  t.is(pomodoroCreatedEvent.user.username, 'christian-fei')
   t.truthy(pomodoroCreatedEvent.createdAt)
   t.truthy(pomodoroCreatedEvent.pomodoro)
   t.is(pomodoroCreatedEvent.pomodoro.minutes, 25)
@@ -128,6 +128,41 @@ test('retrieve user pomodoros', async t => {
   t.truthy(cookie)
 
   response = await fetch('http://localhost:3000/pomodoros', {
+    method: 'GET',
+    json: true,
+    credentials: true,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      cookie
+    }
+  })
+
+  const json = await response.json()
+  t.truthy(json)
+  t.is(response.status, 200)
+  t.is(json.length, 1)
+  t.is(json[0].minutes, 25)
+  t.true(new Date(json[0].startedAt) < new Date())
+  t.is(json[0].type, 'pomodoro')
+  t.truthy(json[0]._id)
+  t.truthy(json[0].userId)
+})
+
+test('retrieve user weekly pomodoros', async t => {
+  const pomodoro = { '_id': monk.id('5cf6c7ff8985d5f68443f7e3'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id('5a9fe4e085d766000c002636') }
+  await Pomodoro.insert(pomodoro)
+  const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id() }
+  await Pomodoro.insert(pomodoroOtherUser)
+
+  let response, cookie
+  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
+  t.is(response.status, 200)
+  cookie = response.headers.get('set-cookie')
+  t.truthy(cookie)
+
+  const week = 24
+  response = await fetch('http://localhost:3000/pomodoros/weekly/' + week, {
     method: 'GET',
     json: true,
     credentials: true,
@@ -183,7 +218,7 @@ test('create user todo', async t => {
 
   t.is(events.length, 2)
   const createTodoEvent = events.find(e => e.name === 'createTodo')
-  t.is(createTodoEvent.userId, '5a9fe4e085d766000c002636')
+  t.is(createTodoEvent.user.username, 'christian-fei')
   t.truthy(createTodoEvent.createdAt)
   t.truthy(createTodoEvent.todo)
   t.true(createTodoEvent.todo.completed)
@@ -193,13 +228,13 @@ test('create user todo', async t => {
   t.truthy(new Date(createTodoEvent.todo.createdAt))
 
   const todoCreatedEvent = events.find(e => e.name === 'todoCreated')
-  t.is(todoCreatedEvent.userId, '5a9fe4e085d766000c002636')
+  t.is(todoCreatedEvent.user.username, 'christian-fei')
   t.truthy(todoCreatedEvent.createdAt)
   t.truthy(todoCreatedEvent.todo)
   t.true(todoCreatedEvent.todo.completed)
   t.is(todoCreatedEvent.todo.text, 'write some tests')
   t.is(todoCreatedEvent.todo.id, 18)
   t.is(todoCreatedEvent.todo.completedAt, '2019-06-01T16:56:05.726Z')
-  t.is(todoCreatedEvent.todo.userId, '5a9fe4e085d766000c002636')
+  t.is(todoCreatedEvent.todo.user.username, 'christian-fei')
   t.truthy(new Date(todoCreatedEvent.todo.createdAt))
 })

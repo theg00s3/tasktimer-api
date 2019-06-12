@@ -1,5 +1,8 @@
 var monk = require('monk')
 var url = require('url')
+var dayjs = require('dayjs')
+var weekOfYear = require('dayjs/plugin/weekOfYear')
+dayjs.extend(weekOfYear)
 
 module.exports = function PomodoroQueryBuilder () {
   if (!(this instanceof PomodoroQueryBuilder)) {
@@ -7,6 +10,7 @@ module.exports = function PomodoroQueryBuilder () {
   }
   var _user,
     _day,
+    _week,
     _id,
     _timerangeStart,
     _timerangeEnd
@@ -17,7 +21,11 @@ module.exports = function PomodoroQueryBuilder () {
   }
 
   this.withDay = function (day) {
-    _day = day
+    if (day) _day = day
+    return this
+  }
+  this.withWeek = function (week) {
+    if (week) _week = week
     return this
   }
 
@@ -31,6 +39,7 @@ module.exports = function PomodoroQueryBuilder () {
     this
       .withUser(req.user)
       .withDay(query.day)
+      .withWeek(req.params.week)
     return this
   }
 
@@ -54,13 +63,20 @@ module.exports = function PomodoroQueryBuilder () {
     var result = {}
 
     if (_user && _user._id) {
-      result.userId = monk.id(_user._id)
+      // result.userId = monk.id(_user._id)
+      result.userId = { $in: [_user._id, monk.id(_user._id)] }
     }
 
     if (_day) {
       result.startedAt = {
         $gte: calculateStartDay(_day),
         $lt: calculateEndDay(_day)
+      }
+    }
+    if (_week) {
+      result.startedAt = {
+        $gte: calculateStartDayFromWeek(_week),
+        $lt: calculateEndDayFromWeek(_week)
       }
     }
 
@@ -89,4 +105,12 @@ module.exports = function PomodoroQueryBuilder () {
     endDate.setDate(endDate.getDate() + 1)
     return endDate
   }
+}
+function calculateStartDayFromWeek (_week) {
+  const x = dayjs().week(_week).startOf('week').toDate()
+  console.log({ x })
+  return new Date(x)
+}
+function calculateEndDayFromWeek (_week) {
+  return dayjs().week(_week).endOf('week').toDate()
 }
