@@ -80,7 +80,7 @@ api.post('/pomodoros', async (req, res) => {
 
   if (errors) {
     logger.info('pomodoro validation errors', errors)
-    await Event.insert({ name: 'pomodoroFailedValidation', createdAt: new Date(), user: req.user, pomodoro }).catch(Function.prototype)
+    await Event.insert({ name: 'pomodoroFailedValidation', createdAt: new Date(), user: req.user, pomodoro, errors }).catch(Function.prototype)
     res.writeHead(422)
     return res.end()
   }
