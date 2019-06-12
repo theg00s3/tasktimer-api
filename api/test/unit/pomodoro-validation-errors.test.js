@@ -29,3 +29,12 @@ test('handles "team" correctly', t => {
   })
   t.deepEqual(result, null)
 })
+test('handles "cancelledAt" correctly', t => {
+  result = pomodoroValidationErrors({
+    minutes: 25,
+    type: 'pomodoro',
+    startedAt: new Date(),
+    cancelledAt: new Date()
+  })
+  t.deepEqual(result, null)
+})
