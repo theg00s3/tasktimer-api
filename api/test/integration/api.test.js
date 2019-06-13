@@ -161,7 +161,7 @@ test('retrieve user weekly pomodoros', async t => {
   cookie = response.headers.get('set-cookie')
   t.truthy(cookie)
 
-  const week = 24
+  const week = 23
   response = await fetch('http://localhost:3000/pomodoros/weekly/' + week, {
     method: 'GET',
     json: true,
