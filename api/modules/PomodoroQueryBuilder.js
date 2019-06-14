@@ -98,17 +98,21 @@ module.exports = function PomodoroQueryBuilder () {
   }
 
   function calculateStartDay (_day) {
-    return new Date(_day)
+    const startDay = new Date(_day)
+    startDay.setHours(0)
+    console.log({ startDay })
+    return startDay
   }
   function calculateEndDay (_day) {
-    var endDate = new Date(_day)
-    endDate.setDate(endDate.getDate() + 1)
-    return endDate
+    var endDay = new Date(_day)
+    endDay.setHours(0)
+    endDay.setDate(endDay.getDate() + 1)
+    console.log({ endDay })
+    return endDay
   }
 }
 function calculateStartDayFromWeek (_week) {
   const x = dayjs().week(_week).startOf('week').toDate()
-  console.log({ x })
   return new Date(x)
 }
 function calculateEndDayFromWeek (_week) {
