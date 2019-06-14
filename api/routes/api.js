@@ -121,16 +121,16 @@ api.post('/todos', async (req, res) => {
 
   const todo = req.body
 
-  await Event.insert({ name: 'createTodo', createdAt: new Date(), userId: req.user._id, todo }).catch(Function.prototype)
+  await Event.insert({ name: 'createTodo', createdAt: new Date(), user: req.user, todo }).catch(Function.prototype)
 
   const errors = todoValidationErrors(todo)
   logger.info('todo, errors', todo, errors)
   if (errors === null) {
-    Object.assign(todo, { userId: req.user._id })
+    Object.assign(todo, { user: req.user })
     await Todo.insert(todo)
-    await Event.insert({ name: 'todoCreated', createdAt: new Date(), userId: req.user._id, todo }).catch(Function.prototype)
+    await Event.insert({ name: 'todoCreated', createdAt: new Date(), user: req.user, todo }).catch(Function.prototype)
   } else {
-    await Event.insert({ name: 'todoFailedValidation', createdAt: new Date(), userId: req.user._id, todo }).catch(Function.prototype)
+    await Event.insert({ name: 'todoFailedValidation', createdAt: new Date(), user: req.user, todo }).catch(Function.prototype)
     res.writeHead(422)
     return res.end()
   }

@@ -149,7 +149,7 @@ test('retrieve user pomodoros', async t => {
   t.truthy(json[0].userId)
 })
 
-test('retrieve user weekly pomodoros', async t => {
+test.skip('retrieve user weekly pomodoros', async t => {
   const pomodoro = { '_id': monk.id('5cf6c7ff8985d5f68443f7e3'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id('5a9fe4e085d766000c002636') }
   await Pomodoro.insert(pomodoro)
   const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id() }
@@ -212,7 +212,7 @@ test('create user todo', async t => {
   t.is(json.id, 18)
   t.deepEqual(new Date(json.completedAt), new Date('2019-06-01T16:56:05.726Z'))
   t.truthy(json._id)
-  t.truthy(json.userId)
+  t.truthy(json.user)
 
   const events = await Event.find()
 
