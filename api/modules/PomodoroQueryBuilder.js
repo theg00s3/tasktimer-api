@@ -10,6 +10,8 @@ module.exports = function PomodoroQueryBuilder () {
   }
   var _user,
     _day,
+    _from,
+    _to,
     _week,
     _id,
     _timerangeStart,
@@ -22,6 +24,14 @@ module.exports = function PomodoroQueryBuilder () {
 
   this.withDay = function (day) {
     if (day) _day = day
+    return this
+  }
+  this.withFrom = function (from) {
+    if (from) _from = from
+    return this
+  }
+  this.withTo = function (to) {
+    if (to) _to = to
     return this
   }
   this.withWeek = function (week) {
@@ -39,6 +49,8 @@ module.exports = function PomodoroQueryBuilder () {
     this
       .withUser(req.user)
       .withDay(query.day)
+      .withFrom(query.from)
+      .withTo(query.to)
       .withWeek(req.params.week)
     return this
   }
@@ -71,6 +83,14 @@ module.exports = function PomodoroQueryBuilder () {
         $gte: calculateStartDay(_day),
         $lt: calculateEndDay(_day)
       }
+    }
+
+    if (_from && _to) {
+      result.startedAt = {
+        $gte: calculateStartDay(_from),
+        $lt: calculateEndDay(_to)
+      }
+      console.log('result', result)
     }
     if (_week) {
       result.startedAt = {
