@@ -47,14 +47,15 @@ test('create user pomodoro', async t => {
   t.true(new Date(json.startedAt) < new Date())
   t.is(json.type, 'pomodoro')
   t.truthy(json._id)
-  t.truthy(json.userId)
+  t.truthy(json.minutes)
+  t.truthy(json.type)
+  t.truthy(json.startedAt)
 
   const events = await Event.find()
 
   t.is(events.length, 2)
   const createPomodoroEvent = events.find(e => e.name === 'createPomodoro')
   const pomodoroCreatedEvent = events.find(e => e.name === 'pomodoroCreated')
-  console.log('createPomodoroEvent.user', createPomodoroEvent.user)
   t.is(createPomodoroEvent.user.username, 'christian-fei')
   t.is(pomodoroCreatedEvent.user.username, 'christian-fei')
   t.truthy(createPomodoroEvent.createdAt)

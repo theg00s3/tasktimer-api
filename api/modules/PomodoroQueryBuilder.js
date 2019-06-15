@@ -63,8 +63,7 @@ module.exports = function PomodoroQueryBuilder () {
     var result = {}
 
     if (_user && _user._id) {
-      // result.userId = monk.id(_user._id)
-      result.userId = { $in: [_user._id, monk.id(_user._id)] }
+      result.userId = monk.id(_user._id)
     }
 
     if (_day) {
@@ -100,14 +99,12 @@ module.exports = function PomodoroQueryBuilder () {
   function calculateStartDay (_day) {
     const startDay = new Date(_day)
     startDay.setHours(0)
-    console.log({ startDay })
     return startDay
   }
   function calculateEndDay (_day) {
     var endDay = new Date(_day)
     endDay.setHours(0)
     endDay.setDate(endDay.getDate() + 1)
-    console.log({ endDay })
     return endDay
   }
 }

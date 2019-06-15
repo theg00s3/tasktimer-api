@@ -81,6 +81,7 @@ api.post('/pomodoros', async (req, res) => {
 
   const userId = req.user._id
   let pomodoro = req.body
+  Object.assign(pomodoro, { startedAt: new Date(pomodoro.startedAt) })
 
   await Event.insert({ name: 'createPomodoro', createdAt: new Date(), user: req.user, pomodoro }).catch(Function.prototype)
 
@@ -103,7 +104,10 @@ api.post('/pomodoros', async (req, res) => {
     return res.end()
   }
 
-  Object.assign(pomodoro, { userId: monk.id(userId) })
+  Object.assign(pomodoro, { userId: monk.id(userId), startedAt: new Date(pomodoro.startedAt) })
+  if (pomodoro.cancelledAt) {
+    Object.assign(pomodoro, { cancelledAt: new Date(pomodoro.cancelledAt) })
+  }
 
   logger.info('inserting pomodoro', pomodoro)
   await Pomodoro.insert(pomodoro)
