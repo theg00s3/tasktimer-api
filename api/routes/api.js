@@ -2,13 +2,13 @@ const api = require('../app')
 const User = require('../models/User')
 const Event = require('../models/Event')
 const Pomodoro = require('../models/Pomodoro')
-const Todo = require('../models/Todo')
 const DuplicateError = require('../errors/duplicate')
+const ValidationError = require('../errors/validation')
 const PomodoroQueryBuilder = require('../modules/PomodoroQueryBuilder')
 const { createUserPomodoro } = require('../modules/create-user-pomodoro')
+const { createUserTodo } = require('../modules/create-user-todo')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const plan = process.env.STRIPE_PLAN || 'pro'
-const todoValidationErrors = require('../modules/todo-validation-errors')
 const logger = require('pino')()
 
 module.exports = api
@@ -86,7 +86,7 @@ api.post('/pomodoros', async (req, res) => {
       logger.info(pomodoro)
       res.json(pomodoro)
     })
-    .catch((err) => {
+    .catch(err => {
       logger.error(err)
       if (err instanceof DuplicateError) {
         res.writeHead(409)
@@ -104,23 +104,24 @@ api.post('/todos', async (req, res) => {
     return res.end()
   }
 
+  const user = req.user
   const todo = req.body
 
-  await Event.insert({ name: 'createTodo', createdAt: new Date(), user: req.user, todo }).catch(Function.prototype)
+  await createUserTodo({ user, todo })
+    .then((todo) => {
+      logger.info(todo)
+      res.json(todo)
+    })
+    .catch(err => {
+      logger.error(err)
+      if (err instanceof ValidationError) {
+        res.writeHead(422)
+        return res.end()
+      }
 
-  const errors = todoValidationErrors(todo)
-  logger.info('todo, errors', todo, errors)
-  if (errors === null) {
-    Object.assign(todo, { user: req.user })
-    await Todo.insert(todo)
-    await Event.insert({ name: 'todoCreated', createdAt: new Date(), user: req.user, todo }).catch(Function.prototype)
-  } else {
-    await Event.insert({ name: 'todoFailedValidation', createdAt: new Date(), user: req.user, todo }).catch(Function.prototype)
-    res.writeHead(422)
-    return res.end()
-  }
-
-  res.json(todo)
+      res.writeHead(422)
+      return res.end()
+    })
 })
 
 async function createCustomer (email, source) {
