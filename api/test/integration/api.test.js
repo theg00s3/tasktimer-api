@@ -235,7 +235,7 @@ test('create user todo', async t => {
   t.true(todoCreatedEvent.todo.completed)
   t.is(todoCreatedEvent.todo.text, 'write some tests')
   t.is(todoCreatedEvent.todo.id, 18)
-  t.is(todoCreatedEvent.todo.completedAt, '2019-06-01T16:56:05.726Z')
+  t.deepEqual(todoCreatedEvent.todo.completedAt, new Date('2019-06-01T16:56:05.726Z'))
   t.is(todoCreatedEvent.todo.user.username, 'christian-fei')
   t.truthy(new Date(todoCreatedEvent.todo.createdAt))
 })

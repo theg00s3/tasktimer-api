@@ -15,7 +15,14 @@ async function createUserTodo ({ user, todo }) {
   logger.info('todo, errors', todo, errors)
   if (errors === null) {
     Object.assign(todo, { user })
+    if (todo.completedAt) {
+      Object.assign(todo, { completedAt: new Date(todo.completedAt) })
+    }
+    if (todo.deletedAt) {
+      Object.assign(todo, { deletedAt: new Date(todo.deletedAt) })
+    }
     await Todo.insert(todo)
+
     await Event.insert({ name: 'todoCreated', createdAt: new Date(), user, todo }).catch(Function.prototype)
     return todo
   } else {
