@@ -3,13 +3,13 @@ const User = require('../models/User')
 const Event = require('../models/Event')
 const Pomodoro = require('../models/Pomodoro')
 const Todo = require('../models/Todo')
+const DuplicateError = require('../errors/duplicate')
 const PomodoroQueryBuilder = require('../modules/PomodoroQueryBuilder')
+const { createUserPomodoro } = require('../modules/create-user-pomodoro')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const plan = process.env.STRIPE_PLAN || 'pro'
-const pomodoroValidationErrors = require('../modules/pomodoro-validation-errors')
 const todoValidationErrors = require('../modules/todo-validation-errors')
 const logger = require('pino')()
-const monk = require('monk')
 
 module.exports = api
 
@@ -79,41 +79,22 @@ api.post('/pomodoros', async (req, res) => {
     return res.end()
   }
 
-  const userId = req.user._id
-  let pomodoro = req.body
-  Object.assign(pomodoro, { startedAt: new Date(pomodoro.startedAt) })
-
-  await Event.insert({ name: 'createPomodoro', createdAt: new Date(), user: req.user, pomodoro }).catch(Function.prototype)
-
-  const errors = pomodoroValidationErrors(pomodoro)
-  logger.info('pomodoro, errors', pomodoro, errors)
-
-  if (errors) {
-    logger.info('pomodoro validation errors', errors)
-    await Event.insert({ name: 'pomodoroFailedValidation', createdAt: new Date(), user: req.user, pomodoro, errors }).catch(Function.prototype)
-    res.writeHead(422)
-    return res.end()
-  }
-
-  const duplicateCount = await Pomodoro.count({ userId: monk.id(userId), startedAt: pomodoro.startedAt })
-  logger.info('duplicateCount', duplicateCount)
-  if (duplicateCount > 0) {
-    logger.info('found duplicate pomodoro', duplicateCount)
-    await Event.insert({ name: 'pomodoroDuplicate', createdAt: new Date(), user: req.user, pomodoro }).catch(Function.prototype)
-    res.writeHead(409)
-    return res.end()
-  }
-
-  Object.assign(pomodoro, { userId: monk.id(userId), startedAt: new Date(pomodoro.startedAt) })
-  if (pomodoro.cancelledAt) {
-    Object.assign(pomodoro, { cancelledAt: new Date(pomodoro.cancelledAt) })
-  }
-
-  logger.info('inserting pomodoro', pomodoro)
-  await Pomodoro.insert(pomodoro)
-  await Event.insert({ name: 'pomodoroCreated', createdAt: new Date(), user: req.user, pomodoro }).catch(Function.prototype)
-
-  res.json(pomodoro)
+  const user = req.user
+  const pomodoro = req.body
+  await createUserPomodoro({ user, pomodoro })
+    .then((pomodoro) => {
+      logger.info(pomodoro)
+      res.json(pomodoro)
+    })
+    .catch((err) => {
+      logger.error(err)
+      if (err instanceof DuplicateError) {
+        res.writeHead(409)
+        return res.end()
+      }
+      res.writeHead(422)
+      return res.end()
+    })
 })
 
 api.post('/todos', async (req, res) => {
