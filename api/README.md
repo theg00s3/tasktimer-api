@@ -22,3 +22,7 @@ configure MONGO_URL in `.env`
 npm start
 npm t
 ```
+
+## migrations
+
+configure with `npm run migrate-mongo init`

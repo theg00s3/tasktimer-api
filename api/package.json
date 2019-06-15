@@ -8,7 +8,8 @@
     "test": "NODE_ENV=test MONGO_URL=mongodb://localhost:27017/test ava --fail-fast --verbose --timeout=30s --concurrency 1",
     "start": "now dev",
     "dev": "NODE_ENV=development nodemon index.js",
-    "deploy": "now --target production"
+    "deploy": "now --target production",
+    "migrate-mongo": "migrate-mongo"
   },
   "keywords": [],
   "author": "",
