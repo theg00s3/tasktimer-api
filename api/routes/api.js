@@ -2,9 +2,11 @@ const api = require('../app')
 const User = require('../models/User')
 const Event = require('../models/Event')
 const Pomodoro = require('../models/Pomodoro')
+const Todo = require('../models/Todo')
 const DuplicateError = require('../errors/duplicate')
 const ValidationError = require('../errors/validation')
 const PomodoroQueryBuilder = require('../modules/PomodoroQueryBuilder')
+const TodoQueryBuilder = require('../modules/TodoQueryBuilder')
 const { createUserPomodoro } = require('../modules/create-user-pomodoro')
 const { createUserTodo } = require('../modules/create-user-todo')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
@@ -87,6 +89,14 @@ api.post('/pomodoros', async (req, res) => {
       res.writeHead(422)
       return res.end()
     })
+})
+
+api.get('/todos', async (req, res) => {
+  const todosQuery = TodoQueryBuilder().withRequest(req).build()
+  logger.info('todosQuery', todosQuery)
+  const todos = await Todo.find(todosQuery)
+  logger.info('todos', todos)
+  res.json(todos)
 })
 
 api.post('/todos', async (req, res) => {

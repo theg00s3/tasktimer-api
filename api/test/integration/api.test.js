@@ -240,3 +240,38 @@ test('create user todo', async t => {
   t.is(todoCreatedEvent.todo.user.username, 'christian-fei')
   t.truthy(new Date(todoCreatedEvent.todo.createdAt))
 })
+
+test('retrieve user todos', async t => {
+  const todo = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  await Todo.insert(todo)
+  const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
+  await Todo.insert(todoOtherUser)
+
+  let response, cookie
+  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
+  t.is(response.status, 200)
+  cookie = response.headers.get('set-cookie')
+  t.truthy(cookie)
+
+  response = await fetch('http://localhost:3000/todos', {
+    method: 'GET',
+    json: true,
+    credentials: true,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      cookie
+    }
+  })
+
+  const json = await response.json()
+  t.is(response.status, 200)
+  t.is(json.length, 1)
+
+  t.is(json[0].completed, true)
+  t.is(json[0].text, 'write some tests')
+  t.is(json[0].id, 18)
+  t.deepEqual(new Date(json[0].completedAt), new Date('2019-06-01T16:56:05.726Z'))
+  t.truthy(json[0]._id)
+  t.truthy(json[0].userId)
+})
