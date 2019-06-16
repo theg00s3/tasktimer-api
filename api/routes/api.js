@@ -64,14 +64,6 @@ api.get('/pomodoros', async (req, res) => {
   res.json(pomodoros)
 })
 
-api.get('/pomodoros/weekly/:week', async (req, res) => {
-  const pomodoroQuery = PomodoroQueryBuilder().withRequest(req).build()
-  logger.info('pomodoroQuery', pomodoroQuery)
-  const pomodoros = await Pomodoro.find(pomodoroQuery)
-  logger.info('pomodoros', pomodoros)
-  res.json(pomodoros)
-})
-
 api.post('/pomodoros', async (req, res) => {
   logger.info('create pomodoro for user', req.user && req.user.username, req.body)
   if (!req.user) {
