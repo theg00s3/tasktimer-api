@@ -1,4 +1,4 @@
-const allowedFields = ['id', '_id', 'startedAt', 'createdAt', 'completed', 'completedAt', 'completedAt', 'cancelled', 'cancelledAt', 'cancelled_at', 'type', 'minutes', 'team', 'recreated']
+const allowedFields = ['id', '_id', 'startedAt', 'createdAt', 'completed', 'completedAt', 'completedAt', 'cancelled', 'cancelledAt', 'cancelled_at', 'type', 'minutes', 'team', 'pair', 'recreated']
 
 module.exports = function pomodoroValidationErrors (pomodoro) {
   if (!pomodoro) return ['invalid']
