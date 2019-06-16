@@ -117,9 +117,9 @@ test('cannot create duplicate user pomodoro (same userId + startedAt)', async t 
 })
 
 test('retrieve user pomodoros', async t => {
-  const pomodoro = { '_id': monk.id('5cf6c7ff8985d5f68443f7e3'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro = { '_id': monk.id('5cf6c7ff8985d5f68443f7e3'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
   await Pomodoro.insert(pomodoro)
-  const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id() }
+  const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id() }
   await Pomodoro.insert(pomodoroOtherUser)
 
   let response, cookie
@@ -165,41 +165,6 @@ test('retrieve user pomodoros by time range', async t => {
   t.truthy(cookie)
 
   response = await fetch('http://localhost:3000/pomodoros?from=2019-06-03&to=2019-06-05', {
-    method: 'GET',
-    json: true,
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      cookie
-    }
-  })
-
-  const json = await response.json()
-  t.truthy(json)
-  t.is(response.status, 200)
-  t.is(json.length, 1)
-  t.is(json[0].minutes, 25)
-  t.true(new Date(json[0].startedAt) < new Date())
-  t.is(json[0].type, 'pomodoro')
-  t.truthy(json[0]._id)
-  t.truthy(json[0].userId)
-})
-
-test.skip('retrieve user weekly pomodoros', async t => {
-  const pomodoro = { '_id': monk.id('5cf6c7ff8985d5f68443f7e3'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id('5a9fe4e085d766000c002636') }
-  await Pomodoro.insert(pomodoro)
-  const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': '2019-06-04T19:35:27.255Z', 'userId': monk.id() }
-  await Pomodoro.insert(pomodoroOtherUser)
-
-  let response, cookie
-  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-
-  const week = 23
-  response = await fetch('http://localhost:3000/pomodoros/weekly/' + week, {
     method: 'GET',
     json: true,
     credentials: true,
