@@ -214,7 +214,7 @@ test('create user todo', async t => {
   t.is(json.id, 18)
   t.deepEqual(new Date(json.completedAt), new Date('2019-06-01T16:56:05.726Z'))
   t.truthy(json._id)
-  t.truthy(json.user)
+  t.truthy(json.userId)
 
   const events = await Event.find()
 
@@ -237,7 +237,7 @@ test('create user todo', async t => {
   t.is(todoCreatedEvent.todo.text, 'write some tests')
   t.is(todoCreatedEvent.todo.id, 18)
   t.deepEqual(todoCreatedEvent.todo.completedAt, new Date('2019-06-01T16:56:05.726Z'))
-  t.is(todoCreatedEvent.todo.user.username, 'christian-fei')
+  t.is(todoCreatedEvent.user.username, 'christian-fei')
   t.truthy(new Date(todoCreatedEvent.todo.createdAt))
 })
 

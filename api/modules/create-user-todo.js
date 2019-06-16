@@ -9,12 +9,13 @@ module.exports = {
 }
 
 async function createUserTodo ({ user, todo }) {
+  const userId = user._id
   await Event.insert({ name: 'createTodo', createdAt: new Date(), user, todo }).catch(Function.prototype)
 
   const errors = todoValidationErrors(todo)
   logger.info('todo, errors', todo, errors)
   if (errors === null) {
-    Object.assign(todo, { user })
+    Object.assign(todo, { userId })
     if (todo.completedAt) {
       Object.assign(todo, { completedAt: new Date(todo.completedAt) })
     }
