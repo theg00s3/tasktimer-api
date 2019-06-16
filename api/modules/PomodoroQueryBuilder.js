@@ -8,39 +8,31 @@ module.exports = function PomodoroQueryBuilder () {
   if (!(this instanceof PomodoroQueryBuilder)) {
     return new PomodoroQueryBuilder()
   }
-  var _user,
-    _day,
-    _from,
-    _to,
-    _week,
-    _id,
-    _timerangeStart,
-    _timerangeEnd
 
   this.withUser = function (user) {
-    _user = user
+    this.user = user
     return this
   }
 
   this.withDay = function (day) {
-    if (day) _day = day
+    if (day) this.day = day
     return this
   }
   this.withFrom = function (from) {
-    if (from) _from = from
+    if (from) this.from = from
     return this
   }
   this.withTo = function (to) {
-    if (to) _to = to
+    if (to) this.to = to
     return this
   }
   this.withWeek = function (week) {
-    if (week) _week = week
+    if (week) this.week = week
     return this
   }
 
-  this.withId = function (id) {
-    _id = id
+  this.withId = function (_id) {
+    this._id = _id
     return this
   }
 
@@ -55,60 +47,37 @@ module.exports = function PomodoroQueryBuilder () {
     return this
   }
 
-  this.withinTimerange = function (timerangeStart, timerangeEnd) {
-    _timerangeStart = timerangeStart
-    _timerangeEnd = timerangeEnd
-    return this
-  }
-
-  this.withinTimerangeOf = function (pomodoro) {
-    var timerangeStart = pomodoro.startedAt
-    var timerangeEnd = pomodoro.cancelledAt
-    if (!timerangeEnd) {
-      timerangeEnd = new Date(pomodoro.startedAt)
-      timerangeEnd.setMinutes(timerangeEnd.getMinutes() + pomodoro.minutes)
-    }
-    return this.withinTimerange(timerangeStart, timerangeEnd)
-  }
-
   this.build = function () {
     var result = {}
 
-    if (_user && _user._id) {
-      result.userId = monk.id(_user._id)
+    if (this.user && this.user._id) {
+      result.userId = monk.id(this.user._id)
     }
 
-    if (_day) {
+    if (this.day) {
       result.startedAt = {
-        $gte: calculateStartDay(_day),
-        $lt: calculateEndDay(_day)
+        $gte: calculateStartDay(this.day),
+        $lt: calculateEndDay(this.day)
       }
     }
 
-    if (_from && _to) {
+    if (this.from && this.to) {
       result.startedAt = {
-        $gte: calculateStartDay(_from),
-        $lt: calculateEndDay(_to)
+        $gte: calculateStartDay(this.from),
+        $lt: calculateEndDay(this.to)
       }
       console.log('result', result)
     }
-    if (_week) {
+    if (this.week) {
       result.startedAt = {
-        $gte: calculateStartDayFromWeek(_week),
-        $lt: calculateEndDayFromWeek(_week)
+        $gte: calculateStartDayFromWeek(this.week),
+        $lt: calculateEndDayFromWeek(this.week)
       }
     }
 
-    if (_timerangeStart && _timerangeEnd) {
-      result.startedAt = {
-        $gte: new Date(_timerangeStart),
-        $lt: new Date(_timerangeEnd)
-      }
-    }
-
-    if (_id) {
+    if (this._id) {
       try {
-        result._id = monk.id(_id)
+        result.this._id = monk.id(this._id)
       } catch (e) {
       }
     }
@@ -116,22 +85,22 @@ module.exports = function PomodoroQueryBuilder () {
     return result
   }
 
-  function calculateStartDay (_day) {
-    const startDay = new Date(_day)
+  function calculateStartDay (day) {
+    const startDay = new Date(day)
     startDay.setHours(0)
     return startDay
   }
-  function calculateEndDay (_day) {
-    var endDay = new Date(_day)
+  function calculateEndDay (day) {
+    var endDay = new Date(day)
     endDay.setHours(0)
     endDay.setDate(endDay.getDate() + 1)
     return endDay
   }
 }
-function calculateStartDayFromWeek (_week) {
-  const x = dayjs().week(_week).startOf('week').toDate()
+function calculateStartDayFromWeek (week) {
+  const x = dayjs().week(week).startOf('week').toDate()
   return new Date(x)
 }
-function calculateEndDayFromWeek (_week) {
-  return dayjs().week(_week).endOf('week').toDate()
+function calculateEndDayFromWeek (week) {
+  return dayjs().week(week).endOf('week').toDate()
 }
