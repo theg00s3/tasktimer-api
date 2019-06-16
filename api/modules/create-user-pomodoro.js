@@ -10,7 +10,7 @@ module.exports = {
 }
 
 async function createUserPomodoro ({ user, pomodoro }) {
-  const userId = user._id
+  const userId = monk.id(user._id)
   Object.assign(pomodoro, { startedAt: new Date(pomodoro.startedAt) })
 
   await Event.insert({ name: 'createPomodoro', createdAt: new Date(), user, pomodoro }).catch(Function.prototype)
@@ -24,7 +24,7 @@ async function createUserPomodoro ({ user, pomodoro }) {
     throw errors
   }
 
-  const duplicateCount = await Pomodoro.count({ userId: monk.id(userId), startedAt: pomodoro.startedAt })
+  const duplicateCount = await Pomodoro.count({ userId, startedAt: pomodoro.startedAt })
   logger.info('duplicateCount', duplicateCount)
   if (duplicateCount > 0) {
     logger.info('found duplicate pomodoro', duplicateCount)
@@ -32,7 +32,8 @@ async function createUserPomodoro ({ user, pomodoro }) {
     throw new DuplicateError(duplicateCount)
   }
 
-  Object.assign(pomodoro, { userId: monk.id(userId), startedAt: new Date(pomodoro.startedAt) })
+  Object.assign(pomodoro, { userId })
+  Object.assign(pomodoro, { startedAt: new Date(pomodoro.startedAt) })
   if (pomodoro.cancelledAt) {
     Object.assign(pomodoro, { cancelledAt: new Date(pomodoro.cancelledAt) })
   }

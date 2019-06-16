@@ -1,17 +1,16 @@
 const logger = require('pino')()
-const monk = require('monk')
 const Todo = require('../models/Todo')
 const Event = require('../models/Event')
 const ValidationError = require('../errors/validation')
 const todoValidationErrors = require('../modules/todo-validation-errors')
 
 module.exports = {
-  createUserTodo
+  updateUserTodo
 }
 
-async function createUserTodo ({ user, todo }) {
-  const userId = monk.id(user._id)
-  await Event.insert({ name: 'createTodo', createdAt: new Date(), user, todo }).catch(Function.prototype)
+async function updateUserTodo ({ user, todo }) {
+  const userId = user._id
+  await Event.insert({ name: 'updateTodo', updatedAt: new Date(), user, todo }).catch(Function.prototype)
 
   const errors = todoValidationErrors(todo)
   logger.info('todo, errors', todo, errors)
@@ -20,18 +19,15 @@ async function createUserTodo ({ user, todo }) {
     if (todo.completedAt) {
       Object.assign(todo, { completedAt: new Date(todo.completedAt) })
     }
-    if (todo.createdAt) {
-      Object.assign(todo, { createdAt: new Date(todo.createdAt) })
-    }
     if (todo.deletedAt) {
       Object.assign(todo, { deletedAt: new Date(todo.deletedAt) })
     }
-    await Todo.insert(todo)
+    await Todo.update({ _id: todo._id }, { $set: todo })
 
-    await Event.insert({ name: 'todoCreated', createdAt: new Date(), user, todo }).catch(Function.prototype)
+    await Event.insert({ name: 'todoCreated', updatedAt: new Date(), user, todo }).catch(Function.prototype)
     return todo
   } else {
-    await Event.insert({ name: 'todoFailedValidation', createdAt: new Date(), user, todo }).catch(Function.prototype)
+    await Event.insert({ name: 'todoFailedValidation', updatedAt: new Date(), user, todo }).catch(Function.prototype)
     throw new ValidationError(errors)
   }
 }
