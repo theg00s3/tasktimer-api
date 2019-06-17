@@ -38,10 +38,10 @@
     { "src": "/user.*", "dest": "/routes/user.js" },
     { "src": "/twitter.*", "dest": "/app.js" },
     { "src": "/github.*", "dest": "/app.js" },
-    { "src": "/team.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/team.js" },
-    { "src": "/subscriptions.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/subscriptions.js" },
-    { "src": "/pomodoros.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/pomodoros.js" },
-    { "src": "/todos.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/todos.js" },
-    { "src": "/.*", "methods": ["POST", "GET", "OPTIONS"], "dest": "/routes/api.js" }
+    { "src": "/team.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/team.js" },
+    { "src": "/subscriptions.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/subscriptions.js" },
+    { "src": "/pomodoros.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/pomodoros.js" },
+    { "src": "/todos.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/todos.js" },
+    { "src": "/.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/api.js" }
   ]
 }
