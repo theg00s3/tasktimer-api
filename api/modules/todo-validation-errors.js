@@ -1,4 +1,4 @@
-const allowedFields = ['id', '_id', 'completed', 'completedAt', 'completedAt', 'createdAt', 'text', 'cancelled', 'cancelledAt']
+const allowedFields = ['id', '_id', 'completed', 'completedAt', 'completedAt', 'createdAt', 'text', 'cancelled', 'deleted', 'deletedAt', 'deleted_at']
 
 module.exports = function todoValidationErrors (todo) {
   if (!todo) return ['invalid']

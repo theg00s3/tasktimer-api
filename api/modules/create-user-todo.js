@@ -20,11 +20,19 @@ async function createUserTodo ({ user, todo }) {
     if (todo.completedAt) {
       Object.assign(todo, { completedAt: new Date(todo.completedAt) })
     }
+    if (todo.completed_at) {
+      Object.assign(todo, { completedAt: new Date(todo.completed_at) })
+      delete todo.completed_at
+    }
     if (todo.createdAt) {
       Object.assign(todo, { createdAt: new Date(todo.createdAt) })
     }
     if (todo.deletedAt) {
       Object.assign(todo, { deletedAt: new Date(todo.deletedAt) })
+    }
+    if (todo.deleted_at) {
+      Object.assign(todo, { deletedAt: new Date(todo.deleted_at) })
+      delete todo.deleted_at
     }
     await Todo.insert(todo)
 
