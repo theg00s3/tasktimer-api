@@ -24,7 +24,7 @@ async function updateUserTodo ({ user, todo }) {
     }
     await Todo.update({ _id: todo._id }, { $set: todo })
 
-    await Event.insert({ name: 'todoCreated', updatedAt: new Date(), user, todo }).catch(Function.prototype)
+    await Event.insert({ name: 'todoUpdated', updatedAt: new Date(), user, todo }).catch(Function.prototype)
     return todo
   } else {
     await Event.insert({ name: 'todoFailedValidation', updatedAt: new Date(), user, todo }).catch(Function.prototype)
