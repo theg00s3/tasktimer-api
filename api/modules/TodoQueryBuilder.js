@@ -100,8 +100,10 @@ module.exports = function TodoQueryBuilder () {
     }
 
     if (this.deleted !== undefined) {
-      console.log('this.deleted', this.deleted)
-      result.deleted = this.deleted
+      result.deleted = { $ne: this.deleted }
+      result.$or = result.$or || []
+      if (!this.deleted) result.$or.push({ deleted: { $exists: false } })
+      result.$or.push({ deleted: { $eq: this.deleted } })
     }
 
     return result
