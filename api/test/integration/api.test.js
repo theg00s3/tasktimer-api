@@ -280,7 +280,7 @@ test('retrieve user todos', async t => {
   t.truthy(json[0].userId)
 })
 
-test.only('retrieve user todolist', async t => {
+test('retrieve user todolist', async t => {
   const todo1 = { completed: true, deleted: true, deletedAt: new Date('2019-06-01T16:56:05.726Z'), text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
   await Todo.insert(todo1)
   const todo2 = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }

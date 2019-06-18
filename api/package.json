@@ -5,7 +5,7 @@
   "main": "index.js",
   "ignore-scripts": "false",
   "scripts": {
-    "test": "NODE_ENV=test MONGO_URL=mongodb://localhost:27017/test ava --verbose --timeout=30s --concurrency 1 --match='!*fixtures*'",
+    "test": "NODE_ENV=test MONGO_URL=mongodb://localhost:27017/test ava --verbose --timeout=30s --concurrency 1 test/**/*.test.js",
     "start": "now dev",
     "dev": "NODE_ENV=development nodemon index.js",
     "deploy": "now --target production",

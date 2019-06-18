@@ -1,12 +1,12 @@
-const { serial } = require('ava')
+const { serial: test } = require('ava')
 const fetch = require('node-fetch')
 
-serial('unauthorized response', async t => {
+test('unauthorized response', async t => {
   const response = await fetch('http://localhost:3000/user/info')
   t.is(response.status, 401)
 })
 
-serial('authorizes response with fake cookie', async t => {
+test('authorizes response with fake cookie', async t => {
   let response, cookie
   response = await fetch('http://localhost:3000/user/fake', { credentials: true })
   cookie = response.headers.get('set-cookie')

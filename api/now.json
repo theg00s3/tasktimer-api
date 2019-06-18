@@ -24,7 +24,6 @@
   },
   "builds": [
     { "src": "app.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
-    { "src": "routes/healthcheck.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/api.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/team.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/user.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
@@ -33,8 +32,6 @@
     { "src": "routes/todos.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } }
   ],
   "routes": [
-    { "src": "/", "dest": "/routes/healthcheck.js" },
-    { "src": "/healthcheck", "dest": "/routes/healthcheck.js" },
     { "src": "/user.*", "dest": "/routes/user.js" },
     { "src": "/twitter.*", "dest": "/app.js" },
     { "src": "/github.*", "dest": "/app.js" },
