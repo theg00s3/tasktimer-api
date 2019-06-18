@@ -10,6 +10,7 @@ module.exports = {
 }
 
 async function createUserPomodoro ({ user, pomodoro }) {
+  logger.info('createUserPomodoro', user, pomodoro)
   const userId = monk.id(user._id)
   Object.assign(pomodoro, { startedAt: new Date(pomodoro.startedAt) })
 

@@ -13,8 +13,7 @@ api.get('/pomodoros', async (req, res) => {
   const pomodoroQuery = PomodoroQueryBuilder().withRequest(req).build()
   logger.info('pomodoroQuery', pomodoroQuery)
   const pomodoros = await Pomodoro.find(pomodoroQuery)
-  logger.info('pomodoros', pomodoros)
-  res.json(pomodoros)
+  return res.json(pomodoros)
 })
 
 api.post('/pomodoros', async (req, res) => {
@@ -26,18 +25,22 @@ api.post('/pomodoros', async (req, res) => {
 
   const user = req.user
   const pomodoro = req.body
-  await createUserPomodoro({ user, pomodoro })
+  return createUserPomodoro({ user, pomodoro })
     .then((pomodoro) => {
       logger.info(pomodoro)
-      res.json(pomodoro)
+      return res.json(pomodoro)
     })
     .catch(err => {
       logger.error(err)
       if (err instanceof DuplicateError) {
-        res.writeHead(409)
-        return res.end()
+        logger.info('DuplicateError pomodoro', err, pomodoro)
+        console.log('err.errors', err.errors)
+        return res
+          .status(409)
+          .json(err.msg)
       }
-      res.writeHead(422)
-      return res.end()
+      return res
+        .status(422)
+        .json(err.errors)
     })
 })

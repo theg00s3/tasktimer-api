@@ -5,7 +5,7 @@ db.pomodoros.aggregate([{
   }
 }, {
   $project: {
-    yearMonthDay: { $substr: ["$startedAt", 0, 10] }
+    yearMonthDay: { $substr: ['$startedAt', 0, 10] }
   }
 }, {
   $group: {

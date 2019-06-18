@@ -6,6 +6,17 @@ const Pomodoro = require('../../models/Pomodoro')
 const Todo = require('../../models/Todo')
 const Event = require('../../models/Event')
 
+async function parseJSON (response) {
+  return response.text().then(function (text) {
+    console.log('text', text)
+    try {
+      return JSON.parse(text)
+    } catch (e) {
+      return text
+    }
+  })
+}
+
 test.beforeEach(async () => {
   await Pomodoro.remove({})
   await User.remove({})
@@ -75,7 +86,7 @@ test('cannot create duplicate user pomodoro (same userId + startedAt)', async t 
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
   const response = await fetch('http://localhost:3000/pomodoros', {
     method: 'POST',
-    json: true,
+    // json: true,
     body: JSON.stringify(pomodoro),
     credentials: true,
     headers: {
@@ -91,6 +102,7 @@ test('cannot create duplicate user pomodoro (same userId + startedAt)', async t 
     body: JSON.stringify(pomodoro),
     credentials: true,
     headers: {
+      'Accept': 'application/json',
       'Content-Type': 'application/json',
       cookie
     }
@@ -134,12 +146,11 @@ test('retrieve user pomodoros', async t => {
     credentials: true,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
       cookie
     }
   })
 
-  const json = await response.json()
+  const json = await parseJSON(response)
   t.truthy(json)
   t.is(response.status, 200)
   t.is(json.length, 1)
@@ -170,7 +181,6 @@ test('retrieve user pomodoros by time range', async t => {
     credentials: true,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
       cookie
     }
   })
@@ -259,7 +269,6 @@ test('retrieve user todos', async t => {
     credentials: true,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
       cookie
     }
   })
@@ -296,7 +305,6 @@ test('retrieve user todos by time range', async t => {
     credentials: true,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
       cookie
     }
   })

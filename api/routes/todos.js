@@ -13,7 +13,7 @@ api.get('/todos', async (req, res) => {
   logger.info('todosQuery', todosQuery)
   const todos = await Todo.find(todosQuery)
   logger.info('todos', todos)
-  res.json(todos)
+  return res.json(todos)
 })
 
 api.post('/todos', async (req, res) => {
@@ -29,17 +29,19 @@ api.post('/todos', async (req, res) => {
   await createUserTodo({ user, todo })
     .then((todo) => {
       logger.info(todo)
-      res.json(todo)
+      return res.json(todo)
     })
     .catch(err => {
       logger.error(err)
       if (err instanceof ValidationError) {
-        res.writeHead(422)
-        return res.end()
+        return res
+          .status(422)
+          .json(err.errors)
       }
 
-      res.writeHead(422)
-      return res.end()
+      return res
+        .status(400)
+        .json(err.msg)
     })
 })
 
@@ -61,11 +63,13 @@ api.patch('/todos', async (req, res) => {
     .catch(err => {
       logger.error(err)
       if (err instanceof ValidationError) {
-        res.writeHead(422)
-        return res.end()
+        return res
+          .status(422)
+          .json(err.errors)
       }
 
-      res.writeHead(422)
-      return res.end()
+      return res
+        .status(400)
+        .json(err.msg)
     })
 })
