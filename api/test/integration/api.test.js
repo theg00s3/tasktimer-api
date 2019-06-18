@@ -285,6 +285,42 @@ test('retrieve user todos', async t => {
   t.truthy(json[0].userId)
 })
 
+test.only('retrieve user todolist', async t => {
+  const todo1 = { completed: true, deleted: true, deletedAt: new Date('2019-06-01T16:56:05.726Z'), text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  await Todo.insert(todo1)
+  const todo2 = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  await Todo.insert(todo2)
+  const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
+  await Todo.insert(todoOtherUser)
+
+  let response, cookie
+  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
+  t.is(response.status, 200)
+  cookie = response.headers.get('set-cookie')
+  t.truthy(cookie)
+
+  response = await fetch('http://localhost:3000/todos/list', {
+    method: 'GET',
+    json: true,
+    credentials: true,
+    headers: {
+      'Accept': 'application/json',
+      cookie
+    }
+  })
+
+  t.is(response.status, 200)
+  const json = await response.json()
+  t.is(json.length, 1)
+
+  t.is(json[0].completed, true)
+  t.is(json[0].text, 'write some tests')
+  t.is(json[0].id, 18)
+  t.deepEqual(new Date(json[0].completedAt), new Date('2019-06-01T16:56:05.726Z'))
+  t.truthy(json[0]._id)
+  t.truthy(json[0].userId)
+})
+
 test('retrieve user todos by time range', async t => {
   const todo1 = { completed: true, text: 'write some tests', id: 18, createdAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
   await Todo.insert(todo1)

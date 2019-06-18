@@ -16,6 +16,14 @@ api.get('/todos', async (req, res) => {
   return res.json(todos)
 })
 
+api.get('/todos/list', async (req, res) => {
+  const todosQuery = TodoQueryBuilder().withRequest(req).withDeleted(false).build()
+  logger.info('todosQuery', todosQuery)
+  const todos = await Todo.find(todosQuery)
+  logger.info('todos', todos)
+  return res.json(todos)
+})
+
 api.post('/todos', async (req, res) => {
   logger.info('create todo for user', req.user && req.user.username, req.body)
   if (!req.user) {

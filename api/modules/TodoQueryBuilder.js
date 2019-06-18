@@ -14,7 +14,11 @@ module.exports = function TodoQueryBuilder () {
     return this
   }
   this.withCompleted = function (completed) {
-    this.completed = completed
+    if (typeof completed === 'string') {
+      this.completed = completed === 'true'
+    } else {
+      this.completed = completed
+    }
     return this
   }
   this.withDeleted = function (deleted) {
@@ -100,7 +104,6 @@ module.exports = function TodoQueryBuilder () {
     }
 
     if (this.deleted !== undefined) {
-      result.deleted = { $ne: this.deleted }
       result.$or = result.$or || []
       if (!this.deleted) result.$or.push({ deleted: { $exists: false } })
       result.$or.push({ deleted: { $eq: this.deleted } })

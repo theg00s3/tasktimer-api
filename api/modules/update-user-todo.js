@@ -16,6 +16,7 @@ async function updateUserTodo ({ user, todo }) {
   logger.info('todo, errors', todo, errors)
   if (errors === null) {
     Object.assign(todo, { userId })
+    console.log('todo', todo)
     await Todo.update({ _id: todo._id }, { $set: todo })
 
     await Event.insert({ name: 'todoUpdated', createdAt: new Date(), user, todo }).catch(Function.prototype)
