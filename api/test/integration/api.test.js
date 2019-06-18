@@ -5,6 +5,7 @@ const User = require('../../models/User')
 const Pomodoro = require('../../models/Pomodoro')
 const Todo = require('../../models/Todo')
 const Event = require('../../models/Event')
+const fakeUser = require('../fixtures/fake-user')
 
 async function parseJSON (response) {
   return response.text().then(function (text) {
@@ -20,13 +21,7 @@ async function parseJSON (response) {
 test.beforeEach(async () => {
   await Pomodoro.remove({})
   await User.remove({})
-  await User.insert({
-    '_id': monk.id('5a9fe4e085d766000c002636'),
-    'apikey': 'xxx',
-    'id': '2662706',
-    'avatar': 'https://avatars0.githubusercontent.com/u/2662706?v=4',
-    'username': 'christian-fei'
-  })
+  await User.insert(fakeUser)
 })
 
 const authCookie = require('../../helpers/before-each-auth-cookie')
