@@ -18,7 +18,11 @@ module.exports = function TodoQueryBuilder () {
     return this
   }
   this.withDeleted = function (deleted) {
-    this.deleted = deleted
+    if (typeof deleted === 'string') {
+      this.deleted = deleted === 'true'
+    } else {
+      this.deleted = deleted
+    }
     return this
   }
   this.withDay = function (day) {
