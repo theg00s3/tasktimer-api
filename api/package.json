@@ -16,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "ava": "^2.1.0",
+    "dotenv": "^8.0.0",
     "nodemon": "^1.19.1",
     "passport-mock-strategy": "^2.0.0",
     "r2": "git+https://github.com/mikeal/r2.git"
