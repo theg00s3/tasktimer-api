@@ -13,7 +13,14 @@ module.exports = function TodoQueryBuilder () {
     this.user = user
     return this
   }
-
+  this.withCompleted = function (completed) {
+    this.completed = completed
+    return this
+  }
+  this.withDeleted = function (deleted) {
+    this.deleted = deleted
+    return this
+  }
   this.withDay = function (day) {
     if (day) this.day = day
     return this
@@ -40,6 +47,8 @@ module.exports = function TodoQueryBuilder () {
     var query = url.parse(req.url, true).query
     this
       .withUser(req.user)
+      .withCompleted(query.completed)
+      .withDeleted(query.deleted)
       .withDay(query.day)
       .withFrom(query.from)
       .withTo(query.to)
@@ -80,6 +89,14 @@ module.exports = function TodoQueryBuilder () {
         result.this._id = monk.id(this._id)
       } catch (e) {
       }
+    }
+
+    if (this.completed !== undefined) {
+      result.completed = !!this.completed
+    }
+
+    if (this.deleted !== undefined) {
+      result.deleted = !!this.deleted
     }
 
     return result
