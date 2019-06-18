@@ -1,8 +1,8 @@
 const logger = require('pino')()
+const monk = require('monk')
 const pomodoroValidationErrors = require('./pomodoro-validation-errors')
 const Pomodoro = require('../models/Pomodoro')
 const Event = require('../models/Event')
-const monk = require('monk')
 const DuplicateError = require('../errors/duplicate')
 
 module.exports = {

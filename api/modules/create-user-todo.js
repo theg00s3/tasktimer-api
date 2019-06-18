@@ -10,6 +10,7 @@ module.exports = {
 }
 
 async function createUserTodo ({ user, todo }) {
+  logger.info('createUserTodo', user, todo)
   const userId = monk.id(user._id)
   await Event.insert({ name: 'createTodo', createdAt: new Date(), user, todo }).catch(Function.prototype)
 

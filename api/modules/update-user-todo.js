@@ -1,4 +1,5 @@
 const logger = require('pino')()
+const monk = require('monk')
 const Todo = require('../models/Todo')
 const Event = require('../models/Event')
 const ValidationError = require('../errors/validation')
@@ -9,7 +10,8 @@ module.exports = {
 }
 
 async function updateUserTodo ({ user, todo }) {
-  const userId = user._id
+  logger.info('updateUserTodo', user, todo)
+  const userId = monk.id(user._id)
   await Event.insert({ name: 'updateTodo', createdAt: new Date(), user, todo }).catch(Function.prototype)
 
   const errors = todoValidationErrors(todo)
