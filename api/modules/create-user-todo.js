@@ -27,6 +27,9 @@ async function createUserTodo ({ user, todo }) {
     if (todo.createdAt) {
       Object.assign(todo, { createdAt: new Date(todo.createdAt) })
     }
+    if (todo.created_at) {
+      Object.assign(todo, { createdAt: new Date(todo.created_at) })
+    }
     if (todo.deletedAt) {
       Object.assign(todo, { deletedAt: new Date(todo.deletedAt) })
     }
