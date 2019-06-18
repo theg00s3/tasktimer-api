@@ -92,11 +92,12 @@ module.exports = function TodoQueryBuilder () {
     }
 
     if (this.completed !== undefined) {
-      result.completed = !!this.completed
+      result.completed = this.completed
     }
 
     if (this.deleted !== undefined) {
-      result.deleted = !!this.deleted
+      console.log('this.deleted', this.deleted)
+      result.deleted = this.deleted
     }
 
     return result
