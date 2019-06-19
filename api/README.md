@@ -6,12 +6,6 @@ api for pomodoro.cc
 - node 10+
 - mongo
 
-## installation
-
-```
-npm i
-```
-
 ## test
 
 configure MONGO_URL in `.env`
@@ -19,7 +13,7 @@ configure MONGO_URL in `.env`
 `MONGO_URL=mongodb://localhost:27017/test`
 
 ```
-npm start
+env NODE_ENV=test node server.js # alternatively, with `now dev` running `npm start`, but it's quite slow
 npm t
 ```
 
