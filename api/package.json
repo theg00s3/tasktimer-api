@@ -31,7 +31,6 @@
     "express": "^4.17.1",
     "express-session": "^1.16.1",
     "migrate-mongo": "^6.0.0",
-    "mongo": "^0.1.0",
     "monk": "^7.0.0",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
