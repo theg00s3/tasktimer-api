@@ -1,8 +1,8 @@
 // const monk = require('monk')
 module.exports = {
   async up (db) {
-    const todosColl = db.collection('todos')
-    await todosColl.aggregate({
+    const pomodorosColl = db.collection('pomodoros')
+    await pomodorosColl.aggregate({
       $match: {
         userId: { $type: 'string' }
       }
