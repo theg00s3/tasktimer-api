@@ -40,24 +40,22 @@ async function main ({ _id, namePattern }) {
 
   client = new MongoClient(process.env.MONGO_URL.replace('/test', ''), { useNewUrlParser: true })
 
-  return new Promise((resolve, reject) => {
-    client.connect(function (err) {
-      if (err) return reject(err)
+  await client.connect()
 
-      console.log('Connected successfully to server')
+  console.log('Connected successfully to server')
 
-      const dbName = 'test'
-      const db = client.db(dbName)
-      const eventsColl = db.collection('events')
+  const dbName = 'test'
+  const db = client.db(dbName)
+  const eventsColl = db.collection('events')
 
-      console.log('watching collection')
-      eventsColl.watch([{
-        $match: query
-      }])
-        .on('changed', () => {
-          console.log('changed')
-        })
-    })
+  console.log('watching collection')
+  return new Promise(() => {
+    eventsColl.watch([{
+      $match: query
+    }])
+      .on('changed', () => {
+        console.log('changed')
+      })
   })
 }
 
