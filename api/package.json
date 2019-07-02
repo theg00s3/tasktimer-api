@@ -19,13 +19,13 @@
     "chalk": "^2.4.2",
     "dotenv": "^8.0.0",
     "nodemon": "^1.19.1",
-    "now": "^15.5.0",
+    "now": "^15.6.2",
     "passport-mock-strategy": "^2.0.0",
     "r2": "git+https://github.com/mikeal/r2.git",
     "string-to-color": "^2.1.1"
   },
   "dependencies": {
-    "@sentry/node": "^5.4.0",
+    "@sentry/node": "^5.4.3",
     "body-parser": "^1.19.0",
     "connect-mongo": "^2.0.3",
     "cookie-parser": "^1.4.4",
@@ -43,7 +43,7 @@
     "passport-twitter": "^1.0.4",
     "pino": "^5.12.6",
     "pusher": "^2.2.0",
-    "stripe": "^7.1.0"
+    "stripe": "^7.4.0"
   },
   "standard": {
     "env": {
