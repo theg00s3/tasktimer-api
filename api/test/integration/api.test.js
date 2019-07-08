@@ -129,13 +129,7 @@ test('retrieve user pomodoros', async t => {
   const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id() }
   await Pomodoro.insert(pomodoroOtherUser)
 
-  let response, cookie
-  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-
-  response = await fetch('http://localhost:3000/pomodoros', {
+  const response = await fetch('http://localhost:3000/pomodoros', {
     method: 'GET',
     json: true,
     credentials: true,
@@ -164,13 +158,7 @@ test('retrieve user pomodoros by time range', async t => {
   const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id() }
   await Pomodoro.insert(pomodoroOtherUser)
 
-  let response, cookie
-  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-
-  response = await fetch('http://localhost:3000/pomodoros?from=2019-06-03&to=2019-06-05', {
+  const response = await fetch('http://localhost:3000/pomodoros?from=2019-06-03&to=2019-06-05', {
     method: 'GET',
     json: true,
     credentials: true,
@@ -192,14 +180,8 @@ test('retrieve user pomodoros by time range', async t => {
 })
 
 test('create user todo', async t => {
-  let response, cookie
-  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-
   const todo = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z') }
-  response = await fetch('http://localhost:3000/todos', {
+  const response = await fetch('http://localhost:3000/todos', {
     method: 'POST',
     json: true,
     body: JSON.stringify(todo),
@@ -252,13 +234,7 @@ test('retrieve user todos', async t => {
   const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
   await Todo.insert(todoOtherUser)
 
-  let response, cookie
-  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-
-  response = await fetch('http://localhost:3000/todos', {
+  const response = await fetch('http://localhost:3000/todos', {
     method: 'GET',
     json: true,
     credentials: true,
@@ -288,13 +264,7 @@ test('retrieve user todolist', async t => {
   const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
   await Todo.insert(todoOtherUser)
 
-  let response, cookie
-  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-
-  response = await fetch('http://localhost:3000/todos/list', {
+  const response = await fetch('http://localhost:3000/todos/list', {
     method: 'GET',
     json: true,
     credentials: true,
@@ -324,13 +294,7 @@ test('retrieve user todos by time range', async t => {
   const todoOtherUser = { completed: true, text: 'write some tests', id: 18, createdAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
   await Todo.insert(todoOtherUser)
 
-  let response, cookie
-  response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  t.is(response.status, 200)
-  cookie = response.headers.get('set-cookie')
-  t.truthy(cookie)
-
-  response = await fetch('http://localhost:3000/todos?from=2019-06-03&to=2019-06-05', {
+  const response = await fetch('http://localhost:3000/todos?from=2019-06-03&to=2019-06-05', {
     method: 'GET',
     json: true,
     credentials: true,
