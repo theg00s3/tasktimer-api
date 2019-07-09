@@ -200,6 +200,7 @@ test.only('retrieve user pomodoros aggregated by day', async t => {
   const json = await parseJSON(response)
   t.truthy(json)
   t.is(response.status, 200)
+  console.log('json', JSON.stringify(json))
   t.is(json.length, 2)
   t.deepEqual(json, [{
     'day': '2019-06-05',
