@@ -19,7 +19,7 @@ router.get('/pomodoros', async (req, res) => {
 
 router.get('/pomodoros/daily', async (req, res) => {
   const daily = await getDailyPomodoros(req).catch(console.error)
-  return res.json(daily)
+  return res.json(daily || [])
 })
 
 router.post('/pomodoros', async (req, res) => {
@@ -55,31 +55,40 @@ async function getDailyPomodoros (req) {
   return Pomodoro.aggregate(
     [
       {
-        '$match': {
-          'userId': monk.id(req.user._id)
+        $match: {
+          userId: monk.id(req.user._id)
         }
+      // }, {
+      //   $addFields: {
+      //     startedAt: {
+      //       $convert: {
+      //         input: '$startedAt',
+      //         to: 'date'
+      //       }
+      //     }
+      //   }
       }, {
-        '$project': {
-          'doc': '$$ROOT',
-          'day': {
-            '$dateToString': {
-              'format': '%Y-%m-%d',
-              'date': '$startedAt'
+        $project: {
+          doc: '$$ROOT',
+          day: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: '$startedAt'
             }
           }
         }
       }, {
-        '$group': {
-          '_id': '$day',
-          'docs': {
-            '$push': '$doc'
+        $group: {
+          _id: '$day',
+          docs: {
+            $push: '$doc'
           }
         }
       }, {
-        '$project': {
-          '_id': 0,
-          'day': '$_id',
-          'pomodoros': '$docs'
+        $project: {
+          _id: 0,
+          day: '$_id',
+          pomodoros: '$docs'
         }
       }
     ]
