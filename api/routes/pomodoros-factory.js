@@ -58,15 +58,6 @@ async function getDailyPomodoros (req) {
         $match: {
           userId: monk.id(req.user._id)
         }
-      // }, {
-      //   $addFields: {
-      //     startedAt: {
-      //       $convert: {
-      //         input: '$startedAt',
-      //         to: 'date'
-      //       }
-      //     }
-      //   }
       }, {
         $project: {
           doc: '$$ROOT',
