@@ -5,6 +5,7 @@ const router = Router()
 module.exports = router
 
 const Pomodoro = require('../models/Pomodoro')
+const Todo = require('../models/Todo')
 const logger = require('pino')()
 
 router.get('/analysis', async (req, res) => {
@@ -14,25 +15,38 @@ router.get('/analysis', async (req, res) => {
 })
 
 async function getAnalysis (req) {
-  return Pomodoro.aggregate(
+  const pomodoros = await aggregate({collection: Pomodoro, userId: req.user._id, field: 'startedAt'})
+  const todos = await aggregate({collection: Todo, userId: req.user._id, field: 'completedAt'})
+  return pomodoros.map(({day, docs}, index) => {
+    return {
+      day,
+      pomodoros: docs,
+      todos: (todos.find(t => t.day === day) || {}).todos || []
+    }
+  })
+}
+
+async function aggregate ({collection, userId, field = 'startedAt'}) {
+  return collection.aggregate(
     [
       {
         $match: {
-          userId: monk.id(req.user._id)
+          userId: monk.id(userId)
         }
       }, {
         $project: {
           doc: '$$ROOT',
-          day: {
-            $dateToString: {
-              format: '%Y-%m-%d',
-              date: '$startedAt'
-            }
-          }
+          year: { $year: `$${field}` },
+          month: { $month: `$${field}` },
+          day: { $day: `$${field}` }
         }
       }, {
         $group: {
-          _id: '$day',
+          _id: {
+            year: '$year',
+            month: '$month',
+            day: '$day'
+          },
           docs: {
             $push: '$doc'
           }
@@ -40,8 +54,10 @@ async function getAnalysis (req) {
       }, {
         $project: {
           _id: 0,
-          day: '$_id',
-          pomodoros: '$docs'
+          day: {
+            $concat: ['$_id.year', '$_id.month', '$_id.day']
+          },
+          docs: '$docs'
         }
       }
     ]
