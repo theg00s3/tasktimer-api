@@ -8,7 +8,7 @@ const Pomodoro = require('../models/Pomodoro')
 const logger = require('pino')()
 
 router.get('/analysis', async (req, res) => {
-  logger.log('get analysis', req.user)
+  logger.info('get analysis', req.user)
   const analysis = await getAnalysis(req).catch(console.error)
   return res.json(analysis || [])
 })
