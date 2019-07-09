@@ -60,13 +60,7 @@ async function getDailyPomodoros (req) {
         }
       }, {
         '$project': {
-          'doc': '$$ROOT',
-          'day': {
-            '$dateToString': {
-              'format': '%Y-%m-%d',
-              'date': '$startedAt'
-            }
-          }
+          'doc': '$$ROOT'
         }
       }, {
         '$group': {
