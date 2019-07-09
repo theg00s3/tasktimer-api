@@ -17,9 +17,9 @@ router.get('/pomodoros', async (req, res) => {
   return res.json(pomodoros)
 })
 
-router.get('/pomodoros/daily', async (req, res) => {
-  const daily = await getDailyPomodoros(req).catch(console.error)
-  return res.json(daily || [])
+router.get('/analysis', async (req, res) => {
+  const analysis = await getAnalysis(req).catch(console.error)
+  return res.json(analysis || [])
 })
 
 router.post('/pomodoros', async (req, res) => {
@@ -51,7 +51,7 @@ router.post('/pomodoros', async (req, res) => {
     })
 })
 
-async function getDailyPomodoros (req) {
+async function getAnalysis (req) {
   return Pomodoro.aggregate(
     [
       {
