@@ -26,7 +26,7 @@ test.beforeEach(async () => {
 
 const authCookie = require('../../helpers/before-each-auth-cookie')
 let cookie
-test.beforeEach(async t => { cookie = await authCookie(t) })
+test.before(async t => { cookie = await authCookie(t) })
 test.beforeEach(async () => {
   await Pomodoro.remove({})
   await Todo.remove({})
@@ -177,6 +177,55 @@ test('retrieve user pomodoros by time range', async t => {
   t.is(json[0].type, 'pomodoro')
   t.truthy(json[0]._id)
   t.truthy(json[0].userId)
+})
+
+test.only('retrieve user pomodoros aggregated by day', async t => {
+  const pomodoro1 = { '_id': monk.id('5d24cca977850eb3a93b0f07'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro2 = { '_id': monk.id('5d24ccaa77850eb3a93b0f08'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-05T11:29:23.233Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro3 = { '_id': monk.id('5d24ccaa77850eb3a93b0f09'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-05T10:15:11.639Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  await Pomodoro.insert(pomodoro1)
+  await Pomodoro.insert(pomodoro2)
+  await Pomodoro.insert(pomodoro3)
+
+  const response = await fetch('http://localhost:3000/pomodoros/daily', {
+    method: 'GET',
+    json: true,
+    credentials: true,
+    headers: {
+      'Accept': 'application/json',
+      cookie
+    }
+  })
+
+  const json = await parseJSON(response)
+  t.truthy(json)
+  t.is(response.status, 200)
+  t.is(json.length, 2)
+  t.deepEqual(json, [{
+    'day': '2019-06-05',
+    'pomodoros': [{
+      '_id': '5d24ccaa77850eb3a93b0f08',
+      'minutes': 25,
+      'type': 'pomodoro',
+      'startedAt': '2019-06-05T11:29:23.233Z',
+      'userId': '5a9fe4e085d766000c002636'
+    }, {
+      '_id': '5d24ccaa77850eb3a93b0f09',
+      'minutes': 25,
+      'startedAt': '2019-06-05T10:15:11.639Z',
+      'type': 'pomodoro',
+      'userId': '5a9fe4e085d766000c002636'
+    }]
+  }, {
+    'day': '2019-06-04',
+    'pomodoros': [{
+      '_id': '5d24cca977850eb3a93b0f07',
+      'minutes': 25,
+      'type': 'pomodoro',
+      'startedAt': '2019-06-04T19:35:27.255Z',
+      'userId': '5a9fe4e085d766000c002636'
+    }]
+  }])
 })
 
 test('create user todo', async t => {

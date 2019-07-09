@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const monk = require('monk')
 const router = Router()
 
 module.exports = router
@@ -14,6 +15,11 @@ router.get('/pomodoros', async (req, res) => {
   logger.info('pomodoroQuery', pomodoroQuery)
   const pomodoros = await Pomodoro.find(pomodoroQuery)
   return res.json(pomodoros)
+})
+
+router.get('/pomodoros/daily', async (req, res) => {
+  const daily = await getDailyPomodoros(req).catch(console.error)
+  return res.json(daily)
 })
 
 router.post('/pomodoros', async (req, res) => {
@@ -44,3 +50,38 @@ router.post('/pomodoros', async (req, res) => {
         .json(err.errors)
     })
 })
+
+async function getDailyPomodoros (req) {
+  return Pomodoro.aggregate(
+    [
+      {
+        '$match': {
+          'userId': monk.id(req.user._id)
+        }
+      }, {
+        '$project': {
+          'doc': '$$ROOT',
+          'day': {
+            '$dateToString': {
+              'format': '%Y-%m-%d',
+              'date': '$startedAt'
+            }
+          }
+        }
+      }, {
+        '$group': {
+          '_id': '$day',
+          'docs': {
+            '$push': '$doc'
+          }
+        }
+      }, {
+        '$project': {
+          '_id': 0,
+          'day': '$_id',
+          'pomodoros': '$docs'
+        }
+      }
+    ]
+  )
+}
