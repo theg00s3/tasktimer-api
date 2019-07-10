@@ -17,11 +17,6 @@ router.get('/pomodoros', async (req, res) => {
   return res.json(pomodoros)
 })
 
-router.get('/analysis', async (req, res) => {
-  const analysis = await getAnalysis(req).catch(console.error)
-  return res.json(analysis || [])
-})
-
 router.post('/pomodoros', async (req, res) => {
   logger.info('create pomodoro for user', req.user && req.user.username, req.body)
   if (!req.user) {
@@ -50,38 +45,3 @@ router.post('/pomodoros', async (req, res) => {
         .json(err.errors)
     })
 })
-
-async function getAnalysis (req) {
-  return Pomodoro.aggregate(
-    [
-      {
-        $match: {
-          userId: monk.id(req.user._id)
-        }
-      }, {
-        $project: {
-          doc: '$$ROOT',
-          day: {
-            $dateToString: {
-              format: '%Y-%m-%d',
-              date: '$startedAt'
-            }
-          }
-        }
-      }, {
-        $group: {
-          _id: '$day',
-          docs: {
-            $push: '$doc'
-          }
-        }
-      }, {
-        $project: {
-          _id: 0,
-          day: '$_id',
-          pomodoros: '$docs'
-        }
-      }
-    ]
-  )
-}

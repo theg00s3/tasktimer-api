@@ -17,13 +17,15 @@ router.get('/analysis', async (req, res) => {
 async function getAnalysis (req) {
   const pomodoros = await aggregate({collection: Pomodoro, userId: req.user._id, field: 'startedAt'})
   const todos = await aggregate({collection: Todo, userId: req.user._id, field: 'completedAt'})
-  return pomodoros.map(({day, docs}, index) => {
+  const result = pomodoros.map(({day, docs}, index) => {
     return {
       day,
       pomodoros: docs,
-      todos: (todos.find(t => t.day === day) || {}).todos || []
+      todos: (todos.find(t => t.day === day) || {}).docs || []
     }
   })
+  logger.info('result', result)
+  return result
 }
 
 async function aggregate ({collection, userId, field = 'startedAt'}) {
@@ -36,9 +38,12 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
       }, {
         $project: {
           doc: '$$ROOT',
-          year: { $year: `$${field}` },
-          month: { $month: `$${field}` },
-          day: { $dayOfMonth: `$${field}` }
+          // year: { $year: `$${field}` },
+          // month: { $month: `$${field}` },
+          // day: { $dayOfMonth: `$${field}` }
+          year: { $substr: [`$${field}`, 0, 4] },
+          month: { $substr: [`$${field}`, 5, 2] },
+          day: { $substr: [`$${field}`, 8, 2] }
         }
       }, {
         $group: {
@@ -53,9 +58,18 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
         }
       }, {
         $project: {
+          // day: { $toString: '$_id.day' },
+          // day: { '$convert': { input: '$_id.day', to: 'string' } },
+          // month: { $toString: '$_id.month' },
+          // month: { '$convert': { input: '$_id.month', to: 'string' } },
+          // year: { $toString: '$_id.year' },
+          // year: { '$convert': { input: '$_id.year', to: 'string' } },
+          // year: '$_id.year',
+          // month: '$_id.month',
+          // day: '$_id.day',
           _id: 0,
           day: {
-            $concat: ['$_id.year', '$_id.month', '$_id.day']
+            $concat: ['$_id.year', '-', '$_id.month', '-', '$_id.day']
           },
           docs: '$docs'
         }
