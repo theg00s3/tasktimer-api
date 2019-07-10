@@ -38,7 +38,7 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
           doc: '$$ROOT',
           year: { $year: `$${field}` },
           month: { $month: `$${field}` },
-          day: { $day: `$${field}` }
+          day: { $dayOfMonth: `$${field}` }
         }
       }, {
         $group: {
