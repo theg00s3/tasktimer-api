@@ -179,7 +179,7 @@ test('retrieve user pomodoros by time range', async t => {
   t.truthy(json[0].userId)
 })
 
-test.only('retrieve analysis aggregated by day', async t => {
+test('retrieve analysis aggregated by day', async t => {
   const pomodoro1 = { '_id': monk.id('5d24cca977850eb3a93b0f07'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
   const pomodoro2 = { '_id': monk.id('5d24ccaa77850eb3a93b0f08'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-05T11:29:23.233Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
   const pomodoro3 = { '_id': monk.id('5d24ccaa77850eb3a93b0f09'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-05T10:15:11.639Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
@@ -204,7 +204,8 @@ test.only('retrieve analysis aggregated by day', async t => {
   t.is(json.length, 2)
   t.deepEqual(json, [{
     'day': '2019-06-05',
-    'percentage': 1,
+    'percentagePomodoros': 1,
+    'percentageTodos': 0,
     'todos': [],
     'pomodoros': [{
       '_id': '5d24ccaa77850eb3a93b0f08',
@@ -221,7 +222,8 @@ test.only('retrieve analysis aggregated by day', async t => {
     }]
   }, {
     'day': '2019-06-04',
-    'percentage': 0.5,
+    'percentagePomodoros': 0.5,
+    'percentageTodos': 0,
     'todos': [],
     'pomodoros': [{
       '_id': '5d24cca977850eb3a93b0f07',

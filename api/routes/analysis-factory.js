@@ -88,9 +88,12 @@ function fillAnalysisWithEmptydays (analysis) {
     return acc.concat([daily])
   }, [])
 
-  const max = Math.max(...dataWithEmptyDays.map(d => d.pomodoros.length))
+  const maxPomodoros = Math.max(...dataWithEmptyDays.map(d => d.pomodoros.length))
+  const maxTodos = Math.max(...dataWithEmptyDays.map(d => d.todos.length))
+
   return dataWithEmptyDays.map(d => Object.assign(d, {
-    percentage: d.pomodoros.length / max
+    percentagePomodoros: d.pomodoros.length / maxPomodoros,
+    percentageTodos: d.todos.length / Math.max(maxTodos, 1)
   }))
   .sort((a, b) => b.day.localeCompare(a.day))
 }
