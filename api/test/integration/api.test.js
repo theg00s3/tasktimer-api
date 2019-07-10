@@ -44,13 +44,11 @@ async function get (url) {
     }
   })
 }
-
-test('create user pomodoro', async t => {
-  const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
-  const response = await fetch('http://localhost:3000/pomodoros', {
+async function post (url, body) {
+  return fetch('http://localhost:3000' + url, {
     method: 'POST',
     json: true,
-    body: JSON.stringify(pomodoro),
+    body: JSON.stringify(body),
     credentials: true,
     headers: {
       'Accept': 'application/json',
@@ -58,6 +56,11 @@ test('create user pomodoro', async t => {
       cookie
     }
   })
+}
+
+test('create user pomodoro', async t => {
+  const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
+  const response = await post('/pomodoros', pomodoro)
 
   const json = await response.json()
   t.is(response.status, 200)
@@ -91,29 +94,10 @@ test('create user pomodoro', async t => {
 
 test('cannot create duplicate user pomodoro (same userId + startedAt)', async t => {
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
-  const response = await fetch('http://localhost:3000/pomodoros', {
-    method: 'POST',
-    // json: true,
-    body: JSON.stringify(pomodoro),
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      cookie
-    }
-  })
+  const response = await post('/pomodoros', pomodoro)
   t.is(response.status, 200)
 
-  const duplicateResponse = await fetch('http://localhost:3000/pomodoros', {
-    method: 'POST',
-    body: JSON.stringify(pomodoro),
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      cookie
-    }
-  })
+  const duplicateResponse = await post('/pomodoros', pomodoro)
   t.is(duplicateResponse.status, 409)
 
   const events = await Event.find()
@@ -204,17 +188,7 @@ test('retrieve analysis aggregated by day', async t => {
 
 test('create user todo', async t => {
   const todo = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z') }
-  const response = await fetch('http://localhost:3000/todos', {
-    method: 'POST',
-    json: true,
-    body: JSON.stringify(todo),
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      cookie
-    }
-  })
+  const response = await post('/todos', todo)
 
   const json = await response.json()
   t.is(response.status, 200)
