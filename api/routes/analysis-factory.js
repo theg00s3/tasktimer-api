@@ -84,7 +84,7 @@ function getDataWithEmptyDays (data) {
     datesList.push(day.toISOString().substr(0, 10))
   }
   const dataWithEmptyDays = datesList.reduce((acc, day) => {
-    const daily = data.find(d => d.day === day) || { day: day, pomodoros: [] }
+    const daily = data.find(d => d.day === day) || { day: day, pomodoros: [], todos: [] }
     return acc.concat([daily])
   }, [])
 
