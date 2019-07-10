@@ -33,6 +33,18 @@ test.beforeEach(async () => {
   await Event.remove({})
 })
 
+async function get (url) {
+  return fetch('http://localhost:3000' + url, {
+    method: 'GET',
+    json: true,
+    credentials: true,
+    headers: {
+      'Accept': 'application/json',
+      cookie
+    }
+  })
+}
+
 test('create user pomodoro', async t => {
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
   const response = await fetch('http://localhost:3000/pomodoros', {
@@ -129,15 +141,7 @@ test('retrieve user pomodoros', async t => {
   const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id() }
   await Pomodoro.insert(pomodoroOtherUser)
 
-  const response = await fetch('http://localhost:3000/pomodoros', {
-    method: 'GET',
-    json: true,
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      cookie
-    }
-  })
+  const response = await get('/pomodoros')
 
   const json = await parseJSON(response)
   t.truthy(json)
@@ -158,15 +162,7 @@ test('retrieve user pomodoros by time range', async t => {
   const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id() }
   await Pomodoro.insert(pomodoroOtherUser)
 
-  const response = await fetch('http://localhost:3000/pomodoros?from=2019-06-03&to=2019-06-05', {
-    method: 'GET',
-    json: true,
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      cookie
-    }
-  })
+  const response = await get('/pomodoros?from=2019-06-03&to=2019-06-05')
 
   const json = await response.json()
   t.truthy(json)
@@ -187,15 +183,7 @@ test('retrieve analysis aggregated by day', async t => {
   await Pomodoro.insert(pomodoro2)
   await Pomodoro.insert(pomodoro3)
 
-  const response = await fetch('http://localhost:3000/analysis', {
-    method: 'GET',
-    json: true,
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      cookie
-    }
-  })
+  const response = await get('/analysis')
 
   const json = await parseJSON(response)
   t.truthy(json)
@@ -269,15 +257,7 @@ test('retrieve user todos', async t => {
   const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
   await Todo.insert(todoOtherUser)
 
-  const response = await fetch('http://localhost:3000/todos', {
-    method: 'GET',
-    json: true,
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      cookie
-    }
-  })
+  const response = await get('/todos')
 
   const json = await response.json()
   t.is(response.status, 200)
@@ -299,15 +279,7 @@ test('retrieve user todolist', async t => {
   const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
   await Todo.insert(todoOtherUser)
 
-  const response = await fetch('http://localhost:3000/todos/list', {
-    method: 'GET',
-    json: true,
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      cookie
-    }
-  })
+  const response = await get('/todos/list')
 
   t.is(response.status, 200)
   const json = await response.json()
@@ -329,15 +301,7 @@ test('retrieve user todos by time range', async t => {
   const todoOtherUser = { completed: true, text: 'write some tests', id: 18, createdAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
   await Todo.insert(todoOtherUser)
 
-  const response = await fetch('http://localhost:3000/todos?from=2019-06-03&to=2019-06-05', {
-    method: 'GET',
-    json: true,
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      cookie
-    }
-  })
+  const response = await fetch('http://localhost:3000/todos?from=2019-06-03&to=2019-06-05')
 
   const json = await response.json()
   t.truthy(json)
