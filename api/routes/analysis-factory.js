@@ -29,10 +29,10 @@ async function getAnalysis (req) {
       todos: (todos.find(t => t.day === day) || {}).docs || []
     }
   })
-  const result = getDataWithEmptyDays(data)
+  const analysis = fillAnalysisWithEmptydays(data)
 
-  logger.info('result', result)
-  return result
+  logger.info('analysis', analysis)
+  return analysis
 }
 
 async function aggregate ({collection, userId, field = 'startedAt'}) {
@@ -73,18 +73,18 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
   )
 }
 
-function getDataWithEmptyDays (data) {
+function fillAnalysisWithEmptydays (analysis) {
   const datesList = []
-  data.sort((a, b) => a.day.localeCompare(b.day))
-  const start = dayjs(data[0].day)
-  const end = dayjs(data[data.length - 1].day)
+  analysis.sort((a, b) => a.day.localeCompare(b.day))
+  const start = dayjs(analysis[0].day)
+  const end = dayjs(analysis[analysis.length - 1].day)
   const diffInDays = Math.abs(end.diff(start, 'day'))
   for (let i = 1; i <= diffInDays + 1; i++) {
     const day = start.add(i, 'days')
     datesList.push(day.toISOString().substr(0, 10))
   }
   const dataWithEmptyDays = datesList.reduce((acc, day) => {
-    const daily = data.find(d => d.day === day) || { day: day, pomodoros: [], todos: [] }
+    const daily = analysis.find(d => d.day === day) || { day: day, pomodoros: [], todos: [] }
     return acc.concat([daily])
   }, [])
 
