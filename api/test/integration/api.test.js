@@ -301,7 +301,7 @@ test('retrieve user todos by time range', async t => {
   const todoOtherUser = { completed: true, text: 'write some tests', id: 18, createdAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
   await Todo.insert(todoOtherUser)
 
-  const response = await fetch('http://localhost:3000/todos?from=2019-06-03&to=2019-06-05')
+  const response = await get('/todos?from=2019-06-03&to=2019-06-05')
 
   const json = await response.json()
   t.truthy(json)
