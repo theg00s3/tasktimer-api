@@ -38,9 +38,6 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
       }, {
         $project: {
           doc: '$$ROOT',
-          // year: { $year: `$${field}` },
-          // month: { $month: `$${field}` },
-          // day: { $dayOfMonth: `$${field}` }
           year: { $substr: [`$${field}`, 0, 4] },
           month: { $substr: [`$${field}`, 5, 2] },
           day: { $substr: [`$${field}`, 8, 2] }
@@ -58,15 +55,6 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
         }
       }, {
         $project: {
-          // day: { $toString: '$_id.day' },
-          // day: { '$convert': { input: '$_id.day', to: 'string' } },
-          // month: { $toString: '$_id.month' },
-          // month: { '$convert': { input: '$_id.month', to: 'string' } },
-          // year: { $toString: '$_id.year' },
-          // year: { '$convert': { input: '$_id.year', to: 'string' } },
-          // year: '$_id.year',
-          // month: '$_id.month',
-          // day: '$_id.day',
           _id: 0,
           day: {
             $concat: ['$_id.year', '-', '$_id.month', '-', '$_id.day']
