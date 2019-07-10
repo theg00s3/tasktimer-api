@@ -203,6 +203,12 @@ test('retrieve analysis aggregated by day', async t => {
   console.log('json', JSON.stringify(json))
   t.is(json.length, 2)
   t.deepEqual(json, [{
+    'day': '2019-06-06',
+    'pomodoros': [],
+    'todos': [],
+    'percentagePomodoros': 0,
+    'percentageTodos': 0
+  }, {
     'day': '2019-06-05',
     'percentagePomodoros': 1,
     'percentageTodos': 0,
