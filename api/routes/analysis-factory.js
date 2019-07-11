@@ -29,7 +29,7 @@ async function getAnalysis (req) {
       todos: (todos.find(t => t.day === day) || {}).docs || []
     }
   })
-  const analysis = fillAnalysisWithEmptydays(data)
+  const analysis = prepareAnalysis(data)
 
   logger.info('analysis', analysis)
   return analysis
@@ -73,7 +73,7 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
   )
 }
 
-function fillAnalysisWithEmptydays (analysis) {
+function prepareAnalysis (analysis) {
   const datesList = []
   analysis.sort((a, b) => a.day.localeCompare(b.day))
   const start = dayjs(analysis[0].day)
@@ -92,7 +92,7 @@ function fillAnalysisWithEmptydays (analysis) {
   const maxTodos = Math.max(...dataWithEmptyDays.map(d => d.todos.length))
 
   return dataWithEmptyDays.map(d => Object.assign(d, {
-    percentagePomodoros: d.pomodoros.length / maxPomodoros,
+    percentagePomodoros: d.pomodoros.length / Math.max(maxPomodoros, 1),
     percentageTodos: d.todos.length / Math.max(maxTodos, 1)
   }))
   .sort((a, b) => b.day.localeCompare(a.day))
