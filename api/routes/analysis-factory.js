@@ -83,6 +83,7 @@ function prepareAnalysis (analysis) {
     const day = start.add(i, 'days')
     datesList.push(day.toISOString().substr(0, 10))
   }
+  // console.log('datesList', datesList)
   const dataWithEmptyDays = datesList.reduce((acc, day) => {
     const daily = analysis.find(d => d.day === day) || { day: day, pomodoros: [], todos: [] }
     return acc.concat([daily])
