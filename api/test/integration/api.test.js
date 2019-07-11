@@ -7,6 +7,8 @@ const Event = require('../../models/Event')
 const fakeUser = require('../fixtures/fake-user')
 const { get, post, parseJSON } = require('../../test-helpers')
 
+const authCookie = require('../../helpers/before-each-auth-cookie')
+test.before(async t => { global.cookie = await authCookie(t) })
 test.beforeEach(async () => {
   await Pomodoro.remove({})
   await User.remove({})
@@ -15,9 +17,6 @@ test.beforeEach(async () => {
 
   await User.insert(fakeUser)
 })
-
-const authCookie = require('../../helpers/before-each-auth-cookie')
-test.before(async t => { global.cookie = await authCookie(t) })
 
 test('create user pomodoro', async t => {
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }

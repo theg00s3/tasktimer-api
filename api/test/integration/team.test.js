@@ -1,18 +1,18 @@
 const { serial: test } = require('ava')
-const fetch = require('node-fetch')
+const { get } = require('../../test-helpers')
+const User = require('../../models/User')
 const TeamPomodoro = require('../../models/TeamPomodoro')
+const fakeUser = require('../fixtures/fake-user')
 const authCookie = require('../../helpers/before-each-auth-cookie')
-let cookie
-test.beforeEach(async t => { cookie = await authCookie(t) })
+test.before(async t => { global.cookie = await authCookie(t) })
+test.beforeEach(async () => {
+  await User.remove({})
+  await User.insert(fakeUser)
+})
 
 test('get team channel status (new channel)', async t => {
   await TeamPomodoro.remove({ channel: '1' })
-  const response = await fetch('http://localhost:3000/team/1/status', {
-    credentials: true,
-    headers: {
-      cookie
-    }
-  })
+  const response = await get('/team/1/status')
   t.is(response.status, 200)
   t.deepEqual(await response.json(), {})
 })
@@ -20,12 +20,7 @@ test('get team channel status (new channel)', async t => {
 test('get team channel status (existing channel)', async t => {
   await TeamPomodoro.remove({ channel: '1' })
   await TeamPomodoro.insert({ channel: '1' })
-  const response = await fetch('http://localhost:3000/team/1/status', {
-    credentials: true,
-    headers: {
-      cookie
-    }
-  })
+  const response = await get('/team/1/status')
 
   t.is(response.status, 200)
   const body = await response.json()
