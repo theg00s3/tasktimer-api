@@ -1,11 +1,11 @@
 const { serial: test } = require('ava')
 const monk = require('monk')
-const fetch = require('node-fetch')
 const User = require('../../models/User')
 const Pomodoro = require('../../models/Pomodoro')
 const Todo = require('../../models/Todo')
 const Event = require('../../models/Event')
 const fakeUser = require('../fixtures/fake-user')
+const { get, post } = require('../../test-helpers')
 
 async function parseJSON (response) {
   return response.text().then(function (text) {
@@ -25,38 +25,12 @@ test.beforeEach(async () => {
 })
 
 const authCookie = require('../../helpers/before-each-auth-cookie')
-let cookie
-test.before(async t => { cookie = await authCookie(t) })
+test.before(async t => { global.cookie = await authCookie(t) })
 test.beforeEach(async () => {
   await Pomodoro.remove({})
   await Todo.remove({})
   await Event.remove({})
 })
-
-async function get (url) {
-  return fetch('http://localhost:3000' + url, {
-    method: 'GET',
-    json: true,
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      cookie
-    }
-  })
-}
-async function post (url, body) {
-  return fetch('http://localhost:3000' + url, {
-    method: 'POST',
-    json: true,
-    body: JSON.stringify(body),
-    credentials: true,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      cookie
-    }
-  })
-}
 
 test('create user pomodoro', async t => {
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
