@@ -2,7 +2,8 @@ const fetch = require('node-fetch')
 
 module.exports = {
   get,
-  post
+  post,
+  parseJSON
 }
 
 async function get (url) {
@@ -27,6 +28,17 @@ async function post (url, body) {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       cookie: global.cookie
+    }
+  })
+}
+
+async function parseJSON (response) {
+  return response.text().then(function (text) {
+    console.log('text', text)
+    try {
+      return JSON.parse(text)
+    } catch (e) {
+      return text
     }
   })
 }

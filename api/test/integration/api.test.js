@@ -5,32 +5,19 @@ const Pomodoro = require('../../models/Pomodoro')
 const Todo = require('../../models/Todo')
 const Event = require('../../models/Event')
 const fakeUser = require('../fixtures/fake-user')
-const { get, post } = require('../../test-helpers')
-
-async function parseJSON (response) {
-  return response.text().then(function (text) {
-    console.log('text', text)
-    try {
-      return JSON.parse(text)
-    } catch (e) {
-      return text
-    }
-  })
-}
+const { get, post, parseJSON } = require('../../test-helpers')
 
 test.beforeEach(async () => {
   await Pomodoro.remove({})
   await User.remove({})
+  await Todo.remove({})
+  await Event.remove({})
+
   await User.insert(fakeUser)
 })
 
 const authCookie = require('../../helpers/before-each-auth-cookie')
 test.before(async t => { global.cookie = await authCookie(t) })
-test.beforeEach(async () => {
-  await Pomodoro.remove({})
-  await Todo.remove({})
-  await Event.remove({})
-})
 
 test('create user pomodoro', async t => {
   const pomodoro = { minutes: 25, type: 'pomodoro', startedAt: new Date() }
