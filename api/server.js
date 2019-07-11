@@ -8,7 +8,9 @@ const user = require('./routes/user-factory')
 const cors = require('cors')
 
 const app = require('./app')
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:1234'
+}))
 app.head('/', (req, res) => res.end())
 app.use(pomodoros)
 app.use(analysis)
