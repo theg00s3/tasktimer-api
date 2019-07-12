@@ -29,6 +29,7 @@ async function getAnalysis (req) {
       todos: (todos.find(t => t.day === day) || {}).docs || []
     }
   })
+
   const analysis = prepareAnalysis(data)
 
   logger.info('analysis', analysis)
@@ -97,4 +98,5 @@ function prepareAnalysis (analysis) {
     percentageTodos: d.todos.length / Math.max(maxTodos, 1)
   }))
   .sort((a, b) => b.day.localeCompare(a.day))
+  .filter(({day}) => day.localeCompare(new Date().toISOString().substring(0, 10)) <= 0)
 }
