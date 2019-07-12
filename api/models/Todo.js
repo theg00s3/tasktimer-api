@@ -3,6 +3,8 @@ const todos = db.get('todos')
 
 module.exports = todos
 
+todos.createIndex({ customerId: 1 })
+todos.createIndex({ subscriptionId: 1 })
 todos.createIndex({ createdAt: 1 })
 todos.createIndex({ createdAt: -1 })
 todos.createIndex({ createdAt: -1, userId: 1 })
