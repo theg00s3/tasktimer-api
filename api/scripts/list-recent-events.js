@@ -35,7 +35,7 @@ async function main ({ _id, namePattern }) {
     query.name = { $regex: namePattern }
   }
 
-  const events = await Event.find(query, { limit: 500, sort: { createdAt: -1 } })
+  const events = await Event.find(query, { limit: 1000, sort: { createdAt: -1 } })
   events
     .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
     .forEach(printEvent)
@@ -65,6 +65,15 @@ function additionalInfoFor (e) {
   }
   if (e.name === 'userAuthenticated') {
     return ''
+  }
+  if (e.name === 'todoCreated') {
+    return `\n\t${e.todo && e.todo.text}`
+  }
+  if (e.name === 'pomodoroCreated') {
+    return `\n\t${e.pomodoro && e.pomodoro.type} ${e.pomodoro && e.pomodoro.minutes}`
+  }
+  if (e.name === 'todoUpdated') {
+    return `\n\t${e.todo && e.todo.text}`
   }
   if (e.name === 'createPomodoro') {
     return ''
