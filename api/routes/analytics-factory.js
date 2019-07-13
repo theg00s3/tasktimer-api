@@ -13,13 +13,13 @@ const Pomodoro = require('../models/Pomodoro')
 const Todo = require('../models/Todo')
 const logger = require('pino')()
 
-router.get('/analysis', async (req, res) => {
-  logger.info('get analysis', req.user)
-  const analysis = await getAnalysis(req).catch(console.error)
-  return res.json(analysis || [])
+router.get('/analytics', async (req, res) => {
+  logger.info('get analytics', req.user)
+  const analytics = await getAnalytics(req).catch(console.error)
+  return res.json(analytics || [])
 })
 
-async function getAnalysis (req) {
+async function getAnalytics (req) {
   const pomodoros = await aggregate({collection: Pomodoro, userId: req.user._id, field: 'startedAt'})
   const todos = await aggregate({collection: Todo, userId: req.user._id, field: 'completedAt'})
   const data = pomodoros.map(({day, docs}, index) => {
@@ -30,10 +30,10 @@ async function getAnalysis (req) {
     }
   })
 
-  const analysis = prepareAnalysis(data)
+  const analytics = prepareAnalytics(data)
 
-  logger.info('analysis', analysis)
-  return analysis
+  logger.info('analytics', analytics)
+  return analytics
 }
 
 async function aggregate ({collection, userId, field = 'startedAt'}) {
@@ -74,11 +74,11 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
   )
 }
 
-function prepareAnalysis (analysis) {
+function prepareAnalytics (analytics) {
   const datesList = []
-  analysis.sort((a, b) => a.day.localeCompare(b.day))
-  const start = dayjs(analysis[0].day)
-  const end = dayjs(analysis[analysis.length - 1].day)
+  analytics.sort((a, b) => a.day.localeCompare(b.day))
+  const start = dayjs(analytics[0].day)
+  const end = dayjs(analytics[analytics.length - 1].day)
   const diffInDays = Math.abs(end.diff(start, 'day'))
   for (let i = 1; i <= diffInDays + 1; i++) {
     const day = start.add(i, 'days')
@@ -86,7 +86,7 @@ function prepareAnalysis (analysis) {
   }
   // console.log('datesList', datesList)
   const dataWithEmptyDays = datesList.reduce((acc, day) => {
-    const daily = analysis.find(d => d.day === day) || { day: day, pomodoros: [], todos: [] }
+    const daily = analytics.find(d => d.day === day) || { day: day, pomodoros: [], todos: [] }
     return acc.concat([daily])
   }, [])
 

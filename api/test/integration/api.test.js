@@ -119,7 +119,7 @@ test('retrieve user pomodoros by time range', async t => {
   t.truthy(json[0].userId)
 })
 
-test('retrieve analysis aggregated by day', async t => {
+test('retrieve analytics aggregated by day', async t => {
   const pomodoro1 = { '_id': monk.id('5d24cca977850eb3a93b0f07'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
   const pomodoro2 = { '_id': monk.id('5d24ccaa77850eb3a93b0f08'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-05T11:29:23.233Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
   const pomodoro3 = { '_id': monk.id('5d24ccaa77850eb3a93b0f09'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-05T10:15:11.639Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
@@ -127,7 +127,7 @@ test('retrieve analysis aggregated by day', async t => {
   await Pomodoro.insert(pomodoro2)
   await Pomodoro.insert(pomodoro3)
 
-  const response = await get('/analysis')
+  const response = await get('/analytics')
 
   const json = await parseJSON(response)
   t.truthy(json)
