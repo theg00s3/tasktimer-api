@@ -45,6 +45,8 @@ function printEvent (e) {
   console.log(eventToString(e))
 }
 
+let colorCache = {}
+
 function eventToString (e) {
   const createdAt = e.createdAt
   const username = e.user && e.user.username
@@ -52,7 +54,9 @@ function eventToString (e) {
   const additionalInfo = additionalInfoFor(e)
   const userId = e.user && e.user._id
 
-  return `${chalk.blue(createdAt)} ${chalk.white(e._id)} ${chalk.hex(stringToColor(eventName)).bold(eventName)} by user ${chalk.yellow(username)} ${userId} ${additionalInfo}`
+  colorCache[eventName] = colorCache[eventName] || stringToColor(eventName)
+
+  return `${chalk.blue(createdAt)} ${chalk.white(e._id)} ${chalk.hex(colorCache[eventName]).bold(eventName)} by user ${chalk.yellow(username)} ${userId} ${additionalInfo}`
 }
 
 function additionalInfoFor (e) {
