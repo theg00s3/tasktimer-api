@@ -66,6 +66,18 @@ function additionalInfoFor (e) {
   if (e.name === 'userAuthenticated') {
     return ''
   }
+  if (e.name === 'createCustomer') {
+    return `\n\t${e.email}`
+  }
+  if (e.name === 'createCustomerSucceeded') {
+    return `\n\t${e.email}`
+  }
+  if (e.name === 'createSubscription') {
+    return `\n\t${e.email}`
+  }
+  if (e.name === 'createSubscriptionSucceeded') {
+    return `\n\t${e.email}`
+  }
   if (e.name === 'todoCreated') {
     return `\n\t${e.todo && e.todo.text}`
   }
