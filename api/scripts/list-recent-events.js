@@ -35,10 +35,9 @@ async function main ({ _id, namePattern }) {
     query.name = { $regex: namePattern }
   }
 
-  const events = await Event.find(query, { limit: 1000, sort: { createdAt: -1 } })
-  for (const event of events) {
-    printEvent(event)
-  }
+  const events = await Event.find(query, { limit: 500, sort: { createdAt: -1 } })
+  events.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  events.forEach(printEvent)
 }
 
 function printEvent (e) {
