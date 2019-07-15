@@ -27,6 +27,11 @@ router.post('/subscriptions', async function (req, res) {
     return res.json({ error: 'missing email' })
   }
 
+  const existingCustomerCount = await User.count({'customer.email': email})
+  if (existingCustomerCount > 0) {
+    return res.json({ error: 'existing customer email' })
+  }
+
   logger.info('createSubscription userId, email, token', userId, email, token)
 
   let [customerError, customer] = await createCustomer(email, token)
