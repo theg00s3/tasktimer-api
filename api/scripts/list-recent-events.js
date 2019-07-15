@@ -36,13 +36,13 @@ async function main ({ _id, namePattern }) {
   }
 
   const events = await Event.find(query, { limit: 1000, sort: { createdAt: -1 } })
-  events
-    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-    .forEach(printEvent)
+  for (const event of events) {
+    printEvent(event)
+  }
 }
 
 function printEvent (e) {
-  console.log(eventToString(e))
+  process.stdout.write(eventToString(e) + '\n')
 }
 
 let colorCache = {}
