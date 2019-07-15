@@ -4,17 +4,18 @@ require('../env')
 console.log('process.env.MONGO_URL', process.env.MONGO_URL)
 const Event = require('../models/Event')
 const chalk = require('chalk')
+const monk = require('monk')
 const stringToColor = require('string-to-color')
 
 if (require.main === module) {
   const arg = process.argv[2]
-  let _id
+  let userId
   let namePattern
   if (arg) {
-    if (arg.length === 24) _id = arg
+    if (arg.length === 24) userId = arg
     else namePattern = new RegExp(arg, 'gi')
   }
-  main({ _id, namePattern })
+  main({ userId, namePattern })
     .then(() => {
       process.exit(0)
     })
@@ -26,10 +27,10 @@ if (require.main === module) {
 
 module.exports = main
 
-async function main ({ _id, namePattern }) {
+async function main ({ userId, namePattern }) {
   const query = {}
-  if (_id) {
-    query._id = _id
+  if (userId) {
+    query.userId = monk.id(userId)
   }
   if (namePattern) {
     query.name = { $regex: namePattern }
