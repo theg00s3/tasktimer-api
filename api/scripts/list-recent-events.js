@@ -38,8 +38,20 @@ async function main ({ userId, namePattern }) {
 
   const events = await Event.find(query, { limit: 500, sort: { createdAt: -1 } })
   events.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  const counts = {}
   for (const event of events) {
     process.stdout.write(eventToString(event) + '\n')
+    if (namePattern) {
+      counts[new Date(event.createdAt).toISOString().substring(0, 10)] = counts[new Date(event.createdAt).toISOString().substring(0, 10)] || 0
+      counts[new Date(event.createdAt).toISOString().substring(0, 10)] += 1
+    }
+  }
+
+  if (namePattern) {
+    const uniqueDates = [...new Set(events.map(event => new Date(event.createdAt).toISOString().substring(0, 10)))]
+    for (const date of uniqueDates) {
+      process.stdout.write(`${date} ${counts[date]} ${'⚡️'.repeat(counts[date] || 0)}\n`)
+    }
   }
 }
 
