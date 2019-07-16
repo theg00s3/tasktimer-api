@@ -38,11 +38,9 @@ async function main ({ userId, namePattern }) {
 
   const events = await Event.find(query, { limit: 500, sort: { createdAt: -1 } })
   events.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-  events.forEach(printEvent)
-}
-
-function printEvent (e) {
-  process.stdout.write(eventToString(e) + '\n')
+  for (const event of events) {
+    process.stdout.write(eventToString(event) + '\n')
+  }
 }
 
 let colorCache = {}
