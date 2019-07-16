@@ -33,10 +33,14 @@ async function main ({ userId, namePattern }) {
     query.userId = monk.id(userId)
   }
   if (namePattern) {
-    query.name = { $regex: namePattern }
+    query.$or = [{
+      name: { $regex: namePattern }
+    }, {
+      'user.username': { $regex: namePattern }
+    }]
   }
 
-  const events = await Event.find(query, { limit: 500, sort: { createdAt: -1 } })
+  const events = await Event.find(query, { limit: 2500, sort: { createdAt: -1 } })
   events.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
   const counts = {}
   for (const event of events) {
