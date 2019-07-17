@@ -93,8 +93,8 @@ function prepareAnalytics (analytics) {
   const maxTodos = Math.max(...dataWithEmptyDays.map(d => d.todos.length))
 
   return dataWithEmptyDays.map(d => Object.assign(d, {
-    todos: undefined,
-    pomodoros: undefined,
+    // todos: undefined,
+    // pomodoros: undefined,
     countPomodoros: d.pomodoros.length,
     countTodos: d.todos.length,
     percentagePomodoros: d.pomodoros.length / Math.max(maxPomodoros, 1),
