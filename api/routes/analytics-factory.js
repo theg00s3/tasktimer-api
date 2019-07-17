@@ -84,7 +84,6 @@ function prepareAnalytics (analytics) {
     const day = start.add(i, 'days')
     datesList.push(day.toISOString().substr(0, 10))
   }
-  // console.log('datesList', datesList)
   const dataWithEmptyDays = datesList.reduce((acc, day) => {
     const daily = analytics.find(d => d.day === day) || { day: day, pomodoros: [], todos: [] }
     return acc.concat([daily])
@@ -94,6 +93,10 @@ function prepareAnalytics (analytics) {
   const maxTodos = Math.max(...dataWithEmptyDays.map(d => d.todos.length))
 
   return dataWithEmptyDays.map(d => Object.assign(d, {
+    todos: undefined,
+    pomodoros: undefined,
+    countPomodoros: d.pomodoros.length,
+    countTodos: d.todos.length,
     percentagePomodoros: d.pomodoros.length / Math.max(maxPomodoros, 1),
     percentageTodos: d.todos.length / Math.max(maxTodos, 1)
   }))
