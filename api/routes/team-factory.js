@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const router = Router()
+const Event = require('../models/Event')
 
 module.exports = router
 
@@ -30,11 +31,13 @@ function getRemaining (pomodoro) {
 router.post('/team/:channel', async (req, res) => {
   const body = JSON.parse(JSON.stringify(req.body))
   logger.info('body', body)
+  const channel = req.params.channel
+  await Event.insert({ name: 'createTeamChannel', channel, createdAt: new Date(), user: { _id: req.user && req.user._id, username: req.user && req.user.username } }).catch(Function.prototype)
   if (!body.minutes || !body.type) {
     res.writeHead(422)
+    await Event.insert({ name: 'createTeamChannelFailed', channel, createdAt: new Date(), user: { _id: req.user && req.user._id, username: req.user && req.user.username } }).catch(Function.prototype)
     return res.end()
   }
-  const channel = req.params.channel
   let pomodoro = await TeamPomodoro.findOne({ channel }) || {}
 
   const remaining = getRemaining(pomodoro)
@@ -60,10 +63,12 @@ router.post('/team/:channel', async (req, res) => {
   } else {
     res.json(pomodoro)
   }
+  await Event.insert({ name: 'createTeamChannelSucceeded', channel, createdAt: new Date(), user: { _id: req.user && req.user._id, username: req.user && req.user.username } }).catch(Function.prototype)
 })
 
 router.get('/team/:channel/status', async (req, res) => {
   const channel = req.params.channel
+  await Event.insert({ name: 'getTeamChannelStatus', channel, createdAt: new Date(), user: { _id: req.user && req.user._id, username: req.user && req.user.username } }).catch(Function.prototype)
   const pomodoro = await TeamPomodoro.findOne({ channel }) || {}
   logger.info('channel, pomodoro', channel, pomodoro)
 
