@@ -10,7 +10,8 @@
     "start:test": "NODE_ENV=test node server.js",
     "dev": "NODE_ENV=development node server.js",
     "deploy": "now --target production",
-    "migrate-mongo": "migrate-mongo"
+    "migrate-mongo": "migrate-mongo",
+    "list-recent-events": "NODE_ENV=production scripts/list-recent-events.js"
   },
   "keywords": [],
   "author": "",
