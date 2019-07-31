@@ -15,6 +15,8 @@ const logger = require('pino')()
 
 router.get('/analytics', async (req, res) => {
   logger.info('get analytics', req.user)
+  if (!req.user) return res.sendStatus(401).end()
+
   const analytics = await getAnalytics(req).catch(console.error)
   return res.json(analytics || [])
 })
