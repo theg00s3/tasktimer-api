@@ -24,11 +24,12 @@ router.get('/analytics', async (req, res) => {
 async function getAnalytics (req) {
   const pomodoros = await aggregate({collection: Pomodoro, userId: req.user._id, field: 'startedAt'})
   const todos = await aggregate({collection: Todo, userId: req.user._id, field: 'completedAt'})
-  const data = pomodoros.map(({day, docs}, index) => {
+  const availableDays = new Set([...pomodoros.map(p => p.day), ...todos.map(p => p.day)])
+  const data = availableDays.map((day) => {
     return {
       day,
-      pomodoros: docs,
-      todos: (todos.find(t => t.day === day) || {}).docs || []
+      pomodoros: (pomodoros.find(d => d.day === day) || {}).docs || [],
+      todos: (todos.find(d => d.day === day) || {}).docs || []
     }
   })
 
@@ -70,6 +71,10 @@ async function aggregate ({collection, userId, field = 'startedAt'}) {
             $concat: ['$_id.year', '-', '$_id.month', '-', '$_id.day']
           },
           docs: '$docs'
+        }
+      }, {
+        $sort: {
+          day: -1
         }
       }
     ]
