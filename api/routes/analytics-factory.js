@@ -17,14 +17,19 @@ router.get('/analytics', async (req, res) => {
   logger.info('get analytics', req.user)
   if (!req.user) return res.sendStatus(401).end()
 
-  const analytics = await getAnalytics(req).catch(console.error)
+  const analytics = await getAnalytics(req)
   return res.json(analytics || [])
 })
 
 async function getAnalytics (req) {
   const pomodoros = await aggregate({collection: Pomodoro, userId: req.user._id, field: 'startedAt'})
   const todos = await aggregate({collection: Todo, userId: req.user._id, field: 'completedAt'})
-  const availableDays = new Set([...pomodoros.map(p => p.day), ...todos.map(p => p.day)])
+  const availableDays = Array.from(new Set([...pomodoros.map(p => p.day), ...todos.map(p => p.day)]))
+    .filter(Boolean)
+    .filter(d => d.startsWith('2'))
+
+  console.log('availableDays', JSON.stringify(availableDays))
+
   const data = availableDays.map((day) => {
     return {
       day,
@@ -35,6 +40,7 @@ async function getAnalytics (req) {
 
   const analytics = prepareAnalytics(data)
 
+  console.log('analytics', JSON.stringify(analytics))
   logger.info('analytics', analytics)
   return analytics
 }
