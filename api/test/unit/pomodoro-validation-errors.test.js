@@ -20,15 +20,6 @@ test('returns "minutes", "type", "startedAt" error', t => {
     '"startedAt" needs to be a date (received undefined)'
   ])
 })
-test('handles "team" correctly', t => {
-  result = pomodoroValidationErrors({
-    minutes: 25,
-    type: 'pomodoro',
-    startedAt: new Date(),
-    team: false
-  })
-  t.deepEqual(result, null)
-})
 test('handles "cancelledAt" correctly', t => {
   result = pomodoroValidationErrors({
     minutes: 25,
