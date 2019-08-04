@@ -27,15 +27,15 @@
     "string-to-color": "^2.1.1"
   },
   "dependencies": {
-    "@sentry/node": "^5.4.3",
+    "@sentry/node": "^5.5.0",
     "body-parser": "^1.19.0",
     "connect-mongo": "^2.0.3",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
-    "dayjs": "^1.8.14",
+    "dayjs": "^1.8.15",
     "express": "^4.17.1",
     "express-session": "^1.16.1",
-    "migrate-mongo": "^6.0.0",
+    "migrate-mongo": "^6.0.1",
     "mongodb": "^3.2.7",
     "monk": "^7.0.0",
     "morgan": "^1.9.1",
@@ -43,8 +43,8 @@
     "passport": "^0.4.0",
     "passport-github": "^1.1.0",
     "passport-twitter": "^1.0.4",
-    "pino": "^5.12.6",
-    "stripe": "^7.4.0"
+    "pino": "^5.13.1",
+    "stripe": "^7.6.0"
   },
   "standard": {
     "env": {
