@@ -6,6 +6,7 @@ const passport = require('passport')
 const session = require('express-session')
 const TwitterStrategy = require('passport-twitter').Strategy
 const GithubStrategy = require('passport-github').Strategy
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 const MongoStore = require('connect-mongo')(session)
 const UserInfo = require('./modules/UserInfo')
 const User = require('./models/User')
@@ -64,6 +65,18 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
     app.get('/github/callback', passport.authenticate('github', redirectRoutes))
   } else {
     logger.info('process.env.GITHUB_CLIENT_ID not set', process.env.GITHUB_CLIENT_ID)
+  }
+
+  if (process.env.GOOGLE_CLIENT_ID) {
+    passport.use(new GoogleStrategy({
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL
+    }, upsertAuthenticatedUser))
+    app.get('/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }))
+    app.get('/google/callback', passport.authenticate('google', redirectRoutes))
+  } else {
+    logger.info('process.env.GOOGLE_CLIENT_ID not set', process.env.GOOGLE_CLIENT_ID)
   }
 
   if (process.env.NODE_ENV !== 'production') {

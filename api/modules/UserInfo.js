@@ -4,8 +4,9 @@ module.exports = function UserInfo (raw) {
   var self = this
 
   self.apikey = crypto.randomBytes(20).toString('hex')
-
-  self.username = self.avatar = self.id = null
+  self.username = null
+  self.avatar = null
+  self.id = null
 
   self.id = raw.id
   self.customer = raw.customer
@@ -19,6 +20,10 @@ module.exports = function UserInfo (raw) {
     case 'github':
       self.username = raw.username
       self.avatar = raw._json.avatar_url
+      break
+    case 'google':
+      self.username = raw.displayName
+      self.avatar = raw._json.picture
       break
     default:
   }
