@@ -18,9 +18,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "ava": "^2.2.0",
+    "ava": "^2.3.0",
     "chalk": "^2.4.2",
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.1.0",
     "nodemon": "^1.19.1",
     "now": "^15.8.7",
     "passport-mock-strategy": "^2.0.0",
@@ -28,16 +28,16 @@
     "string-to-color": "^2.1.1"
   },
   "dependencies": {
-    "@sentry/node": "^5.5.0",
+    "@sentry/node": "^5.6.2",
     "body-parser": "^1.19.0",
     "connect-mongo": "^2.0.3",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
-    "dayjs": "^1.8.15",
+    "dayjs": "^1.8.16",
     "express": "^4.17.1",
     "express-session": "^1.16.1",
-    "migrate-mongo": "^6.0.1",
-    "mongodb": "^3.2.7",
+    "migrate-mongo": "^6.0.2",
+    "mongodb": "^3.3.2",
     "monk": "^7.0.0",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
@@ -45,8 +45,8 @@
     "passport-github": "^1.1.0",
     "passport-google-oauth": "^2.0.0",
     "passport-twitter": "^1.0.4",
-    "pino": "^5.13.1",
-    "stripe": "^7.6.0"
+    "pino": "^5.13.2",
+    "stripe": "^7.8.0"
   },
   "standard": {
     "env": {
