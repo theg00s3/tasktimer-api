@@ -27,14 +27,14 @@ router.post('/subscriptions', async function (req, res) {
     return res.json({ error: 'missing email' })
   }
 
-  const existingCustomerCount = await User.count({'customer.email': email})
+  const existingCustomerCount = await User.count({ 'customer.email': email })
   if (existingCustomerCount > 0) {
     return res.json({ error: 'existing customer email' })
   }
 
   logger.info('createSubscription userId, email, token', userId, email, token)
 
-  let [customerError, customer] = await createCustomer(email, token)
+  const [customerError, customer] = await createCustomer(email, token)
   if (customerError) {
     logger.error(customerError)
     await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)

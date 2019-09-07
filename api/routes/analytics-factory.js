@@ -22,8 +22,8 @@ router.get('/analytics', async (req, res) => {
 })
 
 async function getAnalytics (req) {
-  const pomodoros = await aggregate({collection: Pomodoro, userId: req.user._id, field: 'startedAt'})
-  const todos = await aggregate({collection: Todo, userId: req.user._id, field: 'completedAt'})
+  const pomodoros = await aggregate({ collection: Pomodoro, userId: req.user._id, field: 'startedAt' })
+  const todos = await aggregate({ collection: Todo, userId: req.user._id, field: 'completedAt' })
   const availableDays = Array.from(new Set([...pomodoros.map(p => p.day), ...todos.map(p => p.day)]))
     .filter(Boolean)
     .filter(d => d.startsWith('2'))
@@ -45,7 +45,7 @@ async function getAnalytics (req) {
   return analytics
 }
 
-async function aggregate ({collection, userId, field = 'startedAt'}) {
+async function aggregate ({ collection, userId, field = 'startedAt' }) {
   return collection.aggregate(
     [
       {
@@ -113,6 +113,6 @@ function prepareAnalytics (analytics) {
     percentagePomodoros: d.pomodoros.length / Math.max(maxPomodoros, 1),
     percentageTodos: d.todos.length / Math.max(maxTodos, 1)
   }))
-  .sort((a, b) => b.day.localeCompare(a.day))
-  .filter(({day}) => day.localeCompare(new Date().toISOString().substring(0, 10)) <= 0)
+    .sort((a, b) => b.day.localeCompare(a.day))
+    .filter(({ day }) => day.localeCompare(new Date().toISOString().substring(0, 10)) <= 0)
 }

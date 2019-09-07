@@ -59,7 +59,7 @@ async function main ({ userId, namePattern }) {
   }
 }
 
-let colorCache = {}
+const colorCache = {}
 
 function eventToString (e) {
   const createdAt = e.createdAt

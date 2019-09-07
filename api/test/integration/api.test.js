@@ -80,9 +80,9 @@ test('cannot create duplicate user pomodoro (same userId + startedAt)', async t 
 })
 
 test('retrieve user pomodoros', async t => {
-  const pomodoro = { '_id': monk.id('5cf6c7ff8985d5f68443f7e3'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro = { _id: monk.id('5cf6c7ff8985d5f68443f7e3'), minutes: 25, type: 'pomodoro', startedAt: new Date('2019-06-04T19:35:27.255Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Pomodoro.insert(pomodoro)
-  const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id() }
+  const pomodoroOtherUser = { _id: monk.id(), minutes: 25, type: 'pomodoro', startedAt: new Date('2019-06-04T19:35:27.255Z'), userId: monk.id() }
   await Pomodoro.insert(pomodoroOtherUser)
 
   const response = await get('/pomodoros')
@@ -99,11 +99,11 @@ test('retrieve user pomodoros', async t => {
 })
 
 test('retrieve user pomodoros by time range', async t => {
-  const pomodoro1 = { '_id': monk.id('5cf6c7ff8985d5f68443f7e3'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro1 = { _id: monk.id('5cf6c7ff8985d5f68443f7e3'), minutes: 25, type: 'pomodoro', startedAt: new Date('2019-06-04T19:35:27.255Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Pomodoro.insert(pomodoro1)
-  const pomodoro2 = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-01T19:35:27.255Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro2 = { _id: monk.id(), minutes: 25, type: 'pomodoro', startedAt: new Date('2019-06-01T19:35:27.255Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Pomodoro.insert(pomodoro2)
-  const pomodoroOtherUser = { '_id': monk.id(), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id() }
+  const pomodoroOtherUser = { _id: monk.id(), minutes: 25, type: 'pomodoro', startedAt: new Date('2019-06-04T19:35:27.255Z'), userId: monk.id() }
   await Pomodoro.insert(pomodoroOtherUser)
 
   const response = await get('/pomodoros?from=2019-06-03&to=2019-06-05')
@@ -120,9 +120,9 @@ test('retrieve user pomodoros by time range', async t => {
 })
 
 test('retrieve analytics aggregated by day', async t => {
-  const pomodoro1 = { '_id': monk.id('5d24cca977850eb3a93b0f07'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-04T19:35:27.255Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
-  const pomodoro2 = { '_id': monk.id('5d24ccaa77850eb3a93b0f08'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-05T11:29:23.233Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
-  const pomodoro3 = { '_id': monk.id('5d24ccaa77850eb3a93b0f09'), 'minutes': 25, 'type': 'pomodoro', 'startedAt': new Date('2019-06-05T10:15:11.639Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro1 = { _id: monk.id('5d24cca977850eb3a93b0f07'), minutes: 25, type: 'pomodoro', startedAt: new Date('2019-06-04T19:35:27.255Z'), userId: monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro2 = { _id: monk.id('5d24ccaa77850eb3a93b0f08'), minutes: 25, type: 'pomodoro', startedAt: new Date('2019-06-05T11:29:23.233Z'), userId: monk.id('5a9fe4e085d766000c002636') }
+  const pomodoro3 = { _id: monk.id('5d24ccaa77850eb3a93b0f09'), minutes: 25, type: 'pomodoro', startedAt: new Date('2019-06-05T10:15:11.639Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Pomodoro.insert(pomodoro1)
   await Pomodoro.insert(pomodoro2)
   await Pomodoro.insert(pomodoro3)
@@ -186,9 +186,9 @@ test('create user todo', async t => {
 })
 
 test('retrieve user todos', async t => {
-  const todo = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const todo = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Todo.insert(todo)
-  const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
+  const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), userId: monk.id() }
   await Todo.insert(todoOtherUser)
 
   const response = await get('/todos')
@@ -206,11 +206,11 @@ test('retrieve user todos', async t => {
 })
 
 test('retrieve user todolist', async t => {
-  const todo1 = { completed: true, deleted: true, deletedAt: new Date('2019-06-01T16:56:05.726Z'), text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const todo1 = { completed: true, deleted: true, deletedAt: new Date('2019-06-01T16:56:05.726Z'), text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Todo.insert(todo1)
-  const todo2 = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const todo2 = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Todo.insert(todo2)
-  const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
+  const todoOtherUser = { completed: true, text: 'write some tests', id: 18, completedAt: new Date('2019-06-01T16:56:05.726Z'), userId: monk.id() }
   await Todo.insert(todoOtherUser)
 
   const response = await get('/todos/list')
@@ -228,11 +228,11 @@ test('retrieve user todolist', async t => {
 })
 
 test('retrieve user todos by time range', async t => {
-  const todo1 = { completed: true, text: 'write some tests', id: 18, createdAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const todo1 = { completed: true, text: 'write some tests', id: 18, createdAt: new Date('2019-06-01T16:56:05.726Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Todo.insert(todo1)
-  const todo2 = { completed: true, text: 'write some more tests', id: 18, createdAt: new Date('2019-06-04T16:56:05.726Z'), 'userId': monk.id('5a9fe4e085d766000c002636') }
+  const todo2 = { completed: true, text: 'write some more tests', id: 18, createdAt: new Date('2019-06-04T16:56:05.726Z'), userId: monk.id('5a9fe4e085d766000c002636') }
   await Todo.insert(todo2)
-  const todoOtherUser = { completed: true, text: 'write some tests', id: 18, createdAt: new Date('2019-06-01T16:56:05.726Z'), 'userId': monk.id() }
+  const todoOtherUser = { completed: true, text: 'write some tests', id: 18, createdAt: new Date('2019-06-01T16:56:05.726Z'), userId: monk.id() }
   await Todo.insert(todoOtherUser)
 
   const response = await get('/todos?from=2019-06-03&to=2019-06-05')

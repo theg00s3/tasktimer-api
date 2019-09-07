@@ -12,7 +12,7 @@ async function get (url) {
     json: true,
     credentials: true,
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       cookie: global.cookie
     }
   })
@@ -25,7 +25,7 @@ async function post (url, body) {
     body: JSON.stringify(body),
     credentials: true,
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
       cookie: global.cookie
     }

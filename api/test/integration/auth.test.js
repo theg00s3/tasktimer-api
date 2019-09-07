@@ -7,9 +7,9 @@ test('unauthorized response', async t => {
 })
 
 test('authorizes response with fake cookie', async t => {
-  let response, cookie
+  let response
   response = await fetch('http://localhost:3000/user/fake', { credentials: true })
-  cookie = response.headers.get('set-cookie')
+  const cookie = response.headers.get('set-cookie')
   t.is(response.status, 200)
   response = await fetch('http://localhost:3000/user/info', { credentials: true, headers: { cookie } })
   t.is(response.status, 200)

@@ -3,7 +3,7 @@ module.exports = {
   route: route
 }
 
-var fakeUser = { 'apikey': 'fake', 'id': 2662706, 'avatar': 'https://avatars.githubusercontent.com/u/2662706?v=3', 'username': 'christian-fei', '_id': 'fake' }
+var fakeUser = { apikey: 'fake', id: 2662706, avatar: 'https://avatars.githubusercontent.com/u/2662706?v=3', username: 'christian-fei', _id: 'fake' }
 
 function middleware (req, res, next) {
   setUser(req)
