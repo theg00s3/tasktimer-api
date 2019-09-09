@@ -90,6 +90,7 @@ async function aggregate ({ collection, userId, field = 'startedAt' }) {
 function prepareAnalytics (analytics) {
   const datesList = []
   analytics.sort((a, b) => a.day.localeCompare(b.day))
+  if (analytics.length === 0) return []
   const start = dayjs(analytics[0].day)
   const end = dayjs(analytics[analytics.length - 1].day)
   const diffInDays = Math.abs(end.diff(start, 'day'))
