@@ -63,6 +63,43 @@ router.post('/subscriptions', async function (req, res) {
   return res.json({ message: 'create-subscription-succeeded', user })
 })
 
+router.delete('/subscriptions', async function (req, res) {
+  // logger.info('req.params', req.params)
+  // logger.info('req.body', req.body)
+  // logger.info('req.user', req.user)
+  if (!req.user) {
+    res.writeHead(401)
+    return res.end()
+  }
+  const { _id: userId } = req.user
+
+  let user = await User.findOne({ _id: userId })
+
+  if (!user.subscription && !user.subscription.id) {
+    return res.json({ error: 'no-subscription' })
+  }
+
+  logger.info('cancelSubscription userId', userId)
+
+  const [subscriptionError, subscription] = await cancelSubscription(userId, user.subscription.id)
+  if (subscriptionError) {
+    logger.error(subscriptionError)
+    await Event.insert({ name: 'cancelSubscriptionFailed', createdAt: new Date(), userId, subscriptionError }).catch(Function.prototype)
+    return res.json({ error: 'cancel-subscription-failed' })
+  }
+  logger.info('  subscription canceld', subscription, userId)
+  await Event.insert({ name: 'cancelSubscriptionSucceeded', createdAt: new Date(), userId, subscription }).catch(Function.prototype)
+
+  user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
+
+  Object.assign(user, { hasActiveSubscription: hasActiveSubscription(user) })
+  Object.assign(req.session.passport.user, user)
+
+  req.session.save()
+
+  return res.json({ message: 'cancel-subscription-succeeded', user })
+})
+
 async function createCustomer (email, source) {
   process.nextTick(() => {
     Event.insert({ name: 'createCustomer', createdAt: new Date(), email, source }).catch(Function.prototype)
@@ -87,6 +124,19 @@ async function createSubscription (userId, customerId) {
         plan
       }]
     })
+    return [null, res]
+  } catch (err) {
+    return [err]
+  }
+}
+
+async function cancelSubscription (userId, subscriptionId) {
+  process.nextTick(() => {
+    Event.insert({ name: 'createSubscription', createdAt: new Date(), userId, subscriptionId }).catch(Function.prototype)
+  })
+  try {
+    const res = await stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: true })
+
     return [null, res]
   } catch (err) {
     return [err]
