@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const router = Router()
+const hasActiveSubscription = user => user && user.subscription && user.subscription.status === 'active'
 
 module.exports = router
 
@@ -53,6 +54,11 @@ router.post('/subscriptions', async function (req, res) {
   await Event.insert({ name: 'createSubscriptionSucceeded', createdAt: new Date(), userId, email, customer, subscription }).catch(Function.prototype)
 
   const user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), customer, customerUpdatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
+
+  Object.assign(user, { hasActiveSubscription: hasActiveSubscription(user) })
+  Object.assign(req.session.passport.user, user)
+
+  req.session.save()
 
   return res.json({ message: 'create-subscription-succeeded', user })
 })

@@ -12,6 +12,7 @@ const UserInfo = require('./modules/UserInfo')
 const User = require('./models/User')
 const Event = require('./models/Event')
 const middlewares = require('./middlewares')
+const hasActiveSubscription = user => user && user.subscription && user.subscription.status === 'active'
 
 app.set('trust proxy', 1)
 app.use(...middlewares)
@@ -111,18 +112,17 @@ function upsertAuthenticatedUser (token, tokenSecret, profile, done) {
   User.findOne({ id: user.id })
     .then(user => {
       if (user) {
-        const hasActiveSubscription = user.subscription && user.subscription.status === 'active'
-        Object.assign(user, { hasActiveSubscription })
+        Object.assign(user, { hasActiveSubscription: hasActiveSubscription(user) })
         return done(null, user)
       }
-      User.insert(new UserInfo(profile))
+      return User.insert(new UserInfo(profile))
         .then(async user => {
           await Event.insert({ name: 'createUserSucceeded', createdAt: new Date(), user }).catch(Function.prototype)
-          done(null, user)
+          return done(null, user)
         })
         .catch(async err => {
           await Event.insert({ name: 'createUserFailed', createdAt: new Date(), err }).catch(Function.prototype)
-          if (err) return done(err, null)
+          return done(err, null)
         })
     })
 }
