@@ -11,9 +11,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const plan = process.env.STRIPE_PLAN || 'pro'
 
 router.post('/subscriptions', async function (req, res) {
-  // logger.info('req.params', req.params)
-  // logger.info('req.body', req.body)
-  // logger.info('req.user', req.user)
   if (!req.user) {
     res.writeHead(401)
     return res.end()
@@ -30,13 +27,21 @@ router.post('/subscriptions', async function (req, res) {
 
   let customer
 
-  const existingCustomer = await User.findOne({ 'customer.email': email })
+  const existingUserWithCustomer = await User.findOne({ 'customer.email': email })
+  const existingCustomer = existingUserWithCustomer && existingUserWithCustomer.customer
 
   if (existingCustomer) {
-    console.log('existingCustomer', JSON.stringify(existingCustomer))
-    const [customerError, _customer] = await getExistingCustomer(existingCustomer.customer.id)
-    if (customerError) return res.json({ error: 'error-retrieving-existing-customer' })
+    logger.info('retrieving exinsting customer from stripe', { customerId: existingCustomer.id, userId, email, token })
+
+    const [customerError, _customer] = await getExistingCustomer(existingCustomer.id)
+    if (customerError) {
+      logger.error(customerError)
+      await Event.insert({ name: 'getExistingCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
+      return res.json({ error: 'error-retrieving-existing-customer' })
+    }
     customer = _customer
+    logger.info('  customer retrieved', customer, userId, email)
+    await Event.insert({ name: 'getExistingCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
   } else {
     logger.info('createSubscription userId, email, token', userId, email, token)
 
@@ -73,9 +78,6 @@ router.post('/subscriptions', async function (req, res) {
 })
 
 router.delete('/subscriptions', async function (req, res) {
-  // logger.info('req.params', req.params)
-  // logger.info('req.body', req.body)
-  // logger.info('req.user', req.user)
   if (!req.user) {
     res.writeHead(401)
     return res.end()
