@@ -28,21 +28,30 @@ router.post('/subscriptions', async function (req, res) {
     return res.json({ error: 'missing email' })
   }
 
-  const existingCustomerCount = await User.count({ 'customer.email': email })
-  if (existingCustomerCount > 0) {
-    return res.json({ error: 'existing customer email' })
+  let customer
+
+  const existingCustomer = await User.findOne({ 'customer.email': email })
+
+  if (existingCustomer) {
+    console.log('existingCustomer', JSON.stringify(existingCustomer))
+    const [customerError, _customer] = await getExistingCustomer(existingCustomer.customer.id)
+    if (customerError) return res.json({ error: 'error-retrieving-existing-customer' })
+    customer = _customer
+  } else {
+    logger.info('createSubscription userId, email, token', userId, email, token)
+
+    const [customerError, _customer] = await createCustomer(email, token)
+    if (customerError) {
+      logger.error(customerError)
+      await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
+      return res.json({ error: 'create-customer-failed' })
+    }
+    customer = _customer
+    logger.info('  customer created', customer, userId, email)
+    await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
   }
 
-  logger.info('createSubscription userId, email, token', userId, email, token)
-
-  const [customerError, customer] = await createCustomer(email, token)
-  if (customerError) {
-    logger.error(customerError)
-    await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
-    return res.json({ error: 'create-customer-failed' })
-  }
-  logger.info('  customer created', customer, userId, email)
-  await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
+  logger.info('have customer', JSON.stringify(customer))
 
   const [subscriptionError, subscription] = await createSubscription(userId, customer.id)
   if (subscriptionError) {
@@ -107,6 +116,19 @@ async function createCustomer (email, source) {
 
   try {
     const res = await stripe.customers.create({ email, source })
+    return [null, res]
+  } catch (err) {
+    return [err]
+  }
+}
+
+async function getExistingCustomer (customerId, source) {
+  process.nextTick(() => {
+    Event.insert({ name: 'getExistingCustomer', createdAt: new Date(), customerId, source }).catch(Function.prototype)
+  })
+
+  try {
+    const res = await stripe.customers.retrieve(customerId)
     return [null, res]
   } catch (err) {
     return [err]
