@@ -27,12 +27,15 @@ async function getSubscription (id) {
   })
 }
 async function main () {
-  await User.find({}).each(async (doc, { pause, resume }) => {
-    if (doc.subscription && doc.subscription.id) {
+  await User.find({ subscription: { $exists: true } }, { sort: { 'subscription.created': -1 } }).each(async (doc, { pause, resume }) => {
+    if (doc.subscription && doc.subscription.id && doc.customer && doc.customer.id) {
       pause()
       const subscription = await getSubscription(doc.subscription.id)
       console.log('------------------------------------------------------------------')
+      // console.log('(user)', JSON.stringify(doc))
+      console.log('user._id', doc._id)
       console.log('user.username', doc.username)
+      console.log('user.customer.email', doc.customer.email)
       console.log('subscription.id', subscription.id)
       console.log('subscription.status', subscription.status)
       console.log('subscription.created', new Date(subscription.created * 1000).toISOString())
