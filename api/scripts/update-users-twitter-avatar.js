@@ -26,7 +26,7 @@ async function main () {
     '1.0A', null, 'HMAC-SHA1'
   )
 
-  await User.find({ $or: [{ twitterAvatarUpdatedAt: { $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7) } }, { twitterAvatarUpdatedAt: { $exists: false } }] })
+  await User.find({ twitterAvatarNotFound: { $exists: false }, $or: [{ twitterAvatarUpdatedAt: { $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7) } }, { twitterAvatarUpdatedAt: { $exists: false } }] })
     .each(async (doc, { pause, resume }) => {
       pause()
       const { username } = doc
@@ -37,6 +37,8 @@ async function main () {
       const avatar = await getTwitterAvatarUrlByUsername(username).catch(() => {})
       if (!avatar) {
         console.info('avatar not found', username)
+        await User.findOneAndUpdate({ _id: doc._id }, { $set: { twitterAvatarNotFound: true } })
+
         return resume()
       }
 
