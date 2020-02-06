@@ -26,7 +26,7 @@ async function main () {
     '1.0A', null, 'HMAC-SHA1'
   )
 
-  await User.find({ $or: [{ avatar: 'http://pbs.twimg.com/profile_images/1182350902474297344/X2Xmd8Gr_normal.jpg' }, { twitterAvatarUpdatedAt: { $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7) } }, { twitterAvatarUpdatedAt: { $exists: false } }] })
+  await User.find({ $or: [{ twitterAvatarUpdatedAt: { $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7) } }, { twitterAvatarUpdatedAt: { $exists: false } }] })
     .each(async (doc, { pause, resume }) => {
       pause()
       const { username } = doc
