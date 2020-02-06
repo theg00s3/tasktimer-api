@@ -28,6 +28,7 @@
     "dotenv": "^8.2.0",
     "nodemon": "^1.19.2",
     "now": "^16.7.3",
+    "oauth": "^0.9.15",
     "passport-mock-strategy": "^2.0.0",
     "r2": "git+https://github.com/mikeal/r2.git",
     "string-to-color": "^2.1.1"
