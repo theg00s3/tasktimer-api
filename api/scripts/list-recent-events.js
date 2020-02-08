@@ -32,7 +32,7 @@ async function main ({ userId, namePattern }) {
   console.log({ userId, namePattern })
   const query = {}
   if (userId) {
-    query.userId = monk.id(userId)
+    query['user._id'] = monk.id(userId)
   }
   if (namePattern) {
     query.$or = [{
