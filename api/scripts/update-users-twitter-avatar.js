@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 require('../env')
+
 // console.log('process.env.MONGO_URL', process.env.MONGO_URL)
 const OAuth = require('oauth')
 const User = require('../models/User')
