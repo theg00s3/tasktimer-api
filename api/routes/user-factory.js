@@ -13,10 +13,10 @@ router.get('/user/info', async (req, res) => {
     return res.end()
   }
   res.json(req.user)
-  await Event.insert({ name: 'userAuthenticated', createdAt: new Date(), user: { _id: req.user._id, username: req.user.username } }).catch(Function.prototype)
+  await Event.insert({ name: 'userAuthenticated', createdAt: new Date(), user: req.user }).catch(Function.prototype)
 })
 router.get('/user/logout', async (req, res) => {
-  await Event.insert({ name: 'userLoggedOut', createdAt: new Date(), user: { _id: req.user._id, username: req.user.username } }).catch(Function.prototype)
+  await Event.insert({ name: 'userLoggedOut', createdAt: new Date(), user: req.user }).catch(Function.prototype)
   req.logout()
   res.end()
 })
