@@ -17,6 +17,7 @@ router.post('/subscriptions', async function (req, res) {
   }
   const { email, token } = req.body
   const { _id: userId } = req.user
+  let user = await User.findOne({ _id: userId })
 
   if (!token) {
     return res.json({ error: 'missing token' })
@@ -33,41 +34,41 @@ router.post('/subscriptions', async function (req, res) {
   if (existingCustomer) {
     logger.info('retrieving exinsting customer from stripe', { customerId: existingCustomer.id, userId, email, token })
 
-    const [customerError, _customer] = await getExistingCustomer(existingCustomer.id)
+    const [customerError, _customer] = await getExistingCustomer(existingCustomer.id, user)
     if (customerError) {
       logger.error(customerError)
-      await Event.insert({ name: 'getExistingCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
+      await Event.insert({ name: 'getExistingCustomerFailed', createdAt: new Date(), user, email, customerError }).catch(Function.prototype)
       return res.json({ error: 'error-retrieving-existing-customer' })
     }
     customer = _customer
     logger.info('  customer retrieved', customer, userId, email)
-    await Event.insert({ name: 'getExistingCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
+    await Event.insert({ name: 'getExistingCustomerSucceeded', createdAt: new Date(), user, email, customer }).catch(Function.prototype)
   } else {
     logger.info('createSubscription userId, email, token', userId, email, token)
 
-    const [customerError, _customer] = await createCustomer(email, token)
+    const [customerError, _customer] = await createCustomer(email, token, user)
     if (customerError) {
       logger.error(customerError)
-      await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), userId, email, customerError }).catch(Function.prototype)
+      await Event.insert({ name: 'createCustomerFailed', createdAt: new Date(), user, email, customerError }).catch(Function.prototype)
       return res.json({ error: 'create-customer-failed' })
     }
     customer = _customer
     logger.info('  customer created', customer, userId, email)
-    await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), userId, email, customer }).catch(Function.prototype)
+    await Event.insert({ name: 'createCustomerSucceeded', createdAt: new Date(), user, email, customer }).catch(Function.prototype)
   }
 
   logger.info('have customer', JSON.stringify(customer))
 
-  const [subscriptionError, subscription] = await createSubscription(userId, customer.id)
+  const [subscriptionError, subscription] = await createSubscription(customer.id, user)
   if (subscriptionError) {
     logger.error(subscriptionError)
-    await Event.insert({ name: 'createSubscriptionFailed', createdAt: new Date(), userId, email, subscriptionError }).catch(Function.prototype)
+    await Event.insert({ name: 'createSubscriptionFailed', createdAt: new Date(), user, email, subscriptionError }).catch(Function.prototype)
     return res.json({ error: 'create-subscription-failed' })
   }
   logger.info('  subscription created', subscription, userId, email)
-  await Event.insert({ name: 'createSubscriptionSucceeded', createdAt: new Date(), userId, email, customer, subscription }).catch(Function.prototype)
+  await Event.insert({ name: 'createSubscriptionSucceeded', createdAt: new Date(), user, email, customer, subscription }).catch(Function.prototype)
 
-  const user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), customer, customerUpdatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
+  user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), customer, customerUpdatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
 
   Object.assign(user, { hasActiveSubscription: hasActiveSubscription(user) })
   Object.assign(req.session.passport.user, user)
@@ -82,8 +83,8 @@ router.delete('/subscriptions', async function (req, res) {
     res.writeHead(401)
     return res.end()
   }
-  const { _id: userId } = req.user
 
+  const { _id: userId } = req.user
   let user = await User.findOne({ _id: userId })
 
   if (!user.subscription && !user.subscription.id) {
@@ -92,14 +93,14 @@ router.delete('/subscriptions', async function (req, res) {
 
   logger.info('cancelSubscription userId', userId)
 
-  const [subscriptionError, subscription] = await cancelSubscription(userId, user.subscription.id)
+  const [subscriptionError, subscription] = await cancelSubscription(user.subscription.id, user)
   if (subscriptionError) {
     logger.error(subscriptionError)
-    await Event.insert({ name: 'cancelSubscriptionFailed', createdAt: new Date(), userId, subscriptionError }).catch(Function.prototype)
+    await Event.insert({ name: 'cancelSubscriptionFailed', createdAt: new Date(), user, subscriptionError }).catch(Function.prototype)
     return res.json({ error: 'cancel-subscription-failed' })
   }
   logger.info('  subscription canceld', subscription, userId)
-  await Event.insert({ name: 'cancelSubscriptionSucceeded', createdAt: new Date(), userId, subscription }).catch(Function.prototype)
+  await Event.insert({ name: 'cancelSubscriptionSucceeded', createdAt: new Date(), user, subscription }).catch(Function.prototype)
 
   user = await User.findOneAndUpdate({ _id: userId }, { $set: { updatedAt: new Date(), subscription, subscriptionUpdatedAt: new Date() } }, { new: true })
 
@@ -111,9 +112,9 @@ router.delete('/subscriptions', async function (req, res) {
   return res.json({ message: 'cancel-subscription-succeeded', user })
 })
 
-async function createCustomer (email, source) {
+async function createCustomer (email, source, user) {
   process.nextTick(() => {
-    Event.insert({ name: 'createCustomer', createdAt: new Date(), email, source }).catch(Function.prototype)
+    Event.insert({ name: 'createCustomer', createdAt: new Date(), user, email, source }).catch(Function.prototype)
   })
 
   try {
@@ -124,7 +125,7 @@ async function createCustomer (email, source) {
   }
 }
 
-async function getExistingCustomer (customerId, source) {
+async function getExistingCustomer (customerId, source, user) {
   process.nextTick(() => {
     Event.insert({ name: 'getExistingCustomer', createdAt: new Date(), customerId, source }).catch(Function.prototype)
   })
@@ -137,9 +138,9 @@ async function getExistingCustomer (customerId, source) {
   }
 }
 
-async function createSubscription (userId, customerId) {
+async function createSubscription (customerId, user) {
   process.nextTick(() => {
-    Event.insert({ name: 'createSubscription', createdAt: new Date(), userId, customerId }).catch(Function.prototype)
+    Event.insert({ name: 'createSubscription', createdAt: new Date(), user, customerId }).catch(Function.prototype)
   })
   try {
     const res = await stripe.subscriptions.create({
@@ -154,9 +155,9 @@ async function createSubscription (userId, customerId) {
   }
 }
 
-async function cancelSubscription (userId, subscriptionId) {
+async function cancelSubscription (subscriptionId, user) {
   process.nextTick(() => {
-    Event.insert({ name: 'createSubscription', createdAt: new Date(), userId, subscriptionId }).catch(Function.prototype)
+    Event.insert({ name: 'cancelSubscription', createdAt: new Date(), user, subscriptionId }).catch(Function.prototype)
   })
   try {
     const res = await stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: true })

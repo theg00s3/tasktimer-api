@@ -11,6 +11,7 @@ if (require.main === module) {
   const arg = process.argv[2]
   let userId
   let namePattern
+  console.log({ arg })
   if (arg) {
     if (arg.length === 24) userId = arg
     else namePattern = new RegExp(arg, 'gi')
@@ -28,6 +29,7 @@ if (require.main === module) {
 module.exports = main
 
 async function main ({ userId, namePattern }) {
+  console.log({ userId, namePattern })
   const query = {}
   if (userId) {
     query.userId = monk.id(userId)
@@ -39,6 +41,8 @@ async function main ({ userId, namePattern }) {
       'user.username': { $regex: namePattern }
     }]
   }
+
+  console.log({ query })
 
   const events = await Event.find(query, { limit: 2500, sort: { createdAt: -1 } })
   events.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
