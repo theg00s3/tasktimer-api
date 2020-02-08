@@ -31,7 +31,8 @@
     "oauth": "^0.9.15",
     "passport-mock-strategy": "^2.0.0",
     "r2": "git+https://github.com/mikeal/r2.git",
-    "string-to-color": "^2.1.1"
+    "string-to-color": "^2.1.1",
+    "yargs": "^15.1.0"
   },
   "dependencies": {
     "@sentry/node": "^5.12.3",
