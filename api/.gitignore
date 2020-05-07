@@ -24,3 +24,4 @@ api/rel
 .env
 .env*
 migrate-mongo-config.js
+.now

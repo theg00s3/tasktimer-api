@@ -1,8 +1,6 @@
 {
   "version": 2,
-  "name": "api.pomodoro.cc",
-  "alias": "api.pomodoro.cc",
-  "regions": ["bru"],
+  "name": "api.tasktimer.tk",
   "env": {
     "TWITTER_CONSUMER_KEY": "@twitter_consumer_key",
     "TWITTER_CONSUMER_SECRET": "@twitter_consumer_secret",
