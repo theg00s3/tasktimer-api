@@ -25,7 +25,7 @@ if (process.env.USE_AUTH || process.env.NODE_ENV === 'production') {
     saveUninitialized: true,
     secret: 'foo',
     cookie: {
-      domain: process.env.NODE_ENV === 'production' ? '.pomodoro.cc' : 'localhost',
+      domain: process.env.NODE_ENV === 'production' ? '.tasktimer.tk' : 'localhost',
       sameSite: false
     },
     store: new MongoStore({
