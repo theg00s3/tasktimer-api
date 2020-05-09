@@ -1,11 +1,11 @@
 {
-  "name": "api.pomodoro.cc",
+  "name": "api.tasktimer.tk",
   "version": "1.0.0",
   "private": true,
   "engines": {
     "node": "12.x"
   },
-  "description": "api for pomodoro.cc",
+  "description": "api for tasktimer.tk",
   "main": "index.js",
   "ignore-scripts": "false",
   "scripts": {
