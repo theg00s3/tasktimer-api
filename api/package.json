@@ -16,9 +16,7 @@
     "deploy": "now --target production",
     "migrate-mongo": "migrate-mongo",
     "list-recent-events": "NODE_ENV=production scripts/list-recent-events.js",
-    "list-stripe-subscriptions": "NODE_ENV=production scripts/list-stripe-subscriptions.js",
-    "update-users-twitter-avatar": "NODE_ENV=production scripts/update-users-twitter-avatar.js",
-    "update-stripe-subscriptions": "NODE_ENV=production scripts/update-stripe-subscriptions.js"
+    "update-users-twitter-avatar": "NODE_ENV=production scripts/update-users-twitter-avatar.js"
   },
   "keywords": [],
   "author": "",
@@ -53,8 +51,7 @@
     "passport-github": "^1.1.0",
     "passport-google-oauth": "^2.0.0",
     "passport-twitter": "^1.0.4",
-    "pino": "^5.16.0",
-    "stripe": "^7.8.0"
+    "pino": "^5.16.0"
   },
   "standard": {
     "env": {

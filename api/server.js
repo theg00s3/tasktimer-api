@@ -1,7 +1,6 @@
 require('dotenv').config()
 const pomodoros = require('./routes/pomodoros-factory')
 const analytics = require('./routes/analytics-factory')
-const subscriptions = require('./routes/subscriptions-factory')
 const todos = require('./routes/todos-factory')
 const user = require('./routes/user-factory')
 const cors = require('cors')
@@ -13,7 +12,6 @@ app.use(cors({
 app.head('/', (req, res) => res.end())
 app.use(pomodoros)
 app.use(analytics)
-app.use(subscriptions)
 app.use(todos)
 app.use(user)
 
