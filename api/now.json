@@ -24,7 +24,6 @@
     { "src": "app.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/api.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/user.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
-    { "src": "routes/subscriptions.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/pomodoros.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/analytics.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } },
     { "src": "routes/todos.js", "use": "@now/node", "config": { "maxLambdaSize": "512mb" } }
@@ -34,7 +33,6 @@
     { "src": "/twitter.*", "dest": "/app.js" },
     { "src": "/github.*", "dest": "/app.js" },
     { "src": "/google.*", "dest": "/app.js" },
-    { "src": "/subscriptions.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/subscriptions.js" },
     { "src": "/pomodoros.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/pomodoros.js" },
     { "src": "/analytics.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/analytics.js" },
     { "src": "/todos.*", "methods": ["POST", "PATCH", "GET", "OPTIONS"], "dest": "/routes/todos.js" },
