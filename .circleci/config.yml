@@ -1,0 +1,62 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+
+# build job parameters as a template
+defaults: &defaults
+  working_directory: ~/tasktimer-api
+  docker:
+    - image: node:10
+    - image: mongo:3.4
+
+jobs:
+  workspace:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: pwd
+      - run: ls
+      - restore_cache:
+          keys:
+          - v2-deps-{{ .Branch }}-
+          - v2-deps-
+      - run: npm install
+      - run: cd api ; npm install
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            # - .cache
+            - tasktimer-api
+
+  test_api:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Switch timezone to Melbourne
+          command: cp /usr/share/zoneinfo/Australia/Melbourne /etc/localtime
+      - run:
+          name: test_api
+          command: |
+            # npm cache clean -f || exit 0
+            node --version
+            npm --version
+            npm i -g wait-on
+            cd api
+            echo -e "NODE_ENV=test\nTWITTER_CONSUMER_KEY=\nTWITTER_CONSUMER_SECRET=\nTWITTER_CALLBACK_URL=\nGITHUB_CLIENT_ID=\nGITHUB_CLIENT_SECRET=\nGITHUB_CALLBACK_URL=\nMONGO_URL=mongodb://127.0.0.1:27017/test\nHOST=api.pomodoro.cc\nSENTRY_DSN=\nSTRIPE_SECRET_KEY=\nSTRIPE_PLAN=\nUSE_AUTH=false\nBASE_URL=http://localhost:3000\nLEVEL=info" > .env
+            # npm config set ignore-scripts false
+            # npm install -g --unsafe-perm now@latest
+            # now dev --debug --token $NOW_TOKEN & wait-on http://localhost:3000
+            NODE_ENV=test node server.js & wait-on http://localhost:3000
+            npm t
+
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - workspace
+      - test_api:
+          requires:
+            - workspace
