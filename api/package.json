@@ -43,7 +43,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "migrate-mongo": "^6.0.2",
-    "mongodb": "^3.5.2",
+    "mongodb": "^3.5.7",
     "monk": "^7.3.0",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.0",
