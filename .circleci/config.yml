@@ -21,7 +21,6 @@ jobs:
           - v2-deps-{{ .Branch }}-
           - v2-deps-
       - run: npm install
-      - run: cd app ; npm install
       - run: cd api ; npm install
       - persist_to_workspace:
           root: ~/
