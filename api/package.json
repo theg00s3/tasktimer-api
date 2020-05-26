@@ -51,7 +51,7 @@
     "passport-github": "^1.1.0",
     "passport-google-oauth": "^2.0.0",
     "passport-twitter": "^1.0.4",
-    "pino": "^6.2.1"
+    "pino": "^6.3.0"
   },
   "standard": {
     "env": {
