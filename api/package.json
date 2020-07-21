@@ -42,7 +42,7 @@
     "dayjs": "^1.8.29",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "migrate-mongo": "^7.2.1",
+    "migrate-mongo": "^8.0.0",
     "mongodb": "^3.5.9",
     "monk": "^7.3.0",
     "morgan": "^1.10.0",
