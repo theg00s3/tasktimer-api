@@ -44,7 +44,7 @@
     "express-session": "^1.17.1",
     "migrate-mongo": "^7.2.1",
     "mongodb": "^3.6.3",
-    "monk": "^7.3.2",
+    "monk": "^7.3.3",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.1",
     "passport": "^0.4.1",
