@@ -26,7 +26,7 @@
     "chalk": "^4.1.1",
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.7",
-    "now": "^19.2.0",
+    "now": "^21.0.1",
     "oauth": "^0.9.15",
     "passport-mock-strategy": "^2.0.0",
     "r2": "git+https://github.com/mikeal/r2.git",
